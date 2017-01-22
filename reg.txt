@@ -1,0 +1,11 @@
+$digit = [0-9]
+$letter = [a-zA-Z]
+$special =  [\.\;\,\$\|\*\+\?\#\~\-\{\}\(\)\[\]\^\/\&\:\=\@\'\<\>\%\!\\]
+
+@number = $digit+[\.$digit+]?
+@comment = \#($digit|$white|$special)*
+@string = ^\"($digit|$letter|$white|($special # [\\\"])|\\\"|\\\\)*\"$
+@identifier = [a-z]($letter|$digit|_)*
+@sign = ([\%\/\*\-\)\(\+\=\;\,\<\>]|not|and|or|\=\=|\/\=|\>\=|\<\=|div|mod|\-\>)
+@datatype = (number|boolean)
+@reserved = (true|false|with|do|end|if|then|else|while|for|repeat|begin|return|func|times|program)
