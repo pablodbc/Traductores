@@ -1,10 +1,5 @@
 program
-    with
-        number x = 4;
-    do
-        repeat x times
-            forward(50); # Traza una línea por 50 puntos
-            rotatel(90); # Gira 90 grados contra-reloj
-        end;
-    end;
+    repeat 2 times {
+        forward(50);
+    }    
 end;
