@@ -78,7 +78,7 @@ pushToken tokenizer =
   \(posn,prevChar,pending,s) len -> modifyUserState (push $ (take len s) posn) >> alexMonadScan
     where
         newToken = tokenizer s
-        what LexError String = False
+        what LexError = False
         what _ = True
         push :: String -> AlexPosn -> AlexUserState -> AlexUserState
         push s p ts = ts{lexerTokens=(lexerTokens ts)++[(p, newToken)],lexerError=(lexerError ts)&&(what newToken)} 
@@ -88,5 +88,5 @@ pushToken tokenizer =
 main::IO ()
 main = do
   s <- getContents
-  --print (alexScanTokens s)
+  print (runAlex s $ alexMonadScan >> getUserState)
 }
