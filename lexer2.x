@@ -71,17 +71,17 @@ getUserState = Alex $ \s -> Right (s,alex_ust s)
 
 
 
-
-
 pushToken :: (String -> Token) -> AlexAction ()
 pushToken tokenizer =
-  \(posn,prevChar,pending,s) len -> modifyUserState (push $ (take len s) posn) >> alexMonadScan
+    \(posn,prevChar,pending,s) len -> modifyUserState (push $ (take len s) posn) >> alexMonadScan
     where
-        newToken = tokenizer s
         what LexError = False
         what _ = True
         push :: String -> AlexPosn -> AlexUserState -> AlexUserState
-        push s p ts = ts{lexerTokens=(lexerTokens ts)++[(p, newToken)],lexerError=(lexerError ts)&&(what newToken)} 
+        push st p ts = 
+            let newToken = tokenizer st
+            in ts{lexerTokens=(lexerTokens ts)++[(p, newToken)],lexerError=(lexerError ts)&&(what newToken)}
+         
             
 
 
