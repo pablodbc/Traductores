@@ -1,0 +1,3 @@
+alex lexer2.x
+ghc --make lexer2.hs
+./lexer2
