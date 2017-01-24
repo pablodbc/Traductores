@@ -23,10 +23,10 @@ tokens :-
     @floating   { \p s -> Floating p (read s) }
     @comment    ;
     @str        { \p s -> Str p s }
-    @identifier { \p s -> Identifier p s }
+    @reserved   { \p s -> Reserved p s }
     @sign       { \p s -> Sign p s }
     @datatype   { \p s -> Datatype p s }
-    @reserved   { \p s -> Reserved p s }
+    @identifier { \p s -> Identifier p s }
     @error      { \p s -> LexError p s }
 
 {
@@ -60,14 +60,28 @@ makePrintable (Reserved p s) = "linea " ++ show(fst(getPos p)) ++ ", columna " +
 
 makePrintable (LexError p s) = "linea " ++ show(fst(getPos p)) ++ ", columna " ++ show(snd(getPos p)) ++ ": caracter inesperado '" ++ (id s) ++ "'"
 
+isError :: Token -> Bool
+isError(Integer _ _) = False
+isError(Floating _ _) = False
+isError(Str _ _) = False
+isError(Identifier _ _) = False
+isError(Sign _ _) = False
+isError(Datatype _ _) = False
+isError(Reserved _ _) = False
+isError(LexError _ _) = True
+
+testError :: [Token] -> [Token]
+testError = filter (isError)
+printPlease :: [Token] -> [String]
+printPlease = foldr (\x acc -> (makePrintable x) : acc) []
+
 main::IO ()
 main = do
   s <- getContents
   let pre = alexScanTokens s
-  print (pre)
-  let ans = foldr (\x acc -> (makePrintable x) : acc) []
-  mapM_ putStrLn (ans pre)
-      
+  let errors = testError pre
+  if null errors then mapM_ putStrLn (printPlease $ pre) else  mapM_ putStrLn (printPlease $ errors)
+  
 }
 
 
