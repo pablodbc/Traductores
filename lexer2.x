@@ -20,14 +20,14 @@ $special =  [\.\;\,\$\|\*\+\?\#\~\-\{\}\(\)\[\]\^\/\&\:\=\@\'\<\>\%\!\\]
 tokens :-
     $white+             ;
     @comment            ;
-    @integer            {pushToken $ Integer (read s) }
-    @floating           {pushToken $ Floating (read s) }
-    @str                {pushToken $ Str s }
-    @identifier         {pushToken $ Identifier s }
-    @sign               {pushToken $ Sign s }
-    @datatype           {pushToken $ Datatype s }
-    @reserved           {pushToken $ Reserved s }
-    @error              {pushToken $ LexError s }
+    @integer            {(\s -> pushToken $ Integer (read s)) }
+    @floating           {(\s -> pushToken $ Floating (read s)) }
+    @str                {(\s -> pushToken $ Str s) }
+    @identifier         {(\s -> pushToken $ Identifier s) }
+    @sign               {(\s -> pushToken $ Sign s) }
+    @datatype           {(\s -> pushToken $ Datatype s) }
+    @reserved           {(\s -> pushToken $ Reserved s) }
+    @error              {(\s -> pushToken $ LexError s) }
 
 {
 
@@ -60,33 +60,35 @@ alexInitUserState = AlexUserState
 
 
 modifyUserState :: (AlexUserState -> AlexUserState) -> Alex ()
-modifyUserState f = Alex $ \s -> let current = alex_ust s
-                                     new     = f current
-                                 in
-                                    Right (s { alex_ust = new },())
+modifyUserState f = Alex $ \sstate -> let current = alex_ust sstate
+                                          new = f current
+                                      in
+                                          Right (sstate { alex_ust = new },())
 
 
 getUserState ::  Alex AlexUserState
-getUserState = Alex $ \s -> Right (s,alex_ust s)
+getUserState = Alex $ \state -> Right (state,alex_ust state)
 
 
 
 pushToken :: (String -> Token) -> AlexAction ()
 pushToken tokenizer =
-    \(posn,prevChar,pending,s) len -> modifyUserState (push $ (take len s) posn) >> alexMonadScan
+    \(posn,prevChar,pending,str) len -> modifyUserState (push $ (take len str) posn) >> alexMonadScan
     where
-        what LexError = False
-        what _ = True
+        what LexError s = False
+        what _ _ = True
         push :: String -> AlexPosn -> AlexUserState -> AlexUserState
         push st p ts = 
-            let newToken = tokenizer st
-            in ts{lexerTokens=(lexerTokens ts)++[(p, newToken)],lexerError=(lexerError ts)&&(what newToken)}
+            ts{lexerTokens=(lexerTokens ts)++[(p, newToken)],lexerError=(lexerError ts)&&(what newToken)}
+            where 
+                newToken = tokenizer st
          
             
 
 
 main::IO ()
 main = do
-  s <- getContents
-  print (runAlex s $ alexMonadScan >> getUserState)
+  filesss <- getContents
+  --print (runAlex filesss $ alexMonadScan >> getUserState)
+  return ()
 }
