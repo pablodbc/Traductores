@@ -3,6 +3,8 @@
 {-# LINE 1 "proyectoFuncionalSinMonads.x" #-}
 
 module Main where
+import System.Environment
+import System.IO
 
 #if __GLASGOW_HASKELL__ >= 603
 #include "ghcconfig.h"
@@ -247,7 +249,7 @@ alex_deflt :: Array Int Int
 alex_deflt = listArray (0,90) [-1,-1,-1,-1,9,9,-1,12,12,16,16,-1,20,20,89,89,89,-1,25,25,25,-1,-1,-1,-1,25,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
 
 alex_accept = listArray (0::Int,90) [AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccNone,AlexAccSkip,AlexAcc (alex_action_1),AlexAcc (alex_action_2),AlexAccSkip,AlexAcc (alex_action_4),AlexAcc (alex_action_5),AlexAcc (alex_action_6),AlexAcc (alex_action_6),AlexAcc (alex_action_6),AlexAcc (alex_action_6),AlexAcc (alex_action_7),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_8),AlexAcc (alex_action_9),AlexAcc (alex_action_9)]
-{-# LINE 32 "proyectoFuncionalSinMonads.x" #-}
+{-# LINE 34 "proyectoFuncionalSinMonads.x" #-}
 
 data Token = Integer AlexPosn Int               |
              Floating AlexPosn Double           |
@@ -296,10 +298,14 @@ printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 
 main::IO ()
 main = do
-  s <- getContents
+  args <- getArgs
+  let filePath = args!!0
+  handle <- openFile filePath ReadMode
+  s <- hGetContents handle
   let pre = alexScanTokens s
   let errors = testError pre
   if null errors then mapM_ putStrLn (printPlease $ pre) else  mapM_ putStrLn (printPlease $ errors)
+  hClose handle
   
 
 alex_action_1 =  \p s -> Integer p (read s) 

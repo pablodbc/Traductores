@@ -1,5 +1,7 @@
 {
 module Main where
+import System.Environment
+import System.IO
 }
 %wrapper "posn"
 
@@ -77,10 +79,14 @@ printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 
 main::IO ()
 main = do
-  s <- getContents
+  args <- getArgs
+  let filePath = args!!0
+  handle <- openFile filePath ReadMode
+  s <- hGetContents handle
   let pre = alexScanTokens s
   let errors = testError pre
   if null errors then mapM_ putStrLn (printPlease $ pre) else  mapM_ putStrLn (printPlease $ errors)
+  hClose handle
   
 }
 
