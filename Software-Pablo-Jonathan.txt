@@ -1,0 +1,3 @@
+El programa calcula el punto de intersección de dos rectas y muestra el resultado. Lee dos pares enteros (m1, c1) y (m2, c2) que definen las dos rectas de la forma y = mx + c.
+
+En este caso, la funcion que haria los calculos para el programa principal recibe las 2 rectas representadas como las tuplas (m1,c1) y (m2,c2). El dominio de esta funcion es el conjunto de las tuplas (m1,c1,m2,c2) donde m1,c1,m2 y c2 pertenecen al conjunto de los enteros. Ahora, particionemos ese dominio en los siguientes: las tuplas (m1,c1,m2,c2) donde m1,c1,m2 y c2 pertenecen al dominio de los enteros y ademas m1 y m2 son iguales y las tuplas en las que m1 y m2 son distintos y toman las mismas consideraciones que el conjunto mencionado anteriormente. 

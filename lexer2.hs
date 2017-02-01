@@ -350,8 +350,8 @@ alex_accept = listArray (0::Int,32) [AlexAccNone,AlexAccNone,AlexAccNone,AlexAcc
 alexEOF :: Alex ()
 alexEOF = return ()
 
-data Token = Integer Int               |
-             Floating Double           |
+data Token = Integer String               |
+             Floating String           |
              Str String                |
              Identifier String         |
              Sign String               |
@@ -389,33 +389,31 @@ getUserState = Alex $ \state -> Right (state,alex_ust state)
 
 pushToken :: (String -> Token) -> AlexAction ()
 pushToken tokenizer =
-    \(posn,prevChar,pending,str) len -> modifyUserState (push $ (take len str) posn) >> alexMonadScan
+    \(posn,prevChar,pending,str) len -> modifyUserState (push (take len str) posn) >> alexMonadScan
     where
-        what LexError s = False
-        what _ _ = True
+        what (LexError s) = False
+        what _ = True
         push :: String -> AlexPosn -> AlexUserState -> AlexUserState
         push st p ts = 
-            ts{lexerTokens=(lexerTokens ts)++[(p, newToken)],lexerError=(lexerError ts)&&(what newToken)}
+            ts{lexerTokens=(lexerTokens ts)++[(newToken, p)],lexerError=(lexerError ts)&&(what newToken)}
             where 
                 newToken = tokenizer st
          
-            
+runAlexScan :: String -> Either String AlexUserState
+runAlexScan s = runAlex s $ alexMonadScan >> getUserState         
 
 
 main::IO ()
-main = do
-  filesss <- getContents
-  --print (runAlex filesss $ alexMonadScan >> getUserState)
-  return ()
+main = getContents >>= print . runAlexScan
 
-alex_action_2 = (\s -> pushToken $ Integer (read s)) 
-alex_action_3 = (\s -> pushToken $ Floating (read s)) 
-alex_action_4 = (\s -> pushToken $ Str s) 
-alex_action_5 = (\s -> pushToken $ Identifier s) 
-alex_action_6 = (\s -> pushToken $ Sign s) 
-alex_action_7 = (\s -> pushToken $ Datatype s) 
-alex_action_8 = (\s -> pushToken $ Reserved s) 
-alex_action_9 = (\s -> pushToken $ LexError s) 
+alex_action_2 = (pushToken $ Integer ) 
+alex_action_3 = (pushToken $ Floating) 
+alex_action_4 = (pushToken $ Str) 
+alex_action_5 = (pushToken $ Identifier) 
+alex_action_6 = (pushToken $ Sign) 
+alex_action_7 = (pushToken $ Datatype) 
+alex_action_8 = (pushToken $ Reserved) 
+alex_action_9 = (pushToken $ LexError) 
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 {-# LINE 1 "templates/GenericTemplate.hs" #-}
 {-# LINE 1 "<built-in>" #-}
