@@ -172,8 +172,6 @@ makePrintable (Mod s, p) = "linea " ++ show(fst(getPos p)) ++ ", columna " ++ sh
 
 makePrintable (Arrow s, p) = "linea " ++ show(fst(getPos p)) ++ ", columna " ++ show(snd(getPos p)) ++ ": signo '" ++ (id s) ++ "'"
 
-makePrintable (Divex s, p) = "linea " ++ show(fst(getPos p)) ++ ", columna " ++ show(snd(getPos p)) ++ ": signo '" ++ (id s) ++ "'"
-
 makePrintable (Number s, p) = "linea " ++ show(fst(getPos p)) ++ ", columna " ++ show(snd(getPos p)) ++ ": tipo de dato '" ++ (id s) ++ "'"
 
 makePrintable (Boolean s, p) = "linea " ++ show(fst(getPos p)) ++ ", columna " ++ show(snd(getPos p)) ++ ": tipo de dato '" ++ (id s) ++ "'"
