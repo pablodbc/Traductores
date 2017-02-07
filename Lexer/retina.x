@@ -65,8 +65,8 @@ tokens :-
     @error      { \p s -> LexError p s }
 
 {
-data Token = Integer AlexPosn Int               |
-             Floating AlexPosn Double           |
+data Token = Integer AlexPosn String            |
+             Floating AlexPosn String           |
              Str AlexPosn String                |
              Identifier AlexPosn String         |
              LexError AlexPosn String           |
