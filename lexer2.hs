@@ -518,16 +518,29 @@ getUserState ::  Alex AlexUserState
 getUserState = Alex $ \state -> Right (state,alex_ust state)
 
 
+isError :: Token -> Bool
+isError (LexError _) = True
+isError _ = False
+
 
 pushToken :: (String -> Token) -> AlexAction ()
 pushToken tokenizer =
     \(posn,prevChar,pending,str) len -> modifyUserState (push (take len str) posn) >> alexMonadScan
     where
-        what (LexError s) = False
-        what _ = True
+
+        whatToPush :: [(Token, AlexPosn)] -> (Token, AlexPosn) -> [(Token, AlexPosn)]
+        whatToPush tks@(((LexError _), _) : _) tk@((LexError _) , _) = tks++[tk]        -- Errors and new Error
+        whatToPush tks@(((LexError _), _) : _) _ = tks                                  -- Errors and new Normal Token
+        whatToPush tks tk@((LexError _), _) = [tk]                                      -- Normal Tokens and new Error
+        whatToPush tks tk = tks++[tk]                                                   -- Normal Tokens (might be empty) 
+                                                                                        -- and new Normal Token
+
         push :: String -> AlexPosn -> AlexUserState -> AlexUserState
         push st p ts = 
-            ts{lexerTokens=(lexerTokens ts)++[(newToken, p)],lexerError=(lexerError ts)&&(what newToken)}
+            ts{
+                lexerTokens = whatToPush (lexerTokens ts) (newToken, p) ,
+                lexerError = (lexerError ts) && not(isError newToken)
+            }
             where 
                 newToken = tokenizer st
          
@@ -537,15 +550,11 @@ runAlexScan s = runAlex s $ alexMonadScan >> getUserState
 printPlease :: [(Token,AlexPosn)] -> [String]
 printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 
-isError :: Token -> Bool
-isError (LexError _) = True
-isError _ = False
-
 main = do
     input <- getContents
     let test = runAlexScan input
     case test of
-        Right st -> if lexerError st then mapM_ putStrLn $ printPlease $ lexerTokens st else mapM_ putStrLn $ printPlease $ filter (isError . fst) $ lexerTokens st
+        Right st -> mapM_ putStrLn $ printPlease $ lexerTokens st
     return ()
 
 
