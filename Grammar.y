@@ -82,7 +82,7 @@ Factor  : '('Earit')'            {[]}
         | '-'Factor %prec NEG    {[]}
         | integer                {[]}
         | floating               {[]}
-        | Funcion                {[]}
+        --| Funcion                {[]}
         | identifier             {[]}
 
 Expr    : Conj                   {[]}
@@ -103,19 +103,8 @@ TermB   : '('Expr')'             {[]}
         | Earit '>' Earit        {[]}
         | Earit '<=' Earit       {[]}
         | Earit '>=' Earit       {[]}
-        | Funcion                {[]}
+       -- | Funcion                {[]}
         | identifier             {[]}
-
-Funcion : identifier'('')'       {[]}
-        | identifier'(' Args ')'   {[]}
-
-Args    : Expr                   {[]}
-        | Args ',' Expr          {[]}
-
-Expr    : Ebool                  {[]}
-        | Earit                  {[]}
-        | identifier             {[]}
-        | Funcion                {[]}
 
 {
     
