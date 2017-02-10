@@ -71,7 +71,7 @@ import Lexer
 %right not NEG
 
 %%
-Expr    : Expr or Expr                  {[]}
+Expr    : Expr or Expr                  {Or $1 $3}
         | Expr and Expr                 {[]}
         | Expr '==' Expr                {[]}
         | Expr '/=' Expr                {[]}
