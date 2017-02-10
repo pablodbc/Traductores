@@ -59,6 +59,9 @@ tokens :-
     program             {(pushToken $ Program)}
     writeln             {(pushToken $ WriteLn)}
     write               {(pushToken $ Write)}
+    by                  {(pushToken $ By)}
+    from                {(pushToken $ From)}
+    to                  {(pushToken $ To)}
     @integer            {(pushToken $ Integer . read) }
     @floating           {(pushToken $ Floating . read) }
     @str                {(pushToken $ Str) }
@@ -116,7 +119,10 @@ data Token = Integer Int               |
              Times String              |
              Program String            |
              WriteLn String            |
-             Write String
+             Write String              |
+             By String                 |
+             From String               |
+             To String                 |
              deriving (Eq, Show)
 
 getPos :: AlexPosn -> (Int,Int)
@@ -175,5 +181,8 @@ pushToken tokenizer =
          
 runAlexScan :: String -> Either String AlexUserState
 runAlexScan s = runAlex s $ alexMonadScan >> getUserState         
+
+printPlease :: [(Token,AlexPosn)] -> [String]
+printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 
 }
