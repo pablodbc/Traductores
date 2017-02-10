@@ -1,6 +1,7 @@
 module Main where
 import System.Environment
 import System.IO
+import System.IO.Error
 import Lexer as Lexer
 import Stdout as Out
 --import Grammar 
@@ -41,3 +42,5 @@ main = do
                 Left msg -> putStrLn msg
                 Right x -> do
                     putStrLn "Grammar"
+                    putStrLn $ concatMap (\s -> s++"\n") $ Out.printPlease x
+            
