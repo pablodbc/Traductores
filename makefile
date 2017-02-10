@@ -1,3 +1,4 @@
 compilar:
-	alex lexer2.x
-	ghc --make lexer2.hs
+	alex Lexer.x
+	happy Grammar.y
+	ghc --make main.hs -o retina 
