@@ -67,9 +67,14 @@ import Lexer
 right not NEG
 
 %%
-Earit   : Termino   {[]}
-        | Earit '+' Termino {[]}
-        | Earit '-' Termino {[]}
+Expr    : EBool                  {[]}
+        | Earit                  {[]}
+        | identifier             {[]}
+        | Funcion                {[]}
+
+Earit   : Termino                {[]}
+        | Earit '+' Termino      {[]}
+        | Earit '-' Termino      {[]}
 
 Termino : Factor                 {[]}
         | Termino '*' Factor     {[]}
@@ -82,10 +87,8 @@ Factor  : '('Earit')'            {[]}
         | '-'Factor %prec NEG    {[]}
         | integer                {[]}
         | floating               {[]}
-        | Funcion                {[]}
-        | identifier             {[]}
 
-Expr    : Conj                   {[]}
+EBool   : Conj                   {[]}
         | Expr or Conj           {[]}
 
 Conj    : NegBool                {[]}
@@ -94,28 +97,23 @@ Conj    : NegBool                {[]}
 NegBool : TermB                  {[]}
         | not NegBool            {[]}
 
-TermB   : '('Expr')'             {[]}
+TermB   : '('EBool')'            {[]}
         | true                   {[]}
         | false                  {[]}
-        | Expr '==' Expr         {[]}
-        | Expr '/=' Expr         {[]}
+        | EBool '==' EBool       {[]}
+        | EBool '/=' EBool       {[]}
+        | Earit '==' Earit       {[]}
+        | Earit '/=' Earit       {[]}
         | Earit '<' Earit        {[]}
         | Earit '>' Earit        {[]}
         | Earit '<=' Earit       {[]}
         | Earit '>=' Earit       {[]}
-        | Funcion                {[]}
-        | identifier             {[]}
 
 Funcion : identifier'('')'       {[]}
-        | identifier'(' Args ')'   {[]}
+        | identifier'('Args')'   {[]}
 
 Args    : Expr                   {[]}
         | Args ',' Expr          {[]}
-
-Expr    : Ebool                  {[]}
-        | Earit                  {[]}
-        | identifier             {[]}
-        | Funcion                {[]}
 
 {
     
