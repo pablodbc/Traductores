@@ -71,6 +71,7 @@ import Lexer
 %right not NEG
 
 %%
+<<<<<<< HEAD
 Expr    : Expr or Expr                  {Or $1 $3}
         | Expr and Expr                 {[]}
         | Expr '==' Expr                {[]}
@@ -182,6 +183,46 @@ BloqueR : AnidR             {[]}
 
 AnidR   : AnidS             {[]}
         | return Expr       {[]}
+=======
+Earit   : Termino   {[]}
+        | Earit '+' Termino {[]}
+        | Earit '-' Termino {[]}
+
+Termino : Factor                 {[]}
+        | Termino '*' Factor     {[]}
+        | Termino '/' Factor     {[]}
+        | Termino '%' Factor     {[]}
+        | Termino div Factor     {[]}
+        | Termino mod Factor     {[]}
+
+Factor  : '('Earit')'            {[]}
+        | '-'Factor %prec NEG    {[]}
+        | integer                {[]}
+        | floating               {[]}
+        --| Funcion                {[]}
+        | identifier             {[]}
+
+Expr    : Conj                   {[]}
+        | Expr or Conj           {[]}
+
+Conj    : NegBool                {[]}
+        | Conj and NegBool       {[]}
+
+NegBool : TermB                  {[]}
+        | not NegBool            {[]}
+
+TermB   : '('Expr')'             {[]}
+        | true                   {[]}
+        | false                  {[]}
+        | Expr '==' Expr         {[]}
+        | Expr '/=' Expr         {[]}
+        | Earit '<' Earit        {[]}
+        | Earit '>' Earit        {[]}
+        | Earit '<=' Earit       {[]}
+        | Earit '>=' Earit       {[]}
+       -- | Funcion                {[]}
+        | identifier             {[]}
+>>>>>>> a9180178909ddc3cc0ab8449a070308fa813b2f1
 
 {
     

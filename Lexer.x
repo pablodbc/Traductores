@@ -182,7 +182,10 @@ pushToken tokenizer =
 runAlexScan :: String -> Either String AlexUserState
 runAlexScan s = runAlex s $ alexMonadScan >> getUserState         
 
+<<<<<<< HEAD
 --printPlease :: [(Token,AlexPosn)] -> [String]
 --printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 
+=======
+>>>>>>> a9180178909ddc3cc0ab8449a070308fa813b2f1
 }
