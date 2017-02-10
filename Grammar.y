@@ -1,67 +1,66 @@
 {
 
 module Grammar where
-import Lexer
-
+import qualified Lexer
 }
 
 %name parse
-%tokentype { (Token,AlexPosn) }
+%tokentype { Lexer.Token }
 %error { parseError }
 %monad{ Either String }{ >>= }{ return }
 
 %token
 
-    '%'         { (\(Modex _,_)        -> Modex _)       }
-    '/'         { (\(Divex _,_)         -> Divex _)       }
-    '*'         { (\(Mult _,_)           -> Mult _)        }
-    '-'         { (\(Minus _,_)          -> Minus _)       }
-    ')'         { (\(CloseP _,_)         -> CloseP _)      }     
-    '('         { (\(OpenP _,_)          -> OpenP _)       }     
-    '+'         { (\(Plus _,_)           -> Plus _)        }     
-    '='         { (\(Def _,_)            -> Def _)         }     
-    ';'         { (\(SemiColon _,_)      -> SemiColon _)   }     
-    ','         { (\(Comma _,_)          -> Comma _)       }     
-    '<'         { (\(Less _,_)           -> Less _)        }     
-    '>'         { (\(More _,_)           -> More _)        }     
-    '=='        { (\(Eq _,_)             -> Eq _)          }      
-    '/='        { (\(Neq _,_)            -> Neq _)         }      
-    '>='        { (\(Moreq _,_)          -> Moreq _)       }      
-    '<='        { (\(Lesseq _,_)         -> Lesseq _)      }      
-    '->'        { (\(Arrow _,_)          -> Arrow _)       }      
-    not         { (\(Not _,_)            -> Not _)         }    
-    and         { (\(And _,_)            -> And _)         }    
-    or          { (\(Or _,_)             -> Or _)          }    
-    div         { (\(Div _,_)            -> Div _)         }    
-    mod         { (\(Mod _,_)            -> Mod _)         }    
-    number      { (\(Number _,_)         -> Number _)      }    
-    boolean     { (\(Boolean _,_)        -> Boolean _)     }    
-    true        { (\(True' _,_)          -> True' _)       }    
-    false       { (\(False' _,_)         -> False' _)      }    
-    with        { (\(With _,_)           -> With _)        }    
-    do          { (\(Do _,_)             -> Do _)          }    
-    end         { (\(End _,_)            -> End _)         }    
-    if          { (\(If _,_)             -> If _)          }    
-    then        { (\(Then _,_)           -> Then _)        }    
-    else        { (\(Else _,_)           -> Else _)        }    
-    while       { (\(While _,_)          -> While _)       }    
-    for         { (\(For _,_)            -> For _)         }    
-    repeat      { (\(Repeat _,_)         -> Repeat _)      }    
-    begin       { (\(Begin _,_)          -> Begin _)       }    
-    return      { (\(Return _,_)         -> Return _)      }    
-    func        { (\(Func _,_)           -> Func _)        }    
-    times       { (\(Times _,_)          -> Times _)       }    
-    program     { (\(Program _,_)        -> Program _)     }    
-    integer     { (\(Integer _ ,_)     -> Integer _)       }   
-    floating    { (\(Floating _ ,_)    -> FLoating _)      }   
-    str         { (\(Str _,_)            -> Str _)         }   
-    identifier  { (\(Identifier _,_)     -> Identifier _)  }
-    writeln     { (\(WriteLn _,_)        -> WriteLn _)     }
-    write       { (\(Write _,_)          -> Write _)       }
-    read        {(\(Read _, _) -> Read _)}
-    by          {(\(By _, _) -> By _)}
-    from        {(\(From _, _) -> From _)}
-    to          {(\(To _, _) -> To _)}
+    '%'         { (Lexer.Modex _ _)         }
+    '/'         { (Lexer.Divex _ _)         }
+    '*'         { (Lexer.Mult _ _)          }
+    '-'         { (Lexer.Minus _ _)         }
+    ')'         { (Lexer.CloseP _ _)        }     
+    '('         { (Lexer.OpenP _ _)         }     
+    '+'         { (Lexer.Plus _ _)          }     
+    '='         { (Lexer.Def _ _)           }     
+    ';'         { (Lexer.SemiColon _ _)     }     
+    ','         { (Lexer.Comma _ _)         }     
+    '<'         { (Lexer.Less _ _)          }     
+    '>'         { (Lexer.More _ _)          }     
+    '=='        { (Lexer.Eq _ _)            }      
+    '/='        { (Lexer.Neq _ _)           }      
+    '>='        { (Lexer.Moreq _ _)         }      
+    '<='        { (Lexer.Lesseq _ _)        }      
+    '->'        { (Lexer.Arrow _ _)         }      
+    not         { (Lexer.Not _ _)           }    
+    and         { (Lexer.And _ _)           }    
+    or          { (Lexer.Or _ _)            }    
+    div         { (Lexer.Div _ _)           }    
+    mod         { (Lexer.Mod _ _)           }    
+    number      { (Lexer.Number _ _)        }    
+    boolean     { (Lexer.Boolean _ _)       }    
+    true        { (Lexer.True' _ _)         }    
+    false       { (Lexer.False' _ _)        }    
+    with        { (Lexer.With _ _)          }    
+    do          { (Lexer.Do _ _)            }    
+    end         { (Lexer.End _ _)           }    
+    if          { (Lexer.If _ _)            }    
+    then        { (Lexer.Then _ _)          }    
+    else        { (Lexer.Else _ _)          }    
+    while       { (Lexer.While _ _)         }    
+    for         { (Lexer.For _ _)           }    
+    repeat      { (Lexer.Repeat _ _)        }    
+    begin       { (Lexer.Begin _ _)         }    
+    return      { (Lexer.Return _ _)        }    
+    func        { (Lexer.Func _ _)          }    
+    times       { (Lexer.Times _ _)         }    
+    program     { (Lexer.Program _ _)       }    
+    integer     { (Lexer.Integer _  _)      }   
+    floating    { (Lexer.Floating _  _)     }   
+    str         { (Lexer.Str _ _)           }   
+    identifier  { (Lexer.Identifier _ _)    }
+    writeln     { (Lexer.WriteLn _ _)       }
+    write       { (Lexer.Write _ _)         }
+    read        { (Lexer.Read _ _)          }
+    by          { (Lexer.By _ _)            }
+    from        { (Lexer.From _ _)          }
+    to          { (Lexer.To _ _)            }
 
 %left '-' '+' or
 %left '%' mod
@@ -72,29 +71,29 @@ import Lexer
 
 %%
 Expr    : Expr or Expr                  {Or $1 $3}
-        | Expr and Expr                 {[]}
-        | Expr '==' Expr                {[]}
-        | Expr '/=' Expr                {[]}
-        | Expr '<' Expr                 {[]}
-        | Expr '>' Expr                 {[]}
-        | Expr '<=' Expr                {[]}
-        | Expr '>=' Expr                {[]}
-        | Expr '+' Expr                 {[]}
-        | Expr '-' Expr                 {[]}
-        | Expr '*' Expr                 {[]}
-        | Expr '/' Expr                 {[]}
-        | Expr '%' Expr                 {[]}
-        | Expr div Expr                 {[]}
-        | Expr mod Expr                 {[]}
-        | '(' Expr ')'                  {[]}
-        | not Expr                      {[]}
-        | '-'Expr %prec NEG             {[]}
-        | integer                       {[]}
-        | floating                      {[]}
-        | true                          {[]}
-        | false                         {[]}
-        | identifier                    {[]}
-        | Funcion                       {[]}
+        | Expr and Expr                 {And $1 $3}
+        | Expr '==' Expr                {Eq $1 $3}
+        | Expr '/=' Expr                {Neq $1 $3}
+        | Expr '<' Expr                 {Less $1 $3}
+        | Expr '<=' Expr                {Lesseq $1 $3}
+        | Expr '>' Expr                 {More $1 $3}
+        | Expr '>=' Expr                {Moreq $1 $3}
+        | Expr '+' Expr                 {Plus $1 $3}
+        | Expr '-' Expr                 {Minus $1 $3}
+        | Expr '*' Expr                 {Mult $1 $3}
+        | Expr '/' Expr                 {Divex $1 $3}
+        | Expr '%' Expr                 {Modex $1 $3}
+        | Expr div Expr                 {Div $1 $3}
+        | Expr mod Expr                 {Mod $1 $3}
+        | '(' Expr ')'                  {Brack $2}
+        | not Expr                      {Not $2}
+        | '-'Expr %prec NEG             {Neg $2}
+        | identifier                    {Identifier $1}
+        | integer                       {Integer $1}
+        | floating                      {Floating $1}
+        | true                          {True' $1}
+        | false                         {False' $1}
+        | Funcion                       {$1} 
 
 Funcion : identifier'('')'              {[]}
         | identifier'(' Args ')'        {[]}
@@ -184,7 +183,36 @@ AnidR   : AnidS             {[]}
         | return Expr       {[]}
 
 {
+
+data Expr
+    = Or Expr Expr
+    | And Expr Expr
+    | Eq Expr Expr
+    | Neq Expr Expr
+    | Less Expr Expr
+    | Lesseq Expr Expr
+    | More Expr Expr
+    | Moreq Expr Expr
+    | Plus Expr Expr
+    | Minus Expr Expr
+    | Mult Expr Expr
+    | Divex Expr Expr
+    | Modex Expr Expr
+    | Div Expr Expr
+    | Mod Expr Expr
+    | Brack Expr
+    | Not Expr 
+    | Neg Expr 
+    | Integer  Lexer.Token
+    | Floating Lexer.Token
+    | True' Lexer.Token
+    | False' Lexer.Token
+    | Identifier  Lexer.Token
+    deriving (Show,Eq)  
     
 parseError ts = error "NO"
+--parser :: String -> Either String Expr
+--parser input = Lexer.runAlexScan input
+
 
 }

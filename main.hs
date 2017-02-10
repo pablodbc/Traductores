@@ -4,7 +4,7 @@ import System.IO
 import System.IO.Error
 import Lexer as Lexer
 import Stdout as Out
---import Grammar 
+import Grammar 
 
 
 
@@ -18,7 +18,7 @@ argError [x] =
 
 
 
-parseArg :: String -> Either String [(Lexer.Token,Lexer.AlexPosn)] 
+parseArg :: String -> Either String [Lexer.Token] 
     
 parseArg st =
     case (Lexer.runAlexScan st) of
@@ -26,7 +26,7 @@ parseArg st =
         (Right ltks) -> do
             let tks = Lexer.lexerTokens ltks
             case tks of
-                tks@(((LexError _), _) : _) -> do
+                tks@((LexError _ _) : _) -> do
                     Left $ concatMap (\s -> s++"\n") $ Out.printPlease tks
                 tks -> do
                     Right tks
