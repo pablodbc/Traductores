@@ -58,6 +58,10 @@ import Lexer
     identifier  { (\(Identifier _,_)     -> Identifier _)  }
     writeln     { (\(WriteLn _,_)        -> WriteLn _)     }
     write       { (\(Write _,_)          -> Write _)       }
+    read        {(\(Read _, _) -> Read _)}
+    by          {(\(By _, _) -> By _)}
+    from        {(\(From _, _) -> From _)}
+    to          {(\(To _, _) -> To _)}
 
 %left '-' '+' or
 %left '%' mod
@@ -67,36 +71,93 @@ import Lexer
 %right not NEG
 
 %%
-Expr    : Expr or Expr           {[]}
-        | Expr and Expr          {[]}
-        | Expr '==' Expr         {[]}
-        | Expr '/=' Expr         {[]}
-        | Expr '<' Expr          {[]}
-        | Expr '>' Expr          {[]}
-        | Expr '<=' Expr         {[]}
-        | Expr '>=' Expr         {[]}
-        | Expr '+' Expr          {[]}
-        | Expr '-' Expr          {[]}
-        | Expr '*' Expr          {[]}
-        | Expr '/' Expr          {[]}
-        | Expr '%' Expr          {[]}
-        | Expr div Expr          {[]}
-        | Expr mod Expr          {[]}
-        | '(' Expr ')'           {[]}
-        | not Expr               {[]}
-        | '-'Expr %prec NEG      {[]}
-        | integer                {[]}
-        | floating               {[]}
-        | true                   {[]}
-        | false                  {[]}
-        | identifier             {[]}
-        | Funcion                {[]}
+Expr    : Expr or Expr                  {[]}
+        | Expr and Expr                 {[]}
+        | Expr '==' Expr                {[]}
+        | Expr '/=' Expr                {[]}
+        | Expr '<' Expr                 {[]}
+        | Expr '>' Expr                 {[]}
+        | Expr '<=' Expr                {[]}
+        | Expr '>=' Expr                {[]}
+        | Expr '+' Expr                 {[]}
+        | Expr '-' Expr                 {[]}
+        | Expr '*' Expr                 {[]}
+        | Expr '/' Expr                 {[]}
+        | Expr '%' Expr                 {[]}
+        | Expr div Expr                 {[]}
+        | Expr mod Expr                 {[]}
+        | '(' Expr ')'                  {[]}
+        | not Expr                      {[]}
+        | '-'Expr %prec NEG             {[]}
+        | integer                       {[]}
+        | floating                      {[]}
+        | true                          {[]}
+        | false                         {[]}
+        | identifier                    {[]}
+        | Funcion                       {[]}
 
-Funcion : identifier'('')'       {[]}
-        | identifier'(' Args ')'   {[]}
+Funcion : identifier'('')'              {[]}
+        | identifier'(' Args ')'        {[]}
 
-Args    : Expr                   {[]}
-        | Args ',' Expr          {[]}
+Args    : Expr                          {[]}
+        | Args ',' Expr                 {[]}
+
+Leer    : read identifier               {[]}
+
+Escribir    : write ArgW                {[]}
+
+EscribirLn  : writeln ArgW              {[]}
+
+ExprS   : Expr                          {[]}
+        | str                           {[]}
+
+ArgW    : ExprS                         {[]}
+        | ArgW ',' ExprS                {[]}
+
+Asig    : identifier '=' Expr           {[]}
+
+Tipo    : number                        {[]}
+        | boolean                       {[]}
+
+ListaI  : identifier                    {[]}
+        | ListaI ',' identifier         {[]}
+
+Decl    : Tipo Asig                     {[]}
+        | Tipo ListaI                   {[]} 
+
+ListaD  : Decl';'                       {[]}
+        | ListaD Decl';'                {[]}
+
+Ins     : Asig                          {[]}
+        | Funcion                       {[]}
+        | Leer                          {[]}
+        | Escribir                      {[]}
+        | EscribirLn                    {[]}
+
+ListaIn : Ins';'                        {[]}
+        | ListaIn Ins';'                {[]}
+
+BWith   : with do Bloque end';'         {[]}
+        | with ListaD do Bloque end';'  {[]}
+
+BIf     : if Expr then Bloque else Bloque end';'    {[]}
+        | if Expr then Bloque end';'                {[]}
+
+BWhile  : while Expr then Bloque end';'             {[]}
+
+BFor    : for identifier from Expr to Expr do Bloque end';'             {[]}
+        | for identifier from Expr to Expr by Expr do Bloque end';'     {[]}
+
+BRep    : repeat Expr times Bloque end';'           {[]}
+
+Bloque  : AnidS         {[]}
+        | Bloque AnidS  {[]}
+
+AnidS   : BIf       {[]}
+        | BWith     {[]}
+        | BWhile    {[]}
+        | BFor      {[]}
+        | BRep      {[]}
 
 {
     
