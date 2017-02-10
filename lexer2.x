@@ -10,12 +10,13 @@ $special =  [\.\;\,\$\|\*\+\?\#\~\-\{\}\(\)\[\]\^\/\&\:\=\@\'\<\>\%\!\\]
 @integer = $digit+
 @floating = $digit+(\.$digit+)?
 @comment = \#.*
-@str = \"($digit|$letter|$white|($special # [\\\"])|\\\"|\\\\|\\n|\\t)*\"
+@str = \"($digit|$letter|($white # \n)|($special # [\\\"])|\\\"|\\\\|\\n|\\t)*\"
 @identifier = [a-z]($letter|$digit|_)*
 @error = .
 
 tokens :-
     $white+             ;
+    @comment            ;
     \%                  {(pushToken $ Modex)} 
     \/                  {(pushToken $ Divex)}  
     \*                  {(pushToken $ Mult)}  
@@ -56,7 +57,6 @@ tokens :-
     func                {(pushToken $ Func)}
     times               {(pushToken $ Times)}
     program             {(pushToken $ Program)}
-    @comment            ;
     @integer            {(pushToken $ Integer . read ) }
     @floating           {(pushToken $ Floating . read) }
     @str                {(pushToken $ Str) }
@@ -68,7 +68,7 @@ tokens :-
 alexEOF :: Alex ()
 alexEOF = return ()
 
-data Token = Integer Int            |
+data Token = Integer Int               |
              Floating Double           |
              Str String                |
              Identifier String         |
@@ -97,8 +97,8 @@ data Token = Integer Int            |
              Arrow String              |
              Number String             |
              Boolean String            |
-             True' String               |
-             False' String              |
+             True' String              |
+             False' String             |
              With String               |
              Do String                 |
              End String                |
@@ -112,7 +112,9 @@ data Token = Integer Int            |
              Return String             |
              Func String               |
              Times String              |
-             Program String
+             Program String            |
+             InvString1 String         |
+             InvString2 String
              deriving (Eq, Show)
 
 getPos :: AlexPosn -> (Int,Int)
@@ -251,7 +253,7 @@ pushToken tokenizer =
         whatToPush tks@(((LexError _), _) : _) _ = tks                                  -- Errors and new Normal Token
         whatToPush tks tk@((LexError _), _) = [tk]                                      -- Normal Tokens and new Error
         whatToPush tks tk = tks++[tk]                                                   -- Normal Tokens (might be empty) 
-                                                                                        -- and new Normal Token
+                                                                                       
 
         push :: String -> AlexPosn -> AlexUserState -> AlexUserState
         push st p ts = 
@@ -267,12 +269,5 @@ runAlexScan s = runAlex s $ alexMonadScan >> getUserState
 
 printPlease :: [(Token,AlexPosn)] -> [String]
 printPlease = foldr (\x acc -> (makePrintable x) : acc) []
-
-main = do
-    input <- getContents
-    let test = runAlexScan input
-    case test of
-        Right st -> mapM_ putStrLn $ printPlease $ lexerTokens st
-    return ()
 
 }
