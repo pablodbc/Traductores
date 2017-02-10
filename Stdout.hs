@@ -4,7 +4,7 @@ module Stdout where
 import Lexer 
 
 
--- Tokel List printer
+-- Token List printer
 
 printPlease :: [(Token,AlexPosn)] -> [String]
 printPlease = foldr (\x acc -> (makePrintable x) : acc) []

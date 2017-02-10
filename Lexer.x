@@ -176,5 +176,4 @@ pushToken tokenizer =
 runAlexScan :: String -> Either String AlexUserState
 runAlexScan s = runAlex s $ alexMonadScan >> getUserState         
 
-
 }
