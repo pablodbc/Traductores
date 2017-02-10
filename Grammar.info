@@ -41,6 +41,22 @@ rule 63 is unused
 rule 64 is unused
 rule 65 is unused
 rule 66 is unused
+rule 67 is unused
+rule 68 is unused
+rule 69 is unused
+rule 70 is unused
+rule 71 is unused
+rule 72 is unused
+rule 73 is unused
+rule 74 is unused
+rule 75 is unused
+rule 76 is unused
+rule 77 is unused
+rule 78 is unused
+rule 79 is unused
+rule 80 is unused
+rule 81 is unused
+rule 82 is unused
 
 terminal '=' is unused
 terminal ';' is unused
@@ -139,6 +155,22 @@ Grammar
 	AnidS -> BWhile                                    (64)
 	AnidS -> BFor                                      (65)
 	AnidS -> BRep                                      (66)
+	Param ->                                           (67)
+	Param -> ParamD                                    (68)
+	ParamD -> Tipo identifier                          (69)
+	ParamD -> ParamD ',' Tipo identifier               (70)
+	FunDec -> func identifier '(' Param ')' begin Bloque end ';'   (71)
+	FunDec -> func identifier '(' Param ')' '->' Tipo begin BloqueR end ';'   (72)
+	ListaF -> FunDec                                   (73)
+	ListaF -> ListaF FunDec                            (74)
+	Init -> Program                                    (75)
+	Init -> ListaF Program                             (76)
+	Program -> program with do Bloque end ';'          (77)
+	Program -> program with ListaD do Bloque end ';'   (78)
+	BloqueR -> AnidR                                   (79)
+	BloqueR -> BloqueR AnidR                           (80)
+	AnidR -> AnidS                                     (81)
+	AnidR -> return Expr                               (82)
 
 -----------------------------------------------------------------------------
 Terminals
@@ -220,6 +252,14 @@ Non-terminals
 	BRep            rule  59
 	Bloque          rules 60, 61
 	AnidS           rules 62, 63, 64, 65, 66
+	Param           rules 67, 68
+	ParamD          rules 69, 70
+	FunDec          rules 71, 72
+	ListaF          rules 73, 74
+	Init            rules 75, 76
+	Program         rules 77, 78
+	BloqueR         rules 79, 80
+	AnidR           rules 81, 82
 
 -----------------------------------------------------------------------------
 States
@@ -1656,7 +1696,7 @@ State 53
 -----------------------------------------------------------------------------
 Grammar Totals
 -----------------------------------------------------------------------------
-Number of rules: 67
+Number of rules: 83
 Number of terminals: 50
-Number of non-terminals: 23
+Number of non-terminals: 31
 Number of states: 54

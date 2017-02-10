@@ -159,6 +159,30 @@ AnidS   : BIf       {[]}
         | BFor      {[]}
         | BRep      {[]}
 
+Param   : {- lambda -}      {[]}
+        | ParamD            {[]}
+
+ParamD  : Tipo identifier               {[]}
+        | ParamD ',' Tipo identifier    {[]}
+
+FunDec  : func identifier'('Param')' begin Bloque end';'                {[]}
+        | func identifier'('Param')' '->' Tipo begin BloqueR end';'      {[]}
+
+ListaF  : FunDec            {[]}
+        | ListaF FunDec     {[]}
+
+Init    : Program           {[]}
+        | ListaF Program    {[]}
+
+Program : program with do Bloque end';'      {[]}
+        | program with ListaD do Bloque end';'      {[]}
+
+BloqueR : AnidR             {[]}
+        | BloqueR AnidR     {[]}
+
+AnidR   : AnidS             {[]}
+        | return Expr       {[]}
+
 {
     
 parseError ts = error "NO"
