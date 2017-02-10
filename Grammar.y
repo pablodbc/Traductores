@@ -93,13 +93,13 @@ Expr    : Expr or Expr                  {Or $1 $3}
         | floating                      {Floating $1}
         | true                          {True' $1}
         | false                         {False' $1}
-        | Funcion                       {$1} 
+        | Funcion                       {Funcion $1} 
 
-Funcion : identifier'('')'              {[]}
-        | identifier'(' Args ')'        {[]}
+Funcion : identifier'('')'              {Identifier $1 []}
+        | identifier'(' Args ')'        {Identifier $1 [Args $3]}
 
-Args    : Expr                          {[]}
-        | Args ',' Expr                 {[]}
+Args    : Expr                          {$1}
+        | Args ',' Expr                 {$1 : [$3]}
 
 Leer    : read identifier               {[]}
 
