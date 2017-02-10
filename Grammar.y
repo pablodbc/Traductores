@@ -64,7 +64,7 @@ import Lexer
 %left '*' '/' div and
 %nonassoc '>' '<' '<=' '>='
 %nonassoc '==' '/='
-right not NEG
+%right not NEG
 
 %%
 Expr    : EBool                  {[]}
@@ -89,7 +89,7 @@ Factor  : '('Earit')'            {[]}
         | floating               {[]}
 
 EBool   : Conj                   {[]}
-        | Expr or Conj           {[]}
+        | EBool or Conj           {[]}
 
 Conj    : NegBool                {[]}
         | Conj and NegBool       {[]}
