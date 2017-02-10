@@ -1,5 +1,5 @@
 {
-module Main where
+module Lexer where
 }
 %wrapper "monadUserState"
 
@@ -176,7 +176,5 @@ pushToken tokenizer =
 runAlexScan :: String -> Either String AlexUserState
 runAlexScan s = runAlex s $ alexMonadScan >> getUserState         
 
-printPlease :: [(Token,AlexPosn)] -> [String]
-printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 
 }
