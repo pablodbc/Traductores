@@ -122,7 +122,7 @@ data Token = Integer Int               |
              Write String              |
              By String                 |
              From String               |
-             To String                 |
+             To String                 
              deriving (Eq, Show)
 
 getPos :: AlexPosn -> (Int,Int)
@@ -182,7 +182,5 @@ pushToken tokenizer =
 runAlexScan :: String -> Either String AlexUserState
 runAlexScan s = runAlex s $ alexMonadScan >> getUserState         
 
-printPlease :: [(Token,AlexPosn)] -> [String]
-printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 
 }
