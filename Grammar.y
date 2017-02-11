@@ -92,6 +92,7 @@ BRep    : repeat Expr times Bloque end';'           {[]}
 
 Bloque  : AnidS         {[]}
         | Bloque AnidS  {[]}
+        | ListaIn       {[]}
 
 AnidS   : BIf       {[]}
         | BWith     {[]}
