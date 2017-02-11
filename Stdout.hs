@@ -218,10 +218,10 @@ instance Show Token where
     show (To _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
     show (Read _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
-
+    
     show (LexError _ s) = "Caracter Inesperado: '" ++ (id s) ++ "'" 
 
-
+-- Show parser token
 instance Show ParserToken where
     show  Init              = "Inicio: programa completo"
     show  Program           = "Bloque: program"
