@@ -98,7 +98,7 @@ AnidS   : BIf       {[]}
         | BWhile    {[]}
         | BFor      {[]}
         | BRep      {[]}
-        | ListaIn       {[]}
+        | Ins';'    {[]}
 
 Param   : {- lambda -}      {[]}
         | ParamD            {[]}
@@ -119,8 +119,6 @@ BIf     : if Expr then Bloque else Bloque end';'    {[]}
 BWith   : with do Bloque end';'         {[]}
         | with ListaD do Bloque end';'  {[]}
 
-ListaIn : Ins';'                        {[]}
-        | ListaIn Ins';'                {[]}
 
 Ins     : Asig                          {[]}
         | Funcion                       {[]}
@@ -248,6 +246,13 @@ data ParserToken
       Funcion    |
       Expr       |
       TermToken Lexer.Token
+
+data Node = Node ParserToken [Node ParserToken]
+leaf :: Lexer.Token -> Node
+leaf t = Node (TermToken t) []
+
+
+
 parseError ts = error "NO"
 --parser :: String -> Either String Expr
 --parser input = Lexer.runAlexScan input
