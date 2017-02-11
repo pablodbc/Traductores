@@ -127,8 +127,7 @@ data Token = Integer AlexPosn String            |
              Read AlexPosn String
              deriving (Eq)
 
-getPos :: AlexPosn -> (Int,Int)
-getPos (AlexPn _ l c) = (l,c)
+
 
 data AlexUserState = AlexUserState 
                 {

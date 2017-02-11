@@ -158,9 +158,9 @@ ExprS   : Expr                          {Node ExprS [$1]}
 
 Leer    : read identifier               {Node Leer [leaf $1, leaf $2]}
 
-Escribir    : write ArgW                {Node Escribir [leaf $1, Node ArgW $2]}
+Escribir    : write ArgW                {Node Escribir [leaf $1, $2]}
 
-EscribirLn  : writeln ArgW              {Node EscribirLn [leaf $1, Node ArgW $2]}
+EscribirLn  : writeln ArgW              {Node EscribirLn [leaf $1, $2]}
 
 
 Args    : Expr                          {Node Args [$1]}
