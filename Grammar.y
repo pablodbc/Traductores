@@ -132,24 +132,24 @@ Ins     : Asig                          {Node Ins [$1]}
         | Leer                          {Node Ins [$1]}
         | Escribir                      {Node Ins [$1]}
         | EscribirLn                    {Node Ins [$1]}
-        | ';'                           {Node Ins [leaf $1]}
+        | ';'                           {leaf $1}
 
-ListaD  : Decl';'                       {[Node ListaD [$1,leaf $2]]}
-        | ListaD Decl';'                {[Node ListaD [$2,leaf $3]] ++ $1}
+ListaD  : Decl';'                       {Node ListaD [$1]}
+        | ListaD Decl';'                {Node ListaD [$1,$2]}
 
 Decl    : Tipo Asig                     {Node Decl [$1,$2]}
-        | Tipo ListaI                   {Node Decl [$1, Node ListaI [$2]]} 
+        | Tipo ListaI                   {Node Decl [$1,$2]} 
 
 Tipo    : number                        {leaf $1}
         | boolean                       {leaf $1}
 
-ListaI  : identifier                    {[leaf $1]}
-        | ListaI ',' identifier         {[leaf $3] ++ $1}
+ListaI  : identifier                    {leaf $1}
+        | ListaI ',' identifier         {Node ListaI [$1, leaf $3]}
 
 Asig    : identifier '=' Expr           {Node Asig [leaf $1, leaf $2, $3]}
 
-ArgW    : ExprS                         {[Node ArgW [$1]]}
-        | ArgW ',' ExprS                {[Node ArgW [$3]] ++ $1}
+ArgW    : ExprS                         {Node ArgW [$1]}
+        | ArgW ',' ExprS                {Node ArgW [$1, $3]}
 
 
 ExprS   : Expr                          {Node ExprS [$1]}
@@ -158,17 +158,17 @@ ExprS   : Expr                          {Node ExprS [$1]}
 
 Leer    : read identifier               {Node Leer [leaf $1, leaf $2]}
 
-Escribir    : write ArgW                {Node Escribir [leaf $1, Node Escribir $2]}
+Escribir    : write ArgW                {Node Escribir [leaf $1, Node ArgW $2]}
 
-EscribirLn  : writeln ArgW              {Node EscribirLn [leaf $1, Node Escribir $2]}
+EscribirLn  : writeln ArgW              {Node EscribirLn [leaf $1, Node ArgW $2]}
 
 
-Args    : Expr                          {[Node Args [$1]]}
-        | Args ',' Expr                 {[Node Args [$3]] ++ $1}
+Args    : Expr                          {Node Args [$1]}
+        | Args ',' Expr                 {Node Args [$1, $3]}
         
 
 Funcion : identifier'('')'              {Node Funcion [leaf $1, leaf $2, leaf $3]}
-        | identifier'(' Args ')'        {Node Funcion [leaf $1, leaf $2, Node Funcion $3, leaf $4]}
+        | identifier'(' Args ')'        {Node Funcion [leaf $1, leaf $2, $3, leaf $4]}
         
 Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
         | Expr and Expr                 {Node Expr [$1, leaf $2, $3]}
