@@ -247,7 +247,7 @@ data ParserToken
       Args       |
       Funcion    |
       Expr       |
-      TermToken  
+      TermToken Lexer.Token
 parseError ts = error "NO"
 --parser :: String -> Either String Expr
 --parser input = Lexer.runAlexScan input
