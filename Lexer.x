@@ -125,7 +125,7 @@ data Token = Integer AlexPosn String            |
              From AlexPosn String               |
              To AlexPosn String                 |
              Read AlexPosn String
-             deriving (Eq, Show)
+             deriving (Eq)
 
 getPos :: AlexPosn -> (Int,Int)
 getPos (AlexPn _ l c) = (l,c)
