@@ -70,149 +70,131 @@ import qualified Lexer
 
 %%
 
-Init    : Program           {[]}
-        | ListaF Program    {[]}
+Init    : Program           {Node Init [$1]}
+        | ListaF Program    {Node Init [$1, $2]}
 
-Program : program with do Bloque end';'      {[]}
-        | program with ListaD do Bloque end';'      {[]}
+Program : program with do Bloque end';'      {Node Program [leaf $1, leaf $2, leaf $3, $4, leaf $5, leaf $6]}
+        | program with ListaD do Bloque end';' {Node Program [leaf $1, leaf $2, $3, leaf $4, $5, leaf $6, leaf $7]}
 
-BloqueR : AnidR             {[]}
-        | BloqueR AnidR     {[]}
+LBloqueR : AnidR             {[Node LBloqueR [$1]]}
+        | LBloqueR AnidR     {[Node LBloqueR [$2]] ++ $1}
 
-AnidR   : AnidS             {[]}
-        | return Expr       {[]}
+AnidR   : AnidS             {Node AnidR [$1]}
+        | return Expr       {Node AnidR [leaf $1, $2]}
+
+Bloque  : {- lambda -}  {[]}
+        | LBloque       {Node Bloque [$1]}
+
+BloqueR : {- lambda -}  {[]}
+        | LBloqueR      {Node BloqueR [$1]}
 
 
-BWhile  : while Expr then Bloque end';'             {[]}
+BWhile  : while Expr then Bloque end';'     {Node BWhile [leaf $1, $2, leaf $3, $4, leaf $5, leaf $6]}
 
-BFor    : for identifier from Expr to Expr do Bloque end';'             {[]}
-        | for identifier from Expr to Expr by Expr do Bloque end';'     {[]}
+BFor    : for identifier from Expr to Expr do Bloque end';'             {Node BFor[leaf $1, leaf $2, leaf $3, $4, leaf $5, $6, leaf $7, $8, leaf $9, leaf $10]}
+        | for identifier from Expr to Expr by Expr do Bloque end';'     {Node BFor[leaf $1, leaf $2, leaf $3, $4, leaf $5, $6, leaf $7, $8,  leaf $9, $10, leaf $11, leaf $12]}
 
-BRep    : repeat Expr times Bloque end';'           {[]}
+BRep    : repeat Expr times Bloque end';'   {Node BRep [leaf $1, $2, leaf $3, $4, leaf $5, leaf $6]}
 
-Bloque  : AnidS         {[]}
-        | Bloque AnidS  {[]}
+LBloque : AnidS         {[Node LBloque [$1]]}
+        | LBloque AnidS  {[Node LBloque [$2]] ++ $1}
 
-AnidS   : BIf       {[]}
-        | BWith     {[]}
-        | BWhile    {[]}
-        | BFor      {[]}
-        | BRep      {[]}
-        | Ins';'    {[]}
-
+AnidS   : BIf       {Node AnidS [$1]}
+        | BWith     {Node AnidS [$1]}
+        | BWhile    {Node AnidS [$1]}
+        | BFor      {Node AnidS [$1]}
+        | BRep      {Node AnidS [$1]}
+        | Ins';'    {Node AnidS [$1,leaf $2]}
+        
 Param   : {- lambda -}      {[]}
-        | ParamD            {[]}
+        | ParamD            {Node ParamD [$1]}
 
-ParamD  : Tipo identifier               {[]}
-        | ParamD ',' Tipo identifier    {[]}
+ParamD  : Tipo identifier               {[Node ParamD [$1,leaf $2]]}
+        | ParamD ',' Tipo identifier    {[Node ParamD [$3,leaf $4]] ++ $1}
 
-FunDec  : func identifier'('Param')' begin Bloque end';'                {[]}
-        | func identifier'('Param')' '->' Tipo begin BloqueR end';'      {[]}
+FunDec  : func identifier'('Param')' begin Bloque end';'                {Node FunDec [leaf $1, leaf $2, leaf $3, $4, leaf $5, leaf $6, $7, leaf $8, leaf $9]}
+        | func identifier'('Param')' '->' Tipo begin BloqueR end';'      {Node FunDec [leaf $1, leaf $2, leaf $3, $4, leaf $5, leaf $6, $7, leaf $8, $9, leaf $10, leaf $11]}
 
-ListaF  : FunDec            {[]}
-        | ListaF FunDec     {[]}
-
-
-BIf     : if Expr then Bloque else Bloque end';'    {[]}
-        | if Expr then Bloque end';'                {[]}
-
-BWith   : with do Bloque end';'         {[]}
-        | with ListaD do Bloque end';'  {[]}
+ListaF  : FunDec            {Node ListaF [$1]}
+        | ListaF FunDec     {[Node ListaF [$2]] ++ $1}
 
 
-Ins     : Asig                          {[]}
-        | Funcion                       {[]}
-        | Leer                          {[]}
-        | Escribir                      {[]}
-        | EscribirLn                    {[]}
+BIf     : if Expr then Bloque else Bloque end';'    {Node BIf [leaf $1, $2, leaf $3, $4, leaf $5, $6, leaf $7, leaf $8]}
+        | if Expr then Bloque end';'                {Node BIf [leaf $1, $2, leaf $3, $4, leaf $5, leaf $6]}
 
-ListaD  : Decl';'                       {[]}
-        | ListaD Decl';'                {[]}
-
-Decl    : Tipo Asig                     {[]}
-        | Tipo ListaI                   {[]} 
-
-Tipo    : number                        {[]}
-        | boolean                       {[]}
-
-ListaI  : identifier                    {[]}
-        | ListaI ',' identifier         {[]}
-
-Asig    : identifier '=' Expr           {[]}
-
-ArgW    : ExprS                         {[]}
-        | ArgW ',' ExprS                {[]}
+BWith   : with do Bloque end';'         {Node BWith [leaf $1, leaf $2, $3, leaf $4, leaf $5]}
+        | with ListaD do Bloque end';'  {Node BWith [leaf $1, $2, leaf $3, $4, leaf $5, leaf $6]}
 
 
-ExprS   : Expr                          {[]}
-        | str                           {[]}
+Ins     : Asig                          {$1}
+        | Funcion                       {$1}
+        | Leer                          {$1}
+        | Escribir                      {$1}
+        | EscribirLn                    {$1}
+        | ';'                           {leaf $1}
+
+ListaD  : Decl';'                       {[Node ListaD [$1,leaf $2]]}
+        | ListaD Decl';'                {[Node ListaD [$2,leaf $3]] ++ $1}
+
+Decl    : Tipo Asig                     {Node Decl [$1,$2]}
+        | Tipo ListaI                   {Node Decl ([$1] ++ $2)} 
+
+Tipo    : number                        {leaf $1}
+        | boolean                       {leaf $1}
+
+ListaI  : identifier                    {[leaf $1]}
+        | ListaI ',' identifier         {[leaf $3] ++ $1}
+
+Asig    : identifier '=' Expr           {Node Asig [leaf $1, leaf $2, $3]}
+
+ArgW    : ExprS                         {[$1]}
+        | ArgW ',' ExprS                {[$3] ++ $1}
 
 
-Leer    : read identifier               {[]}
-
-Escribir    : write ArgW                {[]}
-
-EscribirLn  : writeln ArgW              {[]}
+ExprS   : Expr                          {$1}
+        | str                           {leaf $1}
 
 
-Args    : Expr                          {Expr $1}
-        | Args ',' Expr                 {Expr $1  [$3]}
+Leer    : read identifier               {Node Leer [leaf $1, leaf $2]}
+
+Escribir    : write ArgW                {Node Escribir [leaf $1, Node ArgW $2]}
+
+EscribirLn  : writeln ArgW              {Node EscribirLn [leaf $1, Node ArgW $2]}
+
+
+Args    : Expr                          {[$1]}
+        | Args ',' Expr                 {[$3] ++ $1}
         
 
-Funcion : identifier'('')'              {Identifier $1 []}
-        | identifier'(' Args ')'        {Identifier $1 [Args $3]}
+Funcion : identifier'('')'              {Node Funcion [leaf $1, leaf $2, leaf $3]}
+        | identifier'(' Args ')'        {Node Funcion [leaf $1, leaf $2, Node Args $3, leaf $4]}
         
-Expr    : Expr or Expr                  {Or $1 $3}
-        | Expr and Expr                 {And $1 $3}
-        | Expr '==' Expr                {Eq $1 $3}
-        | Expr '/=' Expr                {Neq $1 $3}
-        | Expr '<' Expr                 {Less $1 $3}
-        | Expr '<=' Expr                {Lesseq $1 $3}
-        | Expr '>' Expr                 {More $1 $3}
-        | Expr '>=' Expr                {Moreq $1 $3}
-        | Expr '+' Expr                 {Plus $1 $3}
-        | Expr '-' Expr                 {Minus $1 $3}
-        | Expr '*' Expr                 {Mult $1 $3}
-        | Expr '/' Expr                 {Divex $1 $3}
-        | Expr '%' Expr                 {Modex $1 $3}
-        | Expr div Expr                 {Div $1 $3}
-        | Expr mod Expr                 {Mod $1 $3}
-        | '(' Expr ')'                  {Brack $2}
-        | not Expr                      {Not $2}
-        | '-'Expr %prec NEG             {Neg $2}
-        | identifier                    {Identifier $1}
-        | integer                       {Integer $1}
-        | floating                      {Floating $1}
-        | true                          {True' $1}
-        | false                         {False' $1}
-        | Funcion                       {Funcion $1} 
+Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
+        | Expr and Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr '==' Expr                {Node Expr [$1, leaf $2, $3]}
+        | Expr '/=' Expr                {Node Expr [$1, leaf $2, $3]}
+        | Expr '<' Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr '<=' Expr                {Node Expr [$1, leaf $2, $3]}
+        | Expr '>' Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr '>=' Expr                {Node Expr [$1, leaf $2, $3]}
+        | Expr '+' Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr '-' Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr '*' Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr '/' Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr '%' Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr div Expr                 {Node Expr [$1, leaf $2, $3]}
+        | Expr mod Expr                 {Node Expr [$1, leaf $2, $3]}
+        | '(' Expr ')'                  {Node Expr [leaf $1, $2, leaf $3]}
+        | not Expr                      {Node Expr [leaf $1,$2]}
+        | '-'Expr %prec NEG             {Node Expr [leaf $1,$2]}
+        | identifier                    {leaf $1}
+        | integer                       {leaf $1}
+        | floating                      {leaf $1}
+        | true                          {leaf $1}
+        | false                         {leaf $1}
+        | Funcion                       {$1} 
 {
 
-data Expr
-    = Or Expr Expr
-    | And Expr Expr
-    | Eq Expr Expr
-    | Neq Expr Expr
-    | Less Expr Expr
-    | Lesseq Expr Expr
-    | More Expr Expr
-    | Moreq Expr Expr
-    | Plus Expr Expr
-    | Minus Expr Expr
-    | Mult Expr Expr
-    | Divex Expr Expr
-    | Modex Expr Expr
-    | Div Expr Expr
-    | Mod Expr Expr
-    | Brack Expr
-    | Not Expr 
-    | Neg Expr 
-    | Integer  Lexer.Token
-    | Floating Lexer.Token
-    | True' Lexer.Token
-    | False' Lexer.Token
-    | Identifier  Lexer.Token
-    deriving (Show,Eq)
 
 data ParserToken
     = Init       |
@@ -245,9 +227,11 @@ data ParserToken
       Args       |
       Funcion    |
       Expr       |
+      LBloqueR   |
+      LBloque    |
       TermToken Lexer.Token
 
-data Node = Node ParserToken [Node ParserToken]
+data Node = Node ParserToken [Node]
 leaf :: Lexer.Token -> Node
 leaf t = Node (TermToken t) []
 

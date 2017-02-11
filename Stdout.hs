@@ -221,7 +221,7 @@ instance Show Token where
     
     show (LexError _ s) = "Caracter Inesperado: '" ++ (id s) ++ "'" 
 
--- Show parser token
+Show parser token
 instance Show ParserToken where
     show  Init              = "Inicio: programa completo"
     show  Program           = "Bloque: program"
@@ -254,4 +254,3 @@ instance Show ParserToken where
     show  Funcion           = "Funcion:"
     show  Expr              = "Expresion:"
     show  TermToken Token x = show x
-
