@@ -83,10 +83,10 @@ AnidR    : AnidS             {Node AnidR [$1]}
 LBloqueR : AnidR             {Node LBloqueR [$1]}
          | LBloqueR AnidR    {Node LBloqueR [$1, $2]}
 
-Bloque  : {- lambda -}  {[]}
+Bloque  : {- lambda -}  {Node Empty []}
         | LBloque       {Node Bloque [$1]}
 
-BloqueR : {- lambda -}  {[]}
+BloqueR : {- lambda -}  {Node Empty []}
         | LBloqueR      {Node BloqueR [$1]}
 
 LBloque : AnidS         {Node LBloque [$1]}
@@ -108,7 +108,7 @@ BRep    : repeat Expr times Bloque end';'   {Node BRep [leaf $1, $2, leaf $3, $4
 
 
         
-Param   : {- lambda -}      {[]}
+Param   : {- lambda -}      {Node Empty []}
         | ParamD            {Node Param [$1]}
 
 ParamD  : Tipo identifier               {Node ParamD [$1 ,leaf $2]}
@@ -231,6 +231,7 @@ data ParserToken
       Expr       |
       LBloqueR   |
       LBloque    |
+      Empty      |
       TermToken Lexer.Token
 
 data Node = Node ParserToken [Node]
