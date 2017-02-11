@@ -2,6 +2,7 @@ module Stdout where
 -- Lets print everything
 
 import Lexer 
+import Grammar
 
 
 -- Token List printer
@@ -117,110 +118,140 @@ makePrintable (LexError p s) = "linea " ++ show(fst(getPos p)) ++ ", columna " +
 
 
 -- Show token Value
-
-
 instance Show Token where
-	show (Integer _ s) = "literal numerico: '" ++ (show s) ++ "'"
+    show (Integer _ s) = "Literal Numerico: '" ++ (show s) ++ "'"
 
-	show (Floating _ s) = "literal numerico: '" ++ (show s) ++ "'"
+    show (Floating _ s) = "Literal Numerico: '" ++ (show s) ++ "'"
 
-	show (Str _ s) = "cadena de caracteres: " ++ (id s)
+    show (Str _ s) = "Cadena de Caracteres: " ++ (id s)
 
-	show (Identifier _ s) = "identificador: '" ++ (id s) ++ "'"
+    show (Identifier _ s) = "Identificador: '" ++ (id s) ++ "'"
 
-	show (Modex _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Modex _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Divex _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Divex _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Mult _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Mult _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Minus _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Minus _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (CloseP _ s) = "igno: '" ++ (id s) ++ "'"
+    show (CloseP _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (OpenP _ s) = "signo: '" ++ (id s) ++ "'"
+    show (OpenP _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Plus _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Plus _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Def _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Def _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (SemiColon _ s) = "signo: '" ++ (id s) ++ "'"
+    show (SemiColon _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Comma _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Comma _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Less _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Less _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (More _ s) = "signo: '" ++ (id s) ++ "'"
+    show (More _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Not _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Not _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (And _ s) = "signo: '" ++ (id s) ++ "'"
+    show (And _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Or _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Or _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Eq _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Eq _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Neq _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Neq _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Moreq _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Moreq _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Lesseq _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Lesseq _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Div _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Div _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Mod _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Mod _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Arrow _ s) = "signo: '" ++ (id s) ++ "'"
+    show (Arrow _ s) = "Signo: '" ++ (id s) ++ "'"
 
-	show (Number _ s) = "tipo de dato: '" ++ (id s) ++ "'"
+    show (Number _ s) = "Tipo de Dato: '" ++ (id s) ++ "'"
 
-	show (Boolean _ s) = "tipo de dato: '" ++ (id s) ++ "'"
+    show (Boolean _ s) = "Tipo de Dato: '" ++ (id s) ++ "'"
 
-	show (True' _ s) = "literal booleano: '" ++ (id s) ++ "'"
+    show (True' _ s) = "Literal Booleano: '" ++ (id s) ++ "'"
 
-	show (False' _ s) = "literal booleano: '" ++ (id s) ++ "'"
+    show (False' _ s) = "Literal Booleano: '" ++ (id s) ++ "'"
 
-	show (With _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (With _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (Do _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	    
-	show (End _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	   
-	show (If _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	    
-	show (Else _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	  
-	show (Then _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	  
-	show (While _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	 
-	show (For _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	   
-	show (Repeat _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (Do _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+        
+    show (End _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+       
+    show (If _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+        
+    show (Else _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+      
+    show (Then _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+      
+    show (While _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+     
+    show (For _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+       
+    show (Repeat _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (Begin _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	 
-	show (Return _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (Begin _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+     
+    show (Return _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (Func _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	  
-	show (Times _ s) = "palabra reservada: '" ++ (id s) ++ "'"
-	 
-	show (Program _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (Func _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+      
+    show (Times _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+     
+    show (Program _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (WriteLn _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (WriteLn _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (Write _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (Write _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (By _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (By _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (From _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (From _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (To _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (To _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
 
-	show (Read _ s) = "palabra reservada: '" ++ (id s) ++ "'"
+    show (Read _ s) = "Palabra Reservada: '" ++ (id s) ++ "'"
+    
+    show (LexError _ s) = "Caracter Inesperado: '" ++ (id s) ++ "'" 
 
-	show (LexError _ s) = "Caracter inesperado: '" ++ (id s) ++ "'" 
-
-
+-- Show parser token
+instance Show ParserToken where
+    show  Init              = "Inicio: programa completo"
+    show  Program           = "Bloque: program"
+    show  BloqueR           = "Bloque: funcion con return"
+    show  AnidR             = "Secuencia: bloques, instrucciones o return"
+    show  BWhile            = "Instruccion de Control: while"
+    show  BFor              = "Instruccion de Control: for"
+    show  BRep              = "Instruccion de Control: repeat"
+    show  Bloque            = "Bloque: bloques, instrucciones"
+    show  AnidS             = "Secuencia: bloques o instrucciones"
+    show  Param             = "Parametros: funcion"
+    show  ParamD            = "Secuencia: parametros de funcion"
+    show  FunDec            = "Declaracion: funcion"
+    show  ListaF            = "Secuencia: declaraciones de funciones"
+    show  BIf               = "Instruccion de Control: if"
+    show  BWith             = "Bloque: with"
+    show  ListaIn           = "Secuencia: instrucciones"
+    show  Ins               = "Instruccion:"
+    show  ListaD            = "Secuencia: declaraciones"
+    show  Decl              = "Declaracion:"
+    show  Tipo              = ""                                -- No quitar string vacio, tipo de dato se imprime por show token
+    show  ListaI            = "Secuencia: identificadores"
+    show  Asig              = "Asignacion:"
+    show  ArgW              = "Argumento: funcion de I/O"
+    show  ExprS             = "Expresion: expresion o string"
+    show  Leer              = "Funcion: I/O leer"
+    show  Escribir          = "Funcion: I/O escribir"
+    show  EscribirLn        = "Funcion: I/O escribir con salto de linea"
+    show  Args              = "Argumento:"
+    show  Funcion           = "Funcion:"
+    show  Expr              = "Expresion:"
+    show  TermToken Token x = show x
 
