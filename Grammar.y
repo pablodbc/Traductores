@@ -81,7 +81,7 @@ AnidR    : AnidS             {Node AnidR [$1]}
          | return Expr       {Node AnidR [leaf $1, $2]}
 
 LBloqueR : AnidR             {Node LBloqueR [$1]}
-         | LBloqueR AnidR     {Node LBloqueR [$1, $2]}
+         | LBloqueR AnidR    {Node LBloqueR [$1, $2]}
 
 Bloque  : {- lambda -}  {[]}
         | LBloque       {Node Bloque [$1]}
