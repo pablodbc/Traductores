@@ -158,7 +158,7 @@ EscribirLn  : writeln ArgW              {[]}
 
 
 Args    : Expr                          {Expr $1}
-        | Args ',' Expr                 {Expr $1 : [$3]}
+        | Args ',' Expr                 {Expr $1  [$3]}
         
 
 Funcion : identifier'('')'              {Identifier $1 []}
@@ -216,9 +216,37 @@ data Expr
     | Identifier  Lexer.Token
     deriving (Show,Eq)
 
-data Funcion
-    = 
-    
+data ParserToken
+    = Init       |
+      Program    |
+      BloqueR    |
+      AnidR      |
+      BWhile     |
+      BFor       |
+      BRep       |
+      Bloque     |
+      AnidS      |
+      Param      |
+      ParamD     |
+      FunDec     |
+      ListaF     |
+      BIf        |
+      BWith      |
+      ListaIn    |
+      Ins        |
+      ListaD     |
+      Decl       |
+      Tipo       |
+      ListaI     |
+      Asig       |
+      ArgW       |
+      ExprS      |
+      Leer       |
+      Escribir   |
+      EscribirLn |
+      Args       |
+      Funcion    |
+      Expr       
 parseError ts = error "NO"
 --parser :: String -> Either String Expr
 --parser input = Lexer.runAlexScan input
