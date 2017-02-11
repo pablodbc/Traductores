@@ -157,8 +157,8 @@ Escribir    : write ArgW                {[]}
 EscribirLn  : writeln ArgW              {[]}
 
 
-Args    : Expr                          {$1}
-        | Args ',' Expr                 {$1 : [$3]}
+Args    : Expr                          {Expr $1}
+        | Args ',' Expr                 {Expr $1 : [$3]}
         
 
 Funcion : identifier'('')'              {Identifier $1 []}
@@ -214,7 +214,10 @@ data Expr
     | True' Lexer.Token
     | False' Lexer.Token
     | Identifier  Lexer.Token
-    deriving (Show,Eq)  
+    deriving (Show,Eq)
+
+data Funcion
+    = 
     
 parseError ts = error "NO"
 --parser :: String -> Either String Expr
