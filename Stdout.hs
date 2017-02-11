@@ -221,16 +221,18 @@ instance Show Token where
     
     show (LexError _ s) = "Caracter Inesperado: '" ++ (id s) ++ "'" 
 
-Show parser token
+-- Show parser token
 instance Show ParserToken where
     show  Init              = "Inicio: programa completo"
     show  Program           = "Bloque: program"
     show  BloqueR           = "Bloque: funcion con return"
+    show  LBloqueR			= "Cuerpo: bloque funcion con return"
     show  AnidR             = "Secuencia: bloques, instrucciones o return"
     show  BWhile            = "Instruccion de Control: while"
     show  BFor              = "Instruccion de Control: for"
     show  BRep              = "Instruccion de Control: repeat"
     show  Bloque            = "Bloque: bloques, instrucciones"
+    show  LBloqueR 			= "Cuerpo: bloque"
     show  AnidS             = "Secuencia: bloques o instrucciones"
     show  Param             = "Parametros: funcion"
     show  ParamD            = "Secuencia: parametros de funcion"
@@ -242,7 +244,7 @@ instance Show ParserToken where
     show  Ins               = "Instruccion:"
     show  ListaD            = "Secuencia: declaraciones"
     show  Decl              = "Declaracion:"
-    show  Tipo              = ""                                -- No quitar string vacio, tipo de dato se imprime por show token
+    show  Tipo              = "Tipo de Dato"
     show  ListaI            = "Secuencia: identificadores"
     show  Asig              = "Asignacion:"
     show  ArgW              = "Argumento: funcion de I/O"
@@ -254,3 +256,15 @@ instance Show ParserToken where
     show  Funcion           = "Funcion:"
     show  Expr              = "Expresion:"
     show  TermToken Token x = show x
+
+
+instance Show Node where
+	show ns = showAST "Pablo " 0 ns
+
+
+showAST :: String -> Int -> Node 
+showAST sep h ns =
+	take h (repeat sep) ++ show ptk ++ "\n"
+	case ns of
+		(ptk []) -> ++ ""
+		(ptk chlds) -> ++ $ concatMap (showAST sep (h+1)) chlds
