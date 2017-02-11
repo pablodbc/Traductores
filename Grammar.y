@@ -7,7 +7,6 @@ import qualified Lexer
 %name parse
 %tokentype { Lexer.Token }
 %error { parseError }
-%monad{ Either String }{ >>= }{ return }
 
 %token
 
@@ -70,77 +69,19 @@ import qualified Lexer
 %right not NEG
 
 %%
-Expr    : Expr or Expr                  {Or $1 $3}
-        | Expr and Expr                 {And $1 $3}
-        | Expr '==' Expr                {Eq $1 $3}
-        | Expr '/=' Expr                {Neq $1 $3}
-        | Expr '<' Expr                 {Less $1 $3}
-        | Expr '<=' Expr                {Lesseq $1 $3}
-        | Expr '>' Expr                 {More $1 $3}
-        | Expr '>=' Expr                {Moreq $1 $3}
-        | Expr '+' Expr                 {Plus $1 $3}
-        | Expr '-' Expr                 {Minus $1 $3}
-        | Expr '*' Expr                 {Mult $1 $3}
-        | Expr '/' Expr                 {Divex $1 $3}
-        | Expr '%' Expr                 {Modex $1 $3}
-        | Expr div Expr                 {Div $1 $3}
-        | Expr mod Expr                 {Mod $1 $3}
-        | '(' Expr ')'                  {Brack $2}
-        | not Expr                      {Not $2}
-        | '-'Expr %prec NEG             {Neg $2}
-        | identifier                    {Identifier $1}
-        | integer                       {Integer $1}
-        | floating                      {Floating $1}
-        | true                          {True' $1}
-        | false                         {False' $1}
-        | Funcion                       {Funcion $1} 
 
-Funcion : identifier'('')'              {Identifier $1 []}
-        | identifier'(' Args ')'        {Identifier $1 [Args $3]}
+Init    : Program           {[]}
+        | ListaF Program    {[]}
 
-Args    : Expr                          {$1}
-        | Args ',' Expr                 {$1 : [$3]}
+Program : program with do Bloque end';'      {[]}
+        | program with ListaD do Bloque end';'      {[]}
 
-Leer    : read identifier               {[]}
+BloqueR : AnidR             {[]}
+        | BloqueR AnidR     {[]}
 
-Escribir    : write ArgW                {[]}
+AnidR   : AnidS             {[]}
+        | return Expr       {[]}
 
-EscribirLn  : writeln ArgW              {[]}
-
-ExprS   : Expr                          {[]}
-        | str                           {[]}
-
-ArgW    : ExprS                         {[]}
-        | ArgW ',' ExprS                {[]}
-
-Asig    : identifier '=' Expr           {[]}
-
-Tipo    : number                        {[]}
-        | boolean                       {[]}
-
-ListaI  : identifier                    {[]}
-        | ListaI ',' identifier         {[]}
-
-Decl    : Tipo Asig                     {[]}
-        | Tipo ListaI                   {[]} 
-
-ListaD  : Decl';'                       {[]}
-        | ListaD Decl';'                {[]}
-
-Ins     : Asig                          {[]}
-        | Funcion                       {[]}
-        | Leer                          {[]}
-        | Escribir                      {[]}
-        | EscribirLn                    {[]}
-
-ListaIn : Ins';'                        {[]}
-        | ListaIn Ins';'                {[]}
-
-BWith   : with do Bloque end';'         {[]}
-        | with ListaD do Bloque end';'  {[]}
-
-BIf     : if Expr then Bloque else Bloque end';'    {[]}
-        | if Expr then Bloque end';'                {[]}
 
 BWhile  : while Expr then Bloque end';'             {[]}
 
@@ -170,18 +111,82 @@ FunDec  : func identifier'('Param')' begin Bloque end';'                {[]}
 ListaF  : FunDec            {[]}
         | ListaF FunDec     {[]}
 
-Init    : Program           {[]}
-        | ListaF Program    {[]}
 
-Program : program with do Bloque end';'      {[]}
-        | program with ListaD do Bloque end';'      {[]}
+BIf     : if Expr then Bloque else Bloque end';'    {[]}
+        | if Expr then Bloque end';'                {[]}
 
-BloqueR : AnidR             {[]}
-        | BloqueR AnidR     {[]}
+BWith   : with do Bloque end';'         {[]}
+        | with ListaD do Bloque end';'  {[]}
 
-AnidR   : AnidS             {[]}
-        | return Expr       {[]}
+ListaIn : Ins';'                        {[]}
+        | ListaIn Ins';'                {[]}
 
+Ins     : Asig                          {[]}
+        | Funcion                       {[]}
+        | Leer                          {[]}
+        | Escribir                      {[]}
+        | EscribirLn                    {[]}
+
+ListaD  : Decl';'                       {[]}
+        | ListaD Decl';'                {[]}
+
+Decl    : Tipo Asig                     {[]}
+        | Tipo ListaI                   {[]} 
+
+Tipo    : number                        {[]}
+        | boolean                       {[]}
+
+ListaI  : identifier                    {[]}
+        | ListaI ',' identifier         {[]}
+
+Asig    : identifier '=' Expr           {[]}
+
+ArgW    : ExprS                         {[]}
+        | ArgW ',' ExprS                {[]}
+
+
+ExprS   : Expr                          {[]}
+        | str                           {[]}
+
+
+Leer    : read identifier               {[]}
+
+Escribir    : write ArgW                {[]}
+
+EscribirLn  : writeln ArgW              {[]}
+
+
+Args    : Expr                          {$1}
+        | Args ',' Expr                 {$1 : [$3]}
+        
+
+Funcion : identifier'('')'              {Identifier $1 []}
+        | identifier'(' Args ')'        {Identifier $1 [Args $3]}
+        
+Expr    : Expr or Expr                  {Or $1 $3}
+        | Expr and Expr                 {And $1 $3}
+        | Expr '==' Expr                {Eq $1 $3}
+        | Expr '/=' Expr                {Neq $1 $3}
+        | Expr '<' Expr                 {Less $1 $3}
+        | Expr '<=' Expr                {Lesseq $1 $3}
+        | Expr '>' Expr                 {More $1 $3}
+        | Expr '>=' Expr                {Moreq $1 $3}
+        | Expr '+' Expr                 {Plus $1 $3}
+        | Expr '-' Expr                 {Minus $1 $3}
+        | Expr '*' Expr                 {Mult $1 $3}
+        | Expr '/' Expr                 {Divex $1 $3}
+        | Expr '%' Expr                 {Modex $1 $3}
+        | Expr div Expr                 {Div $1 $3}
+        | Expr mod Expr                 {Mod $1 $3}
+        | '(' Expr ')'                  {Brack $2}
+        | not Expr                      {Not $2}
+        | '-'Expr %prec NEG             {Neg $2}
+        | identifier                    {Identifier $1}
+        | integer                       {Integer $1}
+        | floating                      {Floating $1}
+        | true                          {True' $1}
+        | false                         {False' $1}
+        | Funcion                       {Funcion $1} 
 {
 
 data Expr
