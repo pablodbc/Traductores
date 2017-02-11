@@ -266,5 +266,5 @@ instance Show Node where
 showAST :: String -> Int -> Node -> String 
 showAST sep h ns =
 	case ns of
-		(Node ptk []) -> (take h (repeat sep)) ++ show ptk ++ "\n" ++ ""
-		(Node ptk chlds) -> (take h (repeat sep)) ++ show ptk ++ "\n" ++ concatMap (showAST sep (h+1)) chlds
+		(Node ptk []) -> (concatMap ++ (take h (repeat sep))) ++ show ptk ++ "\n" ++ ""
+		(Node ptk chlds) -> (concatMap ++ (take h (repeat sep))) ++ show ptk ++ "\n" ++ concatMap (showAST sep (h+1)) chlds
