@@ -227,13 +227,13 @@ instance Show ParserToken where
     show  Init              = "Inicio: programa completo"
     show  Program           = "Bloque: program"
     show  BloqueR           = "Bloque: funcion con return"
-    show  LBloqueR			= "Cuerpo: bloque funcion con return"
+    show  LBloqueR          = "Cuerpo: bloque funcion con return"
     show  AnidR             = "Secuencia: bloques, instrucciones o return"
     show  BWhile            = "Instruccion de Control: while"
     show  BFor              = "Instruccion de Control: for"
     show  BRep              = "Instruccion de Control: repeat"
     show  Bloque            = "Bloque: bloques, instrucciones"
-    show  LBloqueR 			= "Cuerpo: bloque"
+    show  LBloque           = "Cuerpo: bloque"
     show  AnidS             = "Secuencia: bloques o instrucciones"
     show  Param             = "Parametros: funcion"
     show  ParamD            = "Secuencia: parametros de funcion"
@@ -256,15 +256,16 @@ instance Show ParserToken where
     show  Args              = "Argumento:"
     show  Funcion           = "Funcion:"
     show  Expr              = "Expresion:"
+    show  Empty             = "Nada: lo que no es el algo"
     show  (TermToken x)     = show x
 
 
 instance Show Node where
-	show ns = showAST "Pablo " 0 ns
+    show ns = showAST "Pablo " 0 ns
 
 
 showAST :: String -> Int -> Node -> String 
 showAST sep h ns =
-	case ns of
-		(Node ptk []) -> (concatMap ++ (take h (repeat sep))) ++ show ptk ++ "\n" ++ ""
-		(Node ptk chlds) -> (concatMap ++ (take h (repeat sep))) ++ show ptk ++ "\n" ++ concatMap (showAST sep (h+1)) chlds
+    case ns of
+        (Node ptk []) ->  (foldr (++) "" (replicate h sep)) ++ show ptk ++ "\n"
+        (Node ptk chlds) -> (foldr (++) "" (replicate h sep)) ++ show ptk ++ "\n" ++ concatMap (showAST sep (h+1)) chlds
