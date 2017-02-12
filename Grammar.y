@@ -74,7 +74,8 @@ import Stdout
 Init    : Program           {Node Init [$1]}
         | ListaF Program    {Node Init [$1, $2]}
 
-Program : program BWith end';'      {Node Program [leaf $1, $2, leaf $3]}
+Program : program Bloque end';'      {Node Program [leaf $1, $2, leaf $3]}
+        | program do Bloque end';' end';' {Node Program [leaf $1, leaf $2, $3, leaf $4, leaf $6]}
 
 AnidR    : AnidS             {Node AnidR [$1]}
          | return Expr';'       {Node AnidR [leaf $1, $2]}
