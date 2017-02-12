@@ -74,15 +74,13 @@ import Stdout
 Init    : Program           {Node Init [$1]}
         | ListaF Program    {Node Init [$1, $2]}
 
-Program : program with do Bloque end';'      {Node Program [leaf $1, leaf $2, leaf $3, $4, leaf $5]}
-        | program with ListaD do Bloque end';' {Node Program [leaf $1, leaf $2, $3, leaf $4, $5, leaf $6]}
-
+Program : program BWith end';'      {Node Program [leaf $1, $2, leaf $3]}
 
 AnidR    : AnidS             {Node AnidR [$1]}
-         | return Expr       {Node AnidR [leaf $1, $2]}
+         | return Expr';'       {Node AnidR [leaf $1, $2]}
 
 LBloqueR : AnidR             {Node LBloqueR [$1]}
-         | LBloqueR AnidR    {Node LBloqueR [$1, $2]}
+         | AnidR LBloqueR   {Node LBloqueR [$1, $2]}
 
 Bloque  : {- lambda -}  {Node Empty []}
         | LBloque       {Node Bloque [$1]}
@@ -100,7 +98,7 @@ AnidS   : BIf       {Node AnidS [$1]}
         | BRep      {Node AnidS [$1]}
         | Ins';'    {Node AnidS [$1]}
 
-BWhile  : while Expr then Bloque end';'     {Node BWhile [leaf $1, $2, leaf $3, $4, leaf $5]}
+BWhile  : while Expr do Bloque end';'     {Node BWhile [leaf $1, $2, leaf $3, $4, leaf $5]}
 
 BFor    : for identifier from Expr to Expr do Bloque end';'             {Node BFor[leaf $1, leaf $2, leaf $3, $4, leaf $5, $6, leaf $7, $8, leaf $9]}
         | for identifier from Expr to Expr by Expr do Bloque end';'     {Node BFor[leaf $1, leaf $2, leaf $3, $4, leaf $5, $6, leaf $7, $8,  leaf $9, $10, leaf $11]}
