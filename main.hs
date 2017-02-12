@@ -43,6 +43,4 @@ main = do
                 Right x -> do
                     let ast = parse x
                     print ast
-                    --putStrLn "Grammar"
-                    --putStrLn $ concatMap (\s -> s++"\n") $ Out.printPlease x
             
