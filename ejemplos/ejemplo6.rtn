@@ -1,0 +1,4 @@
+program
+	if 4 then
+	end;
+end;
