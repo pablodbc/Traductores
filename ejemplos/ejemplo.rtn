@@ -1,2 +1,10 @@
-"ho
-la"
+program
+    with
+        number x = 4;
+    do
+        repeat x times
+            forward(50);
+            rotatel(90);
+        end;
+    end;
+end;

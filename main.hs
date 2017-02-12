@@ -41,6 +41,8 @@ main = do
             case parseArg ss of
                 Left msg -> putStrLn msg
                 Right x -> do
-                    putStrLn "Grammar"
-                    putStrLn $ concatMap (\s -> s++"\n") $ Out.printPlease x
+                    let ast = parse x
+                    print ast
+                    --putStrLn "Grammar"
+                    --putStrLn $ concatMap (\s -> s++"\n") $ Out.printPlease x
             
