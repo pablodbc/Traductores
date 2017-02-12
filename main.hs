@@ -27,7 +27,7 @@ parseArg st =
             let tks = Lexer.lexerTokens ltks
             case tks of
                 tks@((LexError _ _) : _) -> do
-                    Left $ concatMap (\s -> s++"\n") $ Out.printPlease tks
+                    Left $ concatMap (\s -> s++"\n") $ printPlease tks
                 tks -> do
                     Right tks
 

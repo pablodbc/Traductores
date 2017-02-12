@@ -1,10 +1,6 @@
 module Stdout where
 -- Lets print everything
-
-import qualified Lexer 
-import Grammar
-
-
+import qualified Lexer
 -- Token List printer
 getPos :: Lexer.AlexPosn -> (Int,Int)
 getPos (Lexer.AlexPn _ l c) = (l,c)
@@ -222,6 +218,48 @@ instance Show Lexer.Token where
     
     show (Lexer.LexError _ s) = "Caracter Inesperado: '" ++ (id s) ++ "'" 
 
+data ParserToken
+    = Init       |
+      Program    |
+      BloqueR    |
+      AnidR      |
+      BWhile     |
+      BFor       |
+      BRep       |
+      Bloque     |
+      AnidS      |
+      Param      |
+      ParamD     |
+      FunDec     |
+      ListaF     |
+      BIf        |
+      BWith      |
+      ListaIn    |
+      Ins        |
+      ListaD     |
+      Decl       |
+      Tipo       |
+      ListaI     |
+      Asig       |
+      ArgW       |
+      ExprS      |
+      Leer       |
+      Escribir   |
+      EscribirLn |
+      Args       |
+      Funcion    |
+      Expr       |
+      LBloqueR   |
+      LBloque    |
+      Empty      |
+      TermToken Lexer.Token
+      deriving (Eq)
+
+data Node = Node ParserToken [Node]
+leaf :: Lexer.Token -> Node
+leaf t = Node (TermToken t) []
+
+
 -- Show parser token
 instance Show ParserToken where
     show  Init              = "Inicio: programa completo"
@@ -261,7 +299,7 @@ instance Show ParserToken where
 
 
 instance Show Node where
-    show ns = showAST "Pablo " 0 ns
+    show ns = showAST "| " 0 ns
 
 
 showAST :: String -> Int -> Node -> String 

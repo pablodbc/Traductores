@@ -2,6 +2,7 @@
 
 module Grammar where
 import qualified Lexer
+import Stdout
 }
 
 %name parse
@@ -198,51 +199,11 @@ Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
 {
 
 
-data ParserToken
-    = Init       |
-      Program    |
-      BloqueR    |
-      AnidR      |
-      BWhile     |
-      BFor       |
-      BRep       |
-      Bloque     |
-      AnidS      |
-      Param      |
-      ParamD     |
-      FunDec     |
-      ListaF     |
-      BIf        |
-      BWith      |
-      ListaIn    |
-      Ins        |
-      ListaD     |
-      Decl       |
-      Tipo       |
-      ListaI     |
-      Asig       |
-      ArgW       |
-      ExprS      |
-      Leer       |
-      Escribir   |
-      EscribirLn |
-      Args       |
-      Funcion    |
-      Expr       |
-      LBloqueR   |
-      LBloque    |
-      Empty      |
-      TermToken Lexer.Token
-
-data Node = Node ParserToken [Node]
-leaf :: Lexer.Token -> Node
-leaf t = Node (TermToken t) []
 
 
 
-parseError ts = error "NO"
---parser :: String -> Either String Expr
---parser input = Lexer.runAlexScan input
+
+parseError ts = error $ makePrintable $ head ts
 
 
 }
