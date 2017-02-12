@@ -1,3 +1,8 @@
-if()
-
-if ()
+program
+  with
+    number x;
+    boolean y;
+  do
+    rotater((x+y)mod 5);
+  end;
+end;

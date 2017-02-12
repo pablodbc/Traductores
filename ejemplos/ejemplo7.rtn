@@ -1,0 +1,10 @@
+func chao(number hola, number qwerty) -> boolean
+ begin
+   x = hola;
+   y = qwerty;
+   return x;
+ end;
+program
+do
+end;
+end;

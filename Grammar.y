@@ -78,10 +78,9 @@ Program : program BWith end';'      {Node Program [leaf $1, $2, leaf $3]}
         | program do Bloque end';' end';' {Node Program [leaf $1, leaf $2, $3, leaf $4, leaf $6]}
 
 AnidR    : AnidS             {Node AnidR [$1]}
-         | return Expr';'       {Node AnidR [leaf $1, $2]}
 
 LBloqueR : AnidR             {Node LBloqueR [$1]}
-         | AnidR LBloqueR   {Node LBloqueR [$1, $2]}
+         | LBloqueR AnidR    {Node LBloqueR [$1, $2]}
 
 Bloque  : {- lambda -}  {Node Empty []}
         | LBloque       {Node Bloque [$1]}
@@ -133,6 +132,7 @@ Ins     : Asig                          {Node Ins [$1]}
         | Leer                          {Node Ins [$1]}
         | Escribir                      {Node Ins [$1]}
         | EscribirLn                    {Node Ins [$1]}
+        | return Expr                   {Node Ins [leaf $1, $2]}
         | ';'                           {Node Ins [leaf $1]}
 
 ListaD  : Decl';'                       {Node ListaD [$1]}
