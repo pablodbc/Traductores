@@ -197,12 +197,8 @@ Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
         | Funcion                       {Node Expr [$1]} 
 {
 
-
-
-
-
-
-parseError ts = error $ makePrintable $ head ts
+parseError [] = error $ "Archivo Vacio."
+parseError ts = error $ (makePrintable $ head ts) ++ " Token invalido."
 
 
 }
