@@ -99,10 +99,10 @@ BRep    : repeat Expr times Bloque end';'   {Node BRep [$2, $4]}
 
         
 Param   : {- lambda -}      {Node Empty []}
-        | ParamD            {Node Param [$1]}
+        | ParamD            {Node ParamD $1}
 
-ParamD  : Tipo identifier               {Node ParamD [$1]}
-        | ParamD ',' Tipo identifier    {Node ParamD [$1, $3]}
+ParamD  : Tipo identifier               {[Node Param [$1, leaf $2]]}
+        | ParamD ',' Tipo identifier    {$1 ++ [Node Param [$3, leaf $2]]}
 
 FunDec  : func identifier'('Param')' begin Bloque end';'                {Node FunDec [$4, $7]}
         | func identifier'('Param')' '->' Tipo begin Bloque end';'      {Node FunDec [$4, $7, $9]}
@@ -132,8 +132,8 @@ ListaD  : Decl';'                       {Node ListaD [$1]}
 Decl    : Tipo Asig                     {Node Decl [$1, $2]}
         | Tipo ListaI                   {Node Decl [$1, $2]} 
 
-Tipo    : number                        {Node Tipo [leaf $1]}
-        | boolean                       {Node Tipo [leaf $1]}
+Tipo    : number                        {leaf $1}
+        | boolean                       {leaf $1}
 
 ListaI  : identifier                    {Node ListaI [leaf $1]}
         | ListaI ',' identifier         {Node ListaI [$1, leaf $3]}
