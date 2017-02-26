@@ -4,8 +4,17 @@ func chao(number hola, number qwerty) -> boolean
    y = qwerty;
    return x;
  end;
+func chao(number hola, number qwerty) -> boolean
+ begin
+   x = hola;
+   y = qwerty;
+   return x;
+ end;
 program
 with
 do
+    for i from 0 to 0 do 
+        writeln "memes";
+    end;
 end;
 end;

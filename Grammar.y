@@ -72,7 +72,7 @@ import Stdout
 %%
 
 Init    : Program           {Node Init [Node Empty [], $1]}
-        | ListaF Program    {Node Init [$1, $2]}
+        | ListaF Program    {Node Init ($1 ++ [$2])}
 
 Program : program Bloque end';'      {Node Program [$2]}
 
@@ -91,8 +91,8 @@ AnidS   : BIf       {$1}
 
 BWhile  : while Expr do Bloque end';'     {Node BWhile [$2, $4]}
 
-BFor    : for identifier from Expr to Expr do Bloque end';'             {Node BFor[$4, $6, $8]}
-        | for identifier from Expr to Expr by Expr do Bloque end';'     {Node BFor[$4, $6, $8, $10]}
+BFor    : for identifier from Expr to Expr do Bloque end';'             {Node BFor[leaf $2, $4, $6, $8]}
+        | for identifier from Expr to Expr by Expr do Bloque end';'     {Node BFor[leaf $2, $4, $6, $8, $10]}
 
 BRep    : repeat Expr times Bloque end';'   {Node BRep [$2, $4]}
 
@@ -107,8 +107,8 @@ ParamD  : Tipo identifier               {[Node Param [$1, leaf $2]]}
 FunDec  : func identifier'('Param')' begin Bloque end';'                {Node FunDec [$4, $7]}
         | func identifier'('Param')' '->' Tipo begin Bloque end';'      {Node FunDec [$4, $7, $9]}
 
-ListaF  : FunDec            {Node ListaF [$1]}
-        | ListaF FunDec     {Node ListaF [$1, $2]}
+ListaF  : FunDec            {[$1]}
+        | ListaF FunDec     {$1 ++[$2]}
 
 
 BIf     : if Expr then Bloque else Bloque end';'    {Node BIf [$2, $4, $6]}
