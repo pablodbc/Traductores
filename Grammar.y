@@ -82,12 +82,12 @@ Bloque  : {- lambda -}  {Node Empty []}
 LBloque : AnidS         {[$1]}
         | LBloque AnidS {$1 ++ [$2]}
 
-AnidS   : BIf       {Node AnidS [$1]}
-        | BWith     {Node AnidS [$1]}
-        | BWhile    {Node AnidS [$1]}
-        | BFor      {Node AnidS [$1]}
-        | BRep      {Node AnidS [$1]}
-        | Ins';'    {Node AnidS [$1]}
+AnidS   : BIf       {$1}
+        | BWith     {$1}
+        | BWhile    {$1}
+        | BFor      {$1}
+        | BRep      {$1}
+        | Ins';'    {$1}
 
 BWhile  : while Expr do Bloque end';'     {Node BWhile [$2, $4]}
 
