@@ -124,7 +124,7 @@ Ins     : Asig                          {Node Ins [$1]}
         | Escribir                      {Node Ins [$1]}
         | EscribirLn                    {Node Ins [$1]}
         | return Expr                   {Node Ins [Node Return [$2]]}
-        | {- lambda -}                  {Node Ins [Node Empty []]}
+        | {- lambda -}                  {Node Ins []}
 
 ListaD  : Decl';'                       {[$1]}
         | ListaD Decl';'                {$1 ++ [$2]}
@@ -175,15 +175,15 @@ Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
         | Expr '%' Expr                 {Node Expr [$1, leaf $2, $3]}
         | Expr div Expr                 {Node Expr [$1, leaf $2, $3]}
         | Expr mod Expr                 {Node Expr [$1, leaf $2, $3]}
-        | '(' Expr ')'                  {Node Expr [leaf $1, $2, leaf $3]}
-        | not Expr                      {Node Expr [leaf $1,$2]}
-        | '-'Expr %prec NEG             {Node Expr [leaf $1,$2]}
+        | not Expr                      {Node Expr [leaf $1, $2]}
+        | '-'Expr %prec NEG             {Node Expr [leaf $1, $2]}
         | identifier                    {Node Expr [leaf $1]}
         | integer                       {Node Expr [leaf $1]}
         | floating                      {Node Expr [leaf $1]}
         | true                          {Node Expr [leaf $1]}
         | false                         {Node Expr [leaf $1]}
-        | Funcion                       {Node Expr [$1]} 
+        | Funcion                       {Node Expr [$1]}
+        | '(' Expr ')'                  {Node Expr [$2]}
 {
 
 parseError [] = error $ "Archivo Vacio."
