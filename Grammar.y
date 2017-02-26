@@ -77,10 +77,10 @@ Init    : Program           {Node Init [Node Empty [], $1]}
 Program : program Bloque end';'      {Node Program [$2]}
 
 Bloque  : {- lambda -}  {Node Empty []}
-        | LBloque       {Node Bloque [$1]}
+        | LBloque       {Node Bloque $1}
 
-LBloque : AnidS         {Node LBloque [$1]}
-        | LBloque AnidS {Node LBloque [$1, $2]}
+LBloque : AnidS         {[$1]}
+        | LBloque AnidS {$1 ++ [$2]}
 
 AnidS   : BIf       {Node AnidS [$1]}
         | BWith     {Node AnidS [$1]}
