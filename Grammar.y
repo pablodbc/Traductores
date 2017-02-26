@@ -74,19 +74,10 @@ import Stdout
 Init    : Program           {Node Init [$1]}
         | ListaF Program    {Node Init [$1, $2]}
 
-Program : program BWith end';'      {Node Program [leaf $1, $2, leaf $3]}
-        | program do Bloque end';' end';' {Node Program [leaf $1, leaf $2, $3, leaf $4, leaf $6]}
-
-AnidR    : AnidS             {Node AnidR [$1]}
-
-LBloqueR : AnidR             {Node LBloqueR [$1]}
-         | LBloqueR AnidR    {Node LBloqueR [$1, $2]}
+Program : program Bloque end';'      {Node Program [leaf $1, $2, leaf $3]}
 
 Bloque  : {- lambda -}  {Node Empty []}
         | LBloque       {Node Bloque [$1]}
-
-BloqueR : {- lambda -}  {Node Empty []}
-        | LBloqueR      {Node BloqueR [$1]}
 
 LBloque : AnidS         {Node LBloque [$1]}
         | LBloque AnidS {Node LBloque [$1, $2]}
@@ -114,7 +105,7 @@ ParamD  : Tipo identifier               {Node ParamD [$1 ,leaf $2]}
         | ParamD ',' Tipo identifier    {Node ParamD [$1,$3, leaf $4]}
 
 FunDec  : func identifier'('Param')' begin Bloque end';'                {Node FunDec [leaf $1, leaf $2, $4, leaf $6, $7, leaf $8]}
-        | func identifier'('Param')' '->' Tipo begin BloqueR end';'      {Node FunDec [leaf $1, leaf $2, $4, leaf $6, $7, leaf $8, $9, leaf $10]}
+        | func identifier'('Param')' '->' Tipo begin Bloque end';'      {Node FunDec [leaf $1, leaf $2, $4, leaf $6, $7, leaf $8, $9, leaf $10]}
 
 ListaF  : FunDec            {Node ListaF [$1]}
         | ListaF FunDec     {Node ListaF [$1, $2]}
