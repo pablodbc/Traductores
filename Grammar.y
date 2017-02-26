@@ -72,7 +72,7 @@ import Stdout
 %%
 
 Init    : Program           {Node Init [Node Empty [], $1]}
-        | ListaF Program    {Node Init ($1 ++ [$2])}
+        | ListaF Program    {Node Init ([Node ListaF $1] ++ [$2])}
 
 Program : program Bloque end';'      {Node Program [$2]}
 
@@ -124,7 +124,7 @@ Ins     : Asig                          {Node Ins [$1]}
         | Escribir                      {Node Ins [$1]}
         | EscribirLn                    {Node Ins [$1]}
         | return Expr                   {Node Ins [Node Return [$2]]}
-        | ';'                           {Node Ins [leaf $1]}
+        | {- lambda -}                  {Node Ins[Node Empty []]}
 
 ListaD  : Decl';'                       {Node ListaD [$1]}
         | ListaD Decl';'                {Node ListaD [$1, $2]}

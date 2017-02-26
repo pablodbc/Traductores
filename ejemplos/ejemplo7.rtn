@@ -14,7 +14,7 @@ program
 with
 do
     for i from 0 to 0 do 
-        writeln "memes";
+        writeln "memes";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     end;
 end;
 end;
