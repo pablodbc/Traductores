@@ -1,0 +1,10 @@
+program
+with
+number i=3;
+boolean a,b,c,d,e,f,g;
+do
+    for i from 0 to 0 do 
+        writeln "memes";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    end;
+end;
+end;

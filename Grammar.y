@@ -71,12 +71,12 @@ import Stdout
 
 %%
 
-Init    : Program           {Node Init [Node Empty [], $1]}
+Init    : Program           {Node Init [Node ListaF [], $1]}
         | ListaF Program    {Node Init ([Node ListaF $1] ++ [$2])}
 
 Program : program Bloque end';'      {Node Program [$2]}
 
-Bloque  : {- lambda -}  {Node Empty []}
+Bloque  : {- lambda -}  {Node Bloque []}
         | LBloque       {Node Bloque $1}
 
 LBloque : AnidS         {[$1]}
@@ -98,7 +98,7 @@ BRep    : repeat Expr times Bloque end';'   {Node BRep [$2, $4]}
 
 
         
-Param   : {- lambda -}      {Node Empty []}
+Param   : {- lambda -}      {Node ParamD []}
         | ParamD            {Node ParamD $1}
 
 ParamD  : Tipo identifier               {[Node Param [$1, leaf $2]]}
@@ -114,8 +114,8 @@ ListaF  : FunDec            {[$1]}
 BIf     : if Expr then Bloque else Bloque end';'    {Node BIf [$2, $4, $6]}
         | if Expr then Bloque end';'                {Node BIf [$2, $4]}
 
-BWith   : with do Bloque end';'         {Node BWith [Node Empty [], $3]}
-        | with ListaD do Bloque end';'  {Node BWith [$2, $4]}
+BWith   : with do Bloque end';'         {Node BWith [Node ListaD [], $3]}
+        | with ListaD do Bloque end';'  {Node BWith ([Node ListaD $2] ++ [$4])}
 
 
 Ins     : Asig                          {Node Ins [$1]}
@@ -124,19 +124,19 @@ Ins     : Asig                          {Node Ins [$1]}
         | Escribir                      {Node Ins [$1]}
         | EscribirLn                    {Node Ins [$1]}
         | return Expr                   {Node Ins [Node Return [$2]]}
-        | {- lambda -}                  {Node Ins[Node Empty []]}
+        | {- lambda -}                  {Node Ins [Node Empty []]}
 
-ListaD  : Decl';'                       {Node ListaD [$1]}
-        | ListaD Decl';'                {Node ListaD [$1, $2]}
+ListaD  : Decl';'                       {[$1]}
+        | ListaD Decl';'                {$1 ++ [$2]}
 
 Decl    : Tipo Asig                     {Node Decl [$1, $2]}
-        | Tipo ListaI                   {Node Decl [$1, $2]} 
+        | Tipo ListaI                   {Node Decl [$1, (Node ListaI $2)]} 
 
 Tipo    : number                        {leaf $1}
         | boolean                       {leaf $1}
 
-ListaI  : identifier                    {Node ListaI [leaf $1]}
-        | ListaI ',' identifier         {Node ListaI [$1, leaf $3]}
+ListaI  : identifier                    {[leaf $1]}
+        | ListaI ',' identifier         {$1 ++ [leaf $3]}
 
 Asig    : identifier '=' Expr           {Node Asig [leaf $1, $3]}
 
