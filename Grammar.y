@@ -71,10 +71,10 @@ import Stdout
 
 %%
 
-Init    : Program           {Node Init [$1]}
+Init    : Program           {Node Init [Node Empty [], $1]}
         | ListaF Program    {Node Init [$1, $2]}
 
-Program : program Bloque end';'      {Node Program [leaf $1, $2, leaf $3]}
+Program : program Bloque end';'      {Node Program [$2]}
 
 Bloque  : {- lambda -}  {Node Empty []}
         | LBloque       {Node Bloque [$1]}
@@ -89,33 +89,33 @@ AnidS   : BIf       {Node AnidS [$1]}
         | BRep      {Node AnidS [$1]}
         | Ins';'    {Node AnidS [$1]}
 
-BWhile  : while Expr do Bloque end';'     {Node BWhile [leaf $1, $2, leaf $3, $4, leaf $5]}
+BWhile  : while Expr do Bloque end';'     {Node BWhile [$2, $4]}
 
-BFor    : for identifier from Expr to Expr do Bloque end';'             {Node BFor[leaf $1, leaf $2, leaf $3, $4, leaf $5, $6, leaf $7, $8, leaf $9]}
-        | for identifier from Expr to Expr by Expr do Bloque end';'     {Node BFor[leaf $1, leaf $2, leaf $3, $4, leaf $5, $6, leaf $7, $8,  leaf $9, $10, leaf $11]}
+BFor    : for identifier from Expr to Expr do Bloque end';'             {Node BFor[$4, $6, $8]}
+        | for identifier from Expr to Expr by Expr do Bloque end';'     {Node BFor[$4, $6, $8, $10]}
 
-BRep    : repeat Expr times Bloque end';'   {Node BRep [leaf $1, $2, leaf $3, $4, leaf $5]}
+BRep    : repeat Expr times Bloque end';'   {Node BRep [$2, $4]}
 
 
         
 Param   : {- lambda -}      {Node Empty []}
         | ParamD            {Node Param [$1]}
 
-ParamD  : Tipo identifier               {Node ParamD [$1 ,leaf $2]}
-        | ParamD ',' Tipo identifier    {Node ParamD [$1,$3, leaf $4]}
+ParamD  : Tipo identifier               {Node ParamD [$1]}
+        | ParamD ',' Tipo identifier    {Node ParamD [$1, $3]}
 
-FunDec  : func identifier'('Param')' begin Bloque end';'                {Node FunDec [leaf $1, leaf $2, $4, leaf $6, $7, leaf $8]}
-        | func identifier'('Param')' '->' Tipo begin Bloque end';'      {Node FunDec [leaf $1, leaf $2, $4, leaf $6, $7, leaf $8, $9, leaf $10]}
+FunDec  : func identifier'('Param')' begin Bloque end';'                {Node FunDec [$4, $7]}
+        | func identifier'('Param')' '->' Tipo begin Bloque end';'      {Node FunDec [$4, $7, $9]}
 
 ListaF  : FunDec            {Node ListaF [$1]}
         | ListaF FunDec     {Node ListaF [$1, $2]}
 
 
-BIf     : if Expr then Bloque else Bloque end';'    {Node BIf [leaf $1, $2, leaf $3, $4, leaf $5, $6, leaf $7]}
-        | if Expr then Bloque end';'                {Node BIf [leaf $1, $2, leaf $3, $4, leaf $5]}
+BIf     : if Expr then Bloque else Bloque end';'    {Node BIf [$2, $4, $6]}
+        | if Expr then Bloque end';'                {Node BIf [$2, $4]}
 
-BWith   : with do Bloque end';'         {Node BWith [leaf $1, leaf $2, $3, leaf $4]}
-        | with ListaD do Bloque end';'  {Node BWith [leaf $1, $2, leaf $3, $4, leaf $5]}
+BWith   : with do Bloque end';'         {Node BWith [Node Empty [], $3]}
+        | with ListaD do Bloque end';'  {Node BWith [$2, $4]}
 
 
 Ins     : Asig                          {Node Ins [$1]}
@@ -127,10 +127,10 @@ Ins     : Asig                          {Node Ins [$1]}
         | ';'                           {Node Ins [leaf $1]}
 
 ListaD  : Decl';'                       {Node ListaD [$1]}
-        | ListaD Decl';'                {Node ListaD [$1,$2]}
+        | ListaD Decl';'                {Node ListaD [$1, $2]}
 
-Decl    : Tipo Asig                     {Node Decl [$1,$2]}
-        | Tipo ListaI                   {Node Decl [$1,$2]} 
+Decl    : Tipo Asig                     {Node Decl [$1, $2]}
+        | Tipo ListaI                   {Node Decl [$1, $2]} 
 
 Tipo    : number                        {Node Tipo [leaf $1]}
         | boolean                       {Node Tipo [leaf $1]}
@@ -138,7 +138,7 @@ Tipo    : number                        {Node Tipo [leaf $1]}
 ListaI  : identifier                    {Node ListaI [leaf $1]}
         | ListaI ',' identifier         {Node ListaI [$1, leaf $3]}
 
-Asig    : identifier '=' Expr           {Node Asig [leaf $1, leaf $2, $3]}
+Asig    : identifier '=' Expr           {Node Asig [leaf $1, $3]}
 
 ArgW    : ExprS                         {Node ArgW [$1]}
         | ArgW ',' ExprS                {Node ArgW [$1, $3]}
@@ -148,18 +148,18 @@ ExprS   : Expr                          {Node ExprS [$1]}
         | str                           {Node ExprS [leaf $1]}
 
 
-Leer    : read identifier               {Node Leer [leaf $1, leaf $2]}
+Leer    : read identifier               {Node Leer [leaf $2]}
 
-Escribir    : write ArgW                {Node Escribir [leaf $1, $2]}
+Escribir    : write ArgW                {Node Escribir [$2]}
 
-EscribirLn  : writeln ArgW              {Node EscribirLn [leaf $1, $2]}
+EscribirLn  : writeln ArgW              {Node EscribirLn [$2]}
 
 
 Args    : Expr                          {Node Args [$1]}
         | Args ',' Expr                 {Node Args [$1, $3]}
         
 
-Funcion : identifier'('')'              {Node Funcion [leaf $1]}
+Funcion : identifier'('')'              {Node Funcion [leaf $1, Node Empty []]}
         | identifier'(' Args ')'        {Node Funcion [leaf $1, $3]}
         
 Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
@@ -189,7 +189,7 @@ Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
 {
 
 parseError [] = error $ "Archivo Vacio."
-parseError ts = error $ (makePrintable $ head ts) ++ " Token invalido."
+parseError ts = error $ "Error de Sintaxis en " ++ (makePrintable $ head ts) ++ ", Token invalido."
 
 
 }
