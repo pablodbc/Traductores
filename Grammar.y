@@ -123,7 +123,7 @@ Ins     : Asig                          {Node Ins [$1]}
         | Leer                          {Node Ins [$1]}
         | Escribir                      {Node Ins [$1]}
         | EscribirLn                    {Node Ins [$1]}
-        | return Expr                   {Node Ins [leaf $1, $2]}
+        | return Expr                   {Node Ins [Node Return [$2]]}
         | ';'                           {Node Ins [leaf $1]}
 
 ListaD  : Decl';'                       {Node ListaD [$1]}

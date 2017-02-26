@@ -251,6 +251,7 @@ data ParserToken
       Expr       |
       LBloqueR   |
       LBloque    |
+      Return     |
       Empty      |
       TermToken Lexer.Token
       deriving (Eq)
@@ -294,6 +295,7 @@ instance Show ParserToken where
     show  Args              = "Argumento:"
     show  Funcion           = "Funcion:"
     show  Expr              = "Expresion:"
+    show  Return            = "Retorno de Funcion:"
     show  Empty             = "Nada: lo que no es el algo"
     show  (TermToken x)     = show x
 

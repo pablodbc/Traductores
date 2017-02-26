@@ -5,6 +5,7 @@ func chao(number hola, number qwerty) -> boolean
    return x;
  end;
 program
+with
 do
 end;
 end;
