@@ -1,0 +1,16 @@
+func dank(number hola, number qwerty) -> number
+ begin
+   x = hola;
+   y = qwerty;
+   return 42;
+ end;
+program
+with
+number i=3;
+boolean a,b,c,d,e,f,g;
+do
+	dank(i, i);
+	dank(3, i);
+	dank(4, 2);
+end;
+end;

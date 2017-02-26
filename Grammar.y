@@ -140,8 +140,8 @@ ListaI  : identifier                    {[leaf $1]}
 
 Asig    : identifier '=' Expr           {Node Asig [leaf $1, $3]}
 
-ArgW    : ExprS                         {Node ArgW [$1]}
-        | ArgW ',' ExprS                {Node ArgW [$1, $3]}
+ArgW    : ExprS                         {[$1]}
+        | ArgW ',' ExprS                {$1 ++ [$3]}
 
 
 ExprS   : Expr                          {Node ExprS [$1]}
@@ -150,17 +150,15 @@ ExprS   : Expr                          {Node ExprS [$1]}
 
 Leer    : read identifier               {Node Leer [leaf $2]}
 
-Escribir    : write ArgW                {Node Escribir [$2]}
+Escribir    : write ArgW                {Node Escribir [Node ArgW $2]}
 
-EscribirLn  : writeln ArgW              {Node EscribirLn [$2]}
+EscribirLn  : writeln ArgW              {Node EscribirLn [Node ArgW $2]}
 
+Args    : Expr                          {[$1]}
+        | Args ',' Expr                 {$1 ++ [$3]}
 
-Args    : Expr                          {Node Args [$1]}
-        | Args ',' Expr                 {Node Args [$1, $3]}
-        
-
-Funcion : identifier'('')'              {Node Funcion [leaf $1, Node Empty []]}
-        | identifier'(' Args ')'        {Node Funcion [leaf $1, $3]}
+Funcion : identifier'('')'              {Node Funcion [leaf $1, Node Args []]}
+        | identifier'(' Args ')'        {Node Funcion [leaf $1, Node Args $3]}
         
 Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
         | Expr and Expr                 {Node Expr [$1, leaf $2, $3]}

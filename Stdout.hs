@@ -287,7 +287,7 @@ instance Show ParserToken where
     show  Tipo              = "Tipo de Dato:"
     show  ListaI            = "Secuencia: identificadores"
     show  Asig              = "Asignacion:"
-    show  ArgW              = "Argumento: funcion de I/O"
+    show  ArgW              = "Argumentos: funcion de I/O"
     show  ExprS             = "Expresion: expresion o string"
     show  Leer              = "Funcion: I/O leer"
     show  Escribir          = "Funcion: I/O escribir"
