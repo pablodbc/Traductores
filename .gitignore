@@ -1,0 +1,11 @@
+Lexer.hs
+Lexer.hi
+Lexer.o
+Stdout.hi
+Stdout.o 
+Grammar.hs 
+Grammar.hi 
+Grammar.o 
+main.hi 
+main.o 
+retina

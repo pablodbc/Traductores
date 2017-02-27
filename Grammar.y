@@ -119,7 +119,7 @@ BWith   : with do Bloque end';'         {Node BWith [Node ListaD [], $3]}
 
 
 Ins     : Asig                          {Node Ins [$1]}
-        | Funcion                       {Node Ins [$1]}
+        | Expr                          {Node Ins [$1]}
         | Leer                          {Node Ins [$1]}
         | Escribir                      {Node Ins [$1]}
         | EscribirLn                    {Node Ins [$1]}
@@ -187,7 +187,7 @@ Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
 {
 
 parseError [] = error $ "Archivo Vacio."
-parseError ts = error $ "Error de Sintaxis en " ++ (makePrintable $ head ts) ++ ", Token invalido."
+parseError ts = error $ "Error de Sintaxis en " ++ (makePrintable $ head ts) ++ ", Token inesperado."
 
 
 }
