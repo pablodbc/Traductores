@@ -188,9 +188,6 @@ Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
         | '(' Expr ')'                  {Node Expr [$2]}
 {
 
---parseError [] = error $ "Archivo Vacio."
---parseError ts = error $ "Error de Sintaxis en " ++ (makePrintable $ head ts) ++ ", Token inesperado."
-
 data SyntacticError = SyntacticError String
     deriving (Typeable)
 
