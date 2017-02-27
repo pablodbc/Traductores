@@ -1,13 +1,16 @@
 {
-
+{-# LANGUAGE DeriveDataTypeable #-}
 module Grammar where
 import qualified Lexer
 import Stdout
+import Control.Exception
+import Data.Typeable
 }
 
 %name parse
 %tokentype { Lexer.Token }
 %error { parseError }
+%monad { IO }
 
 %token
 
@@ -186,8 +189,19 @@ Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
         | '(' Expr ')'                  {Node Expr [$2]}
 {
 
-parseError [] = error $ "Archivo Vacio."
-parseError ts = error $ "Error de Sintaxis en " ++ (makePrintable $ head ts) ++ ", Token inesperado."
+--parseError [] = error $ "Archivo Vacio."
+--parseError ts = error $ "Error de Sintaxis en " ++ (makePrintable $ head ts) ++ ", Token inesperado."
+
+data SyntacticError = SyntacticError String
+    deriving (Typeable)
+
+instance Exception SyntacticError
+instance Show SyntacticError where
+    show (SyntacticError s) = "Error sintáctico: " ++ s
+
+parseError :: [Lexer.Token] -> IO a
+parseError [] = throw $ SyntacticError "invalid program"
+parseError ts = throw $ SyntacticError $ "Token inesperado: " ++ show (head ts)
 
 
 }

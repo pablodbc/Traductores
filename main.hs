@@ -42,5 +42,5 @@ main = do
                 Left msg -> putStrLn msg
                 Right x -> do
                     let ast = parse x
-                    print ast
+                    ast >>= print
             
