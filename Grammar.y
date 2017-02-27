@@ -120,7 +120,6 @@ BIf     : if Expr then Bloque else Bloque end';'    {Node BIf [$2, $4, $6]}
 BWith   : with do Bloque end';'         {Node BWith [Node ListaD [], $3]}
         | with ListaD do Bloque end';'  {Node BWith ([Node ListaD $2] ++ [$4])}
 
-
 Ins     : Asig                          {Node Ins [$1]}
         | Expr                          {Node Ins [$1]}
         | Leer                          {Node Ins [$1]}
@@ -200,7 +199,7 @@ instance Show SyntacticError where
     show (SyntacticError s) = "Error sintáctico: " ++ s
 
 parseError :: [Lexer.Token] -> IO a
-parseError [] = throw $ SyntacticError "Archivo Vacio "
+parseError [] = throw $ SyntacticError "Archivo Vacio"
 parseError ts = throw $ SyntacticError $ "Token inesperado: " ++ show (head ts)
 
 
