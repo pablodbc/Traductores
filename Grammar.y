@@ -200,7 +200,7 @@ instance Show SyntacticError where
     show (SyntacticError s) = "Error sintáctico: " ++ s
 
 parseError :: [Lexer.Token] -> IO a
-parseError [] = throw $ SyntacticError "Archivo Vacio"
+parseError [] = throw $ SyntacticError "Archivo Vacio "
 parseError ts = throw $ SyntacticError $ "Token inesperado: " ++ show (head ts)
 
 
