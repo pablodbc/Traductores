@@ -79,25 +79,31 @@ Init    : Program           {Node Init [Node ListaF [], $1]}
 
 Program : program Bloque end';'      {Node Program [$2]}
 
-Bloque  : {- lambda -}  {Node Bloque []}
-        | LBloque       {Node Bloque $1}
+Bloque  : {- lambda -}  {Node Ins []}
+        | LBloque       {Node Ins $1}
 
 LBloque : AnidS         {[$1]}
         | LBloque AnidS {$1 ++ [$2]}
 
-AnidS   : BIf       {$1}
-        | BWith     {$1}
-        | BWhile    {$1}
-        | BFor      {$1}
-        | BRep      {$1}
-        | Ins';'    {$1}
+AnidS   : BIf';'                           {$1}
+        | BWith';'                         {$1}
+        | BWhile';'                        {$1}
+        | BFor';'                          {$1}
+        | BRep';'                          {$1}
+        | Asig';'                          {$1}
+        | Funcion';'                       {$1}
+        | Leer';'                          {$1}
+        | Escribir';'                      {$1}
+        | EscribirLn';'                    {$1}
+        | return Expr';'                   {Node Return [$2]}
+        | ';'                              {Node Empty []}
 
-BWhile  : while Expr do Bloque end';'     {Node BWhile [$2, $4]}
+BWhile  : while Expr do Bloque end     {Node BWhile [$2, $4]}
 
-BFor    : for identifier from Expr to Expr do Bloque end';'             {Node BFor[leaf $2, $4, $6, $8]}
-        | for identifier from Expr to Expr by Expr do Bloque end';'     {Node BFor[leaf $2, $4, $6, $8, $10]}
+BFor    : for identifier from Expr to Expr do Bloque end             {Node BFor[leaf $2, $4, $6, $8]}
+        | for identifier from Expr to Expr by Expr do Bloque end     {Node BFor[leaf $2, $4, $6, $8, $10]}
 
-BRep    : repeat Expr times Bloque end';'   {Node BRep [$2, $4]}
+BRep    : repeat Expr times Bloque end   {Node BRep [$2, $4]}
 
 
         
@@ -114,19 +120,11 @@ ListaF  : FunDec            {[$1]}
         | ListaF FunDec     {$1 ++[$2]}
 
 
-BIf     : if Expr then Bloque else Bloque end';'    {Node BIf [$2, $4, $6]}
-        | if Expr then Bloque end';'                {Node BIf [$2, $4]}
+BIf     : if Expr then Bloque else Bloque end    {Node BIf [$2, $4, $6]}
+        | if Expr then Bloque end                {Node BIf [$2, $4]}
 
-BWith   : with do Bloque end';'         {Node BWith [Node ListaD [], $3]}
-        | with ListaD do Bloque end';'  {Node BWith ([Node ListaD $2] ++ [$4])}
-
-Ins     : Asig                          {Node Ins [$1]}
-        | Expr                          {Node Ins [$1]}
-        | Leer                          {Node Ins [$1]}
-        | Escribir                      {Node Ins [$1]}
-        | EscribirLn                    {Node Ins [$1]}
-        | return Expr                   {Node Ins [Node Return [$2]]}
-        | {- lambda -}                  {Node Ins []}
+BWith   : with do Bloque end         {Node BWith [Node ListaD [], $3]}
+        | with ListaD do Bloque end  {Node BWith ([Node ListaD $2] ++ [$4])}
 
 ListaD  : Decl';'                       {[$1]}
         | ListaD Decl';'                {$1 ++ [$2]}

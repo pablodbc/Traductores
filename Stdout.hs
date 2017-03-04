@@ -281,7 +281,7 @@ instance Show ParserToken where
     show  BIf               = "Instruccion de Control: if"
     show  BWith             = "Bloque: with"
     show  ListaIn           = "Secuencia: instrucciones"
-    show  Ins               = "Instruccion:"
+    show  Ins               = "Instrucciones:"
     show  ListaD            = "Secuencia: declaraciones"
     show  Decl              = "Declaracion:"
     show  Tipo              = "Tipo de Dato:"
