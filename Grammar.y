@@ -68,8 +68,7 @@ import Data.Typeable
 %left '-' '+' or
 %left '%' mod
 %left '*' '/' div and
-%nonassoc '>' '<' '<=' '>='
-%nonassoc '==' '/='
+%nonassoc '>' '<' '<=' '>=' '==' '/='
 %right not NEG
 
 %%
@@ -123,14 +122,14 @@ ListaF  : FunDec            {[$1]}
 BIf     : if Expr then Bloque else Bloque end    {Node BIf [$2, $4, $6]}
         | if Expr then Bloque end                {Node BIf [$2, $4]}
 
-BWith   : with do Bloque end         {Node BWith [Node ListaD [], $3]}
-        | with ListaD do Bloque end  {Node BWith ([Node ListaD $2] ++ [$4])}
+BWith   : with ListaD do Bloque end  {Node BWith ([Node ListaD $2] ++ [$4])}
 
-ListaD  : Decl';'                       {[$1]}
-        | ListaD Decl';'                {$1 ++ [$2]}
+ListaD  : {- lambda -}               {[]}
+        | ListaD Decl                {$1 ++ [$2]}
 
-Decl    : Tipo Asig                     {Node Decl [$1, $2]}
-        | Tipo ListaI                   {Node Decl [$1, (Node ListaI $2)]} 
+Decl    : Tipo Asig';'                  {Node Decl [$1, $2]}
+        | Tipo ListaI';'                {Node Decl [$1, (Node ListaI $2)]}
+        | ';'                           {Node Empty []}
 
 Tipo    : number                        {leaf $1}
         | boolean                       {leaf $1}
@@ -195,7 +194,7 @@ instance Show SyntacticError where
 
 parseError :: [Lexer.Token] -> IO a
 parseError [] = throw $ SyntacticError "Archivo Vacio"
-parseError ts = throw $ SyntacticError $ "Token inesperado: " ++ show (head ts)
+parseError ts = throw $ SyntacticError $ (makePrintable (head ts)) ++ " Token inesperado"
 
 
 }
