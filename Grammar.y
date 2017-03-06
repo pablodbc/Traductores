@@ -91,7 +91,6 @@ AnidS   : if Expr then Bloque else Bloque end';'                        {Bifelse
         | for identifier from Expr to Expr do Bloque end';'             {Bfor $2 $4 $6 (reverse $8)}
         | for identifier from Expr to Expr by Expr do Bloque end';'     {Bforby $2 $4 $6 $8 (reverse $10)}
         | repeat Expr times Bloque end';'                               {Brepeat $2 (reverse $4)}
-        | do Bloque end';'                                              {Bdo (reverse $2)}
         | identifier '=' Expr';'                                        {Asig $1 $3}
         | Funcion                                                       {InsFcall $1}
         | read identifier ';'                                           {Read $2}
