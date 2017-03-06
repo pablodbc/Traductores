@@ -227,20 +227,20 @@ data FunDec   = Proc Lexer.Token [ParamL] [AnidS]                |
 
 data ParamL   = ParamL Tipo Lexer.Token deriving (Show)
 
-data AnidS    = Bifelse Expr [AnidS] [AnidS]                |
-                Bif Expr [AnidS]                            |
-                Bwith [Decl] [AnidS]                        |
-                Bwhile Expr [AnidS]                         |
-                Bfor Lexer.Token Expr Expr [AnidS]          |
-                Bforby Lexer.Token Expr Expr Expr [AnidS]   |
-                Brepeat Expr [AnidS]                        |
-                Bdo [AnidS]                                 |
-                Asig {leftSide :: Expr, rightSide :: Expr}  |
-                InsFcall Funcion                            |
-                Read Lexer.Token                            |
-                Write [ExprS]                               |
-                WriteLn [ExprS]                             |
-                Return Expr                                 |
+data AnidS    = Bifelse Expr [AnidS] [AnidS]                       |
+                Bif Expr [AnidS]                                   |
+                Bwith [Decl] [AnidS]                               |
+                Bwhile Expr [AnidS]                                |
+                Bfor Lexer.Token Expr Expr [AnidS]                 |
+                Bforby Lexer.Token Expr Expr Expr [AnidS]          |
+                Brepeat Expr [AnidS]                               |
+                Bdo [AnidS]                                        |
+                Asig {leftSide :: Lexer.Token, rightSide :: Expr}  |
+                InsFcall Funcion                                   |
+                Read Lexer.Token                                   |
+                Write [ExprS]                                      |
+                WriteLn [ExprS]                                    |
+                Return Expr                                        |
                 EmptyB                                       
                 deriving (Show)
 
@@ -261,29 +261,29 @@ data Funcion  = FuncionSA Lexer.Token         |
                 FuncionCA Lexer.Token [Expr]
                 deriving (Show)
 
-data Expr     = Or Expr Expr            |
-                And Expr Expr           |
-                Eq Expr Expr            |
-                Neq Expr Expr           |
-                Less Expr Expr          |
-                Lesseq Expr Expr        |
-                More Expr Expr          |
-                Moreq Expr Expr         |
-                Plus Expr Expr          |
-                Minus Expr Expr         |
-                Mult Expr Expr          |
-                Divex Expr Expr         |
-                Modex Expr Expr         |
-                Div Expr Expr           |
-                Mod Expr Expr           |
-                Not Expr                |
-                Uminus Expr             |
-                Identifier Expr         |
-                Integer Expr            |
-                Floating Expr           |
-                ExpTrue Expr            |
-                ExpFalse Expr           |
-                ExpFcall Funcion        |
+data Expr     = Or Expr Expr                   |
+                And Expr Expr                  |
+                Eq Expr Expr                   |
+                Neq Expr Expr                  |
+                Less Expr Expr                 |
+                Lesseq Expr Expr               |
+                More Expr Expr                 |
+                Moreq Expr Expr                |
+                Plus Expr Expr                 |
+                Minus Expr Expr                |
+                Mult Expr Expr                 |
+                Divex Expr Expr                |
+                Modex Expr Expr                |
+                Div Expr Expr                  |
+                Mod Expr Expr                  |
+                Not Expr                       |
+                Uminus Expr                    |
+                Identifier Lexer.Token         |
+                Integer Lexer.Token            |
+                Floating Lexer.Token           |
+                ExpTrue Lexer.Token            |
+                ExpFalse Lexer.Token           |
+                ExpFcall Funcion               |
                 Bracket Expr
                 deriving (Show)
 

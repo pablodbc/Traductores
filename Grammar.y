@@ -73,7 +73,7 @@ import Data.Typeable
 
 %%
 
-Init    : ListaF program Bloque end';'   {Program (reverse $1) (reverse $2)}
+Init    : ListaF program Bloque end';'   {Program (reverse $1) (reverse $3)}
 
 ListaF  : ListaF FunDec     {$2 : $1}
         | {- lambda -}      {[]}
@@ -88,7 +88,7 @@ AnidS   : if Expr then Bloque else Bloque end';'                        {Bifelse
         | if Expr then Bloque end';'                                    {Bif $2 (reverse $4)}
         | with ListaD do Bloque end';'                                  {Bwith (reverse $2) (reverse $4)}
         | while Expr do Bloque end';'                                   {Bwhile $2 (reverse $4)}
-        | for identifier from Expr to Expr do Bloque end';'             {Bfor $2 $4 $6 reverse($8)}
+        | for identifier from Expr to Expr do Bloque end';'             {Bfor $2 $4 $6 (reverse $8)}
         | for identifier from Expr to Expr by Expr do Bloque end';'     {Bforby $2 $4 $6 $8 (reverse $10)}
         | repeat Expr times Bloque end';'                               {Brepeat $2 (reverse $4)}
         | do Bloque end';'                                              {Bdo (reverse $2)}
@@ -149,8 +149,8 @@ Expr    : Expr or Expr                  {Or $1 $3}
         | Expr '%' Expr                 {Modex $1 $3}
         | Expr div Expr                 {Div $1 $3}
         | Expr mod Expr                 {Mod $1 $3}
-        | not Expr                      {Not $1}
-        | '-'Expr %prec NEG             {Uminus $1}
+        | not Expr                      {Not $2}
+        | '-'Expr %prec NEG             {Uminus $2}
         | identifier                    {Identifier $1}
         | integer                       {Integer $1}
         | floating                      {Floating $1}
