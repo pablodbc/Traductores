@@ -218,50 +218,77 @@ instance Show Lexer.Token where
     
     show (Lexer.LexError _ s) = "Caracter Inesperado: '" ++ (id s) ++ "'" 
 
-data ParserToken
-    = Init       |
-      Program    |
-      BloqueR    |
-      AnidR      |
-      BWhile     |
-      BFor       |
-      BRep       |
-      Bloque     |
-      AnidS      |
-      Param      |
-      ParamD     |
-      FunDec     |
-      ListaF     |
-      BIf        |
-      BWith      |
-      ListaIn    |
-      Ins        |
-      ListaD     |
-      Decl       |
-      Tipo       |
-      ListaI     |
-      Asig       |
-      ArgW       |
-      ExprS      |
-      Leer       |
-      Escribir   |
-      EscribirLn |
-      Args       |
-      Funcion    |
-      Expr       |
-      LBloqueR   |
-      LBloque    |
-      Return     |
-      Empty      |
-      TermToken Lexer.Token
-      deriving (Eq)
 
-data Node = Node ParserToken [Node]
-leaf :: Lexer.Token -> Node
-leaf t = Node (TermToken t) []
+data Init     = Program [FunDec] [AnidS] deriving (Show)
+
+data FunDec   = Proc Lexer.Token [ParamL] [AnidS]                |
+                Func Lexer.Token [ParamL] Tipo [AnidS]
+                deriving (Show)
+
+data ParamL   = ParamL Tipo Lexer.Token deriving (Show)
+
+data AnidS    = Bifelse Expr [AnidS] [AnidS]                |
+                Bif Expr [AnidS]                            |
+                Bwith [Decl] [AnidS]                        |
+                Bwhile Expr [AnidS]                         |
+                Bfor Lexer.Token Expr Expr [AnidS]          |
+                Bforby Lexer.Token Expr Expr Expr [AnidS]   |
+                Brepeat Expr [AnidS]                        |
+                Bdo [AnidS]                                 |
+                Asig {leftSide :: Expr, rightSide :: Expr}  |
+                InsFcall Funcion                            |
+                Read Lexer.Token                            |
+                Write [ExprS]                               |
+                WriteLn [ExprS]                             |
+                Return Expr                                 |
+                EmptyB                                       
+                deriving (Show)
+
+data Decl     = Inicializacion Tipo Lexer.Token Expr        |
+                Declaracion Tipo [Lexer.Token]              |
+                EmptyD
+                deriving (Show)
+
+data Tipo     = NumberT |
+                BooleanT
+                deriving (Show)
+
+data ExprS    = ExprW Expr           |
+                StringW Lexer.Token  
+                deriving (Show)
+
+data Funcion  = FuncionSA Lexer.Token         |
+                FuncionCA Lexer.Token [Expr]
+                deriving (Show)
+
+data Expr     = Or Expr Expr            |
+                And Expr Expr           |
+                Eq Expr Expr            |
+                Neq Expr Expr           |
+                Less Expr Expr          |
+                Lesseq Expr Expr        |
+                More Expr Expr          |
+                Moreq Expr Expr         |
+                Plus Expr Expr          |
+                Minus Expr Expr         |
+                Mult Expr Expr          |
+                Divex Expr Expr         |
+                Modex Expr Expr         |
+                Div Expr Expr           |
+                Mod Expr Expr           |
+                Not Expr                |
+                Uminus Expr             |
+                Identifier Expr         |
+                Integer Expr            |
+                Floating Expr           |
+                ExpTrue Expr            |
+                ExpFalse Expr           |
+                ExpFcall Funcion        |
+                Bracket Expr
+                deriving (Show)
 
 
--- Show parser token
+{-- Show parser token
 instance Show ParserToken where
     show  Init              = "Inicio: programa completo"
     show  Program           = "Bloque: program"
@@ -271,6 +298,7 @@ instance Show ParserToken where
     show  BWhile            = "Instruccion de Control: while"
     show  BFor              = "Instruccion de Control: for"
     show  BRep              = "Instruccion de Control: repeat"
+    show  BDo               = "Bloque: do"
     show  Bloque            = "Bloque: bloques, instrucciones"
     show  LBloque           = "Cuerpo: bloque"
     show  AnidS             = "Secuencia: bloques o instrucciones"
@@ -310,3 +338,4 @@ showAST sep h ns =
         (Node Empty []) -> ""
         (Node ptk []) ->  (foldr (++) "" (replicate h sep)) ++ show ptk ++ "\n"
         (Node ptk chlds) -> (foldr (++) "" (replicate h sep)) ++ show ptk ++ "\n" ++ concatMap (showAST sep (h+1)) chlds
+        --}

@@ -73,116 +73,91 @@ import Data.Typeable
 
 %%
 
-Init    : Program           {Node Init [Node ListaF [], $1]}
-        | ListaF Program    {Node Init ([Node ListaF $1] ++ [$2])}
+Init    : ListaF program Bloque end';'   {Program (reverse $1) (reverse $2)}
 
-Program : program Bloque end';'      {Node Program [$2]}
+ListaF  : ListaF FunDec     {$2 : $1}
+        | {- lambda -}      {[]}
 
-Bloque  : {- lambda -}  {Node Ins []}
-        | LBloque       {Node Ins $1}
+FunDec  : func identifier'('Param')' begin Bloque end';'                {Proc $2 (reverse $4) (reverse $7)}
+        | func identifier'('Param')' '->' Tipo begin Bloque end';'      {Func $2 (reverse $4) $7 (reverse $9)}
 
-LBloque : AnidS         {[$1]}
-        | LBloque AnidS {$1 ++ [$2]}
+Bloque  : {- lambda -}      {[]}
+        | Bloque AnidS      {$2 : $1}
 
-AnidS   : BIf';'                           {$1}
-        | BWith';'                         {$1}
-        | BWhile';'                        {$1}
-        | BFor';'                          {$1}
-        | BRep';'                          {$1}
-        | Asig';'                          {$1}
-        | Funcion';'                       {$1}
-        | Leer';'                          {$1}
-        | Escribir';'                      {$1}
-        | EscribirLn';'                    {$1}
-        | return Expr';'                   {Node Return [$2]}
-        | ';'                              {Node Empty []}
-
-BWhile  : while Expr do Bloque end     {Node BWhile [$2, $4]}
-
-BFor    : for identifier from Expr to Expr do Bloque end             {Node BFor[leaf $2, $4, $6, $8]}
-        | for identifier from Expr to Expr by Expr do Bloque end     {Node BFor[leaf $2, $4, $6, $8, $10]}
-
-BRep    : repeat Expr times Bloque end   {Node BRep [$2, $4]}
-
+AnidS   : if Expr then Bloque else Bloque end';'                        {Bifelse $2 (reverse $4) (reverse $6)}
+        | if Expr then Bloque end';'                                    {Bif $2 (reverse $4)}
+        | with ListaD do Bloque end';'                                  {Bwith (reverse $2) (reverse $4)}
+        | while Expr do Bloque end';'                                   {Bwhile $2 (reverse $4)}
+        | for identifier from Expr to Expr do Bloque end';'             {Bfor $2 $4 $6 reverse($8)}
+        | for identifier from Expr to Expr by Expr do Bloque end';'     {Bforby $2 $4 $6 $8 (reverse $10)}
+        | repeat Expr times Bloque end';'                               {Brepeat $2 (reverse $4)}
+        | do Bloque end';'                                              {Bdo (reverse $2)}
+        | identifier '=' Expr';'                                        {Asig $1 $3}
+        | Funcion                                                       {InsFcall $1}
+        | read identifier ';'                                           {Read $2}
+        | write ArgW ';'                                                {Write (reverse $2)}
+        | writeln ArgW';'                                               {WriteLn (reverse $2)}
+        | return Expr';'                                                {Return $2}
+        | ';'                                                           {EmptyB}
 
         
-Param   : {- lambda -}      {Node ParamD []}
-        | ParamD            {Node ParamD $1}
+Param   : {- lambda -}      {[]}
+        | ParamD            {$1}
 
-ParamD  : Tipo identifier               {[Node Param [$1, leaf $2]]}
-        | ParamD ',' Tipo identifier    {$1 ++ [Node Param [$3, leaf $2]]}
-
-FunDec  : func identifier'('Param')' begin Bloque end';'                {Node FunDec [$4, $7]}
-        | func identifier'('Param')' '->' Tipo begin Bloque end';'      {Node FunDec [$4, $7, $9]}
-
-ListaF  : FunDec            {[$1]}
-        | ListaF FunDec     {$1 ++[$2]}
+ParamD  : Tipo identifier               {[ParamL $1 $2]}
+        | ParamD ',' Tipo identifier    {(ParamL $3 $4) : $1}
 
 
-BIf     : if Expr then Bloque else Bloque end    {Node BIf [$2, $4, $6]}
-        | if Expr then Bloque end                {Node BIf [$2, $4]}
+ListaD  : {- lambda -}                   {[]}
+        | ListaD Decl                    {$2 : $1}
 
-BWith   : with ListaD do Bloque end  {Node BWith ([Node ListaD $2] ++ [$4])}
+Decl    : Tipo identifier '=' Expr';'   {Inicializacion $1 $2 $4}
+        | Tipo ListaI';'                {Declaracion $1 $2}
+        | ';'                           {EmptyD}
 
-ListaD  : {- lambda -}               {[]}
-        | ListaD Decl                {$1 ++ [$2]}
+Tipo    : number                        {NumberT}
+        | boolean                       {BooleanT}
 
-Decl    : Tipo Asig';'                  {Node Decl [$1, $2]}
-        | Tipo ListaI';'                {Node Decl [$1, (Node ListaI $2)]}
-        | ';'                           {Node Empty []}
-
-Tipo    : number                        {leaf $1}
-        | boolean                       {leaf $1}
-
-ListaI  : identifier                    {[leaf $1]}
-        | ListaI ',' identifier         {$1 ++ [leaf $3]}
-
-Asig    : identifier '=' Expr           {Node Asig [leaf $1, $3]}
+ListaI  : identifier                    {[$1]}
+        | ListaI ',' identifier         {$3 : $1}
 
 ArgW    : ExprS                         {[$1]}
-        | ArgW ',' ExprS                {$1 ++ [$3]}
+        | ArgW ',' ExprS                {$3 : $1}
 
 
-ExprS   : Expr                          {Node ExprS [$1]}
-        | str                           {Node ExprS [leaf $1]}
-
-
-Leer    : read identifier               {Node Leer [leaf $2]}
-
-Escribir    : write ArgW                {Node Escribir [Node ArgW $2]}
-
-EscribirLn  : writeln ArgW              {Node EscribirLn [Node ArgW $2]}
+ExprS   : Expr                          {ExprW $1}
+        | str                           {StringW $1}
 
 Args    : Expr                          {[$1]}
-        | Args ',' Expr                 {$1 ++ [$3]}
+        | Args ',' Expr                 {$3 : $1}
 
-Funcion : identifier'('')'              {Node Funcion [leaf $1, Node Args []]}
-        | identifier'(' Args ')'        {Node Funcion [leaf $1, Node Args $3]}
+Funcion : identifier'('')'';'                                           {FuncionSA $1}
+        | identifier'(' Args ')'';'                                     {FuncionCA $1 (reverse $3)}
         
-Expr    : Expr or Expr                  {Node Expr [$1, leaf $2, $3]}
-        | Expr and Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr '==' Expr                {Node Expr [$1, leaf $2, $3]}
-        | Expr '/=' Expr                {Node Expr [$1, leaf $2, $3]}
-        | Expr '<' Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr '<=' Expr                {Node Expr [$1, leaf $2, $3]}
-        | Expr '>' Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr '>=' Expr                {Node Expr [$1, leaf $2, $3]}
-        | Expr '+' Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr '-' Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr '*' Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr '/' Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr '%' Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr div Expr                 {Node Expr [$1, leaf $2, $3]}
-        | Expr mod Expr                 {Node Expr [$1, leaf $2, $3]}
-        | not Expr                      {Node Expr [leaf $1, $2]}
-        | '-'Expr %prec NEG             {Node Expr [leaf $1, $2]}
-        | identifier                    {Node Expr [leaf $1]}
-        | integer                       {Node Expr [leaf $1]}
-        | floating                      {Node Expr [leaf $1]}
-        | true                          {Node Expr [leaf $1]}
-        | false                         {Node Expr [leaf $1]}
-        | Funcion                       {Node Expr [$1]}
-        | '(' Expr ')'                  {Node Expr [$2]}
+Expr    : Expr or Expr                  {Or $1 $3}
+        | Expr and Expr                 {And $1 $3}
+        | Expr '==' Expr                {Eq $1 $3}
+        | Expr '/=' Expr                {Neq $1 $3}
+        | Expr '<' Expr                 {Less $1 $3}
+        | Expr '<=' Expr                {Lesseq $1 $3}
+        | Expr '>' Expr                 {More $1 $3}
+        | Expr '>=' Expr                {Moreq $1 $3}
+        | Expr '+' Expr                 {Plus $1 $3}
+        | Expr '-' Expr                 {Minus $1 $3}
+        | Expr '*' Expr                 {Mult $1 $3}
+        | Expr '/' Expr                 {Divex $1 $3}
+        | Expr '%' Expr                 {Modex $1 $3}
+        | Expr div Expr                 {Div $1 $3}
+        | Expr mod Expr                 {Mod $1 $3}
+        | not Expr                      {Not $1}
+        | '-'Expr %prec NEG             {Uminus $1}
+        | identifier                    {Identifier $1}
+        | integer                       {Integer $1}
+        | floating                      {Floating $1}
+        | true                          {ExpTrue $1}
+        | false                         {ExpFalse $1}
+        | Funcion                       {ExpFcall $1}
+        | '(' Expr ')'                  {Bracket $2}
 {
 
 data SyntacticError = SyntacticError String
