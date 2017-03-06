@@ -234,7 +234,6 @@ data AnidS    = Bifelse Expr [AnidS] [AnidS]                       |
                 Bfor Lexer.Token Expr Expr [AnidS]                 |
                 Bforby Lexer.Token Expr Expr Expr [AnidS]          |
                 Brepeat Expr [AnidS]                               |
-                Bdo [AnidS]                                        |
                 Asig {leftSide :: Lexer.Token, rightSide :: Expr}  |
                 InsFcall Funcion                                   |
                 Read Lexer.Token                                   |
@@ -288,54 +287,264 @@ data Expr     = Or Expr Expr                   |
                 deriving (Show)
 
 
-{-- Show parser token
-instance Show ParserToken where
-    show  Init              = "Inicio: programa completo"
-    show  Program           = "Bloque: program"
-    show  BloqueR           = "Bloque: funcion con return"
-    show  LBloqueR          = "Cuerpo: bloque funcion con return"
-    show  AnidR             = "Secuencia: bloques, instrucciones o return"
-    show  BWhile            = "Instruccion de Control: while"
-    show  BFor              = "Instruccion de Control: for"
-    show  BRep              = "Instruccion de Control: repeat"
-    show  BDo               = "Bloque: do"
-    show  Bloque            = "Bloque: bloques, instrucciones"
-    show  LBloque           = "Cuerpo: bloque"
-    show  AnidS             = "Secuencia: bloques o instrucciones"
-    show  Param             = "Parametros: funcion"
-    show  ParamD            = "Secuencia: parametros de funcion"
-    show  FunDec            = "Declaracion: funcion"
-    show  ListaF            = "Secuencia: declaraciones de funciones"
-    show  BIf               = "Instruccion de Control: if"
-    show  BWith             = "Bloque: with"
-    show  ListaIn           = "Secuencia: instrucciones"
-    show  Ins               = "Instrucciones:"
-    show  ListaD            = "Secuencia: declaraciones"
-    show  Decl              = "Declaracion:"
-    show  Tipo              = "Tipo de Dato:"
-    show  ListaI            = "Secuencia: identificadores"
-    show  Asig              = "Asignacion:"
-    show  ArgW              = "Argumentos: funcion de I/O"
-    show  ExprS             = "Expresion: expresion o string"
-    show  Leer              = "Funcion: I/O leer"
-    show  Escribir          = "Funcion: I/O escribir"
-    show  EscribirLn        = "Funcion: I/O escribir con salto de linea"
-    show  Args              = "Argumento:"
-    show  Funcion           = "Funcion:"
-    show  Expr              = "Expresion:"
-    show  Return            = "Retorno de Funcion:"
-    show  Empty             = "Nada: lo que no es el algo"
-    show  (TermToken x)     = show x
+showParamL :: String -> Int -> ParamL -> String
+showParamL sep h (ParamL t id) = 
+  (showLine sep h "Parametro de Declaracion de Funcion:\n") ++ (showTipo sep (h+1) t) 
+  ++ (showLine sep (h+1) ((show id) ++ "\n")) 
 
 
-instance Show Node where
-    show ns = showAST "| " 0 ns
+showAnidS :: String -> Int -> AnidS -> String
+showAnidS sep h (Bifelse e [] []) = 
+  (showLine sep h "Instruccion de Control If Else:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones de Caso Verdadero: Vacio\n") 
+    ++ (showLine sep (h+1) "Instrucciones de Caso Falso: Vacio\n")
+
+showAnidS sep h (Bifelse e ins1 []) = 
+  (showLine sep h "Instruccion de Control IF Else:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones de Caso Verdadero:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins1) ++ (showLine sep (h+1) "Instrucciones de Caso Falso: Vacio\n")
+
+showAnidS sep h (Bifelse e [] ins2) = 
+  (showLine sep h "Instruccion de Control IF Else:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones de Caso Verdadero: Vacio\n")
+    ++ (showLine sep (h+1) "Instrucciones de Caso Falso:\n") ++ (concatMap (showAnidS sep (h+2)) ins2)
+
+showAnidS sep h (Bifelse e ins1 ins2) = 
+  (showLine sep h "Instruccion de Control IF Else:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones de Caso Verdadero:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins1) ++ (showLine sep (h+1) "Instrucciones de Caso Falso:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins2)
+
+showAnidS sep h (Bif e []) = 
+  (showLine sep h "Instruccion de Control If:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones: Vacio\n") 
+
+showAnidS sep h (Bif e ins) = 
+  (showLine sep h "Instruccion de Control IF:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showAnidS sep h (Bwith [] []) = 
+  (showLine sep h "Instruccion de Control With:\n") ++ (showLine sep (h+1) "Declaraciones: Vacio\n")
+    ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+
+showAnidS sep h (Bwith [] ins) = 
+  (showLine sep h "Instruccion de Control With:\n") ++ (showLine sep (h+1) "Declaraciones: Vacio\n")
+    ++ (showLine sep (h+1) "Instrucciones:\n") ++ (concatMap (showAnidS sep (h+2)) ins) 
+
+showAnidS sep h (Bwith dls []) = 
+  (showLine sep h "Instruccion de Control With:\n") ++ (showLine sep (h+1) "Declaraciones:\n") 
+    ++ (concatMap (showDecl sep (h+2)) dls) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+
+showAnidS sep h (Bwith dls ins) = 
+  (showLine sep h "Instruccion de Control With:\n") ++ (showLine sep (h+1) "Declaraciones:\n") 
+    ++ (concatMap (showDecl sep (h+2)) dls) ++ (showLine sep (h+1) "Instrucciones:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins) 
+
+showAnidS sep h (Bwhile e []) = 
+  (showLine sep h "Instruccion de Control For:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones: Vacio\n") 
+
+showAnidS sep h (Bwhile e ins) = 
+  (showLine sep h "Instruccion de Control For:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showAnidS sep h (Bfor id e1 e2 []) = 
+  (showLine sep h "Instruccion de Control For:\n") ++ (showLine sep (h+1) "Iterador:\n") 
+    ++ (showLine sep (h+2) (show id)++"\n") ++ (showLine sep (h+1) "Inicio:\n") 
+    ++ (showExpr sep (h+2) e1) ++ (showLine sep (h+1) "Fin:\n")
+    ++ (showExpr sep (h+2) e2) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+
+showAnidS sep h (Bfor id e1 e2 ins) = 
+  (showLine sep h "Instruccion de Control For:\n") ++ (showLine sep (h+1) "Iterador:\n") 
+    ++ (showLine sep (h+2) (show id)++"\n") ++ (showLine sep (h+1) "Inicio:\n") 
+    ++ (showExpr sep (h+2) e1) ++ (showLine sep (h+1) "Fin:\n")
+    ++ (showExpr sep (h+2) e2) ++ (showLine sep (h+1) "Instrucciones:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showAnidS sep h (Bforby id e1 e2 e3 []) = 
+  (showLine sep h "Instruccion de Control For by:\n") ++ (showLine sep (h+1) "Iterador:\n") 
+    ++ (showLine sep (h+2) (show id)++"\n") ++ (showLine sep (h+1) "Inicio:\n") 
+    ++ (showExpr sep (h+2) e1) ++ (showLine sep (h+1) "Fin:\n")
+    ++ (showExpr sep (h+2) e2) ++ (showLine sep (h+1) "Incremento:\n")
+    ++ (showExpr sep (h+2) e3) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+
+showAnidS sep h (Bforby id e1 e2 e3 ins) = 
+  (showLine sep h "Instruccion de Control For by:\n") ++ (showLine sep (h+1) "Iterador:\n") 
+    ++ (showLine sep (h+2) (show id)++"\n") ++ (showLine sep (h+1) "Inicio:\n") 
+    ++ (showExpr sep (h+2) e1) ++ (showLine sep (h+1) "Fin:\n")
+    ++ (showExpr sep (h+2) e2) ++ (showLine sep (h+1) "Incremento:\n")
+    ++ (showExpr sep (h+2) e3) ++ (showLine sep (h+1) "Instrucciones:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showAnidS sep h (Brepeat e []) = 
+  (showLine sep h "Instruccion de Control Repeat:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+
+showAnidS sep h (Brepeat e ins) = 
+  (showLine sep h "Instruccion de Control Repeat:\n") ++ (showLine sep (h+1) "Condicion:\n") 
+    ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones:\n") 
+    ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showAnidS sep h (Asig id e) = 
+  (showLine sep h "Asignacion:\n") ++ (showLine sep (h+1) "Variable:\n") 
+    ++ (showLine sep (h+2) (show id)++"\n") ++ (showLine sep (h+1) "Expresion Asignada:\n") 
+    ++ (showExpr sep (h+2) e)
+
+showAnidS sep h (InsFcall f) = showFuncion sep h f
+
+showAnidS sep h (Read id) = 
+  (showLine sep h "Instruccion: Read\n") ++ (showLine sep (h+1) "Argumento:\n")
+    ++ (showLine sep (h+2) (show id)++"\n")
+
+showAnidS sep h (Write xprs) = 
+  (showLine sep h "Instruccion: Write\n") ++ (showLine sep (h+1) "Argumentos:\n")
+    ++ (concatMap (showExprS sep (h+2)) xprs)
+
+showAnidS sep h (WriteLn xprs) = 
+  (showLine sep h "Instruccion: WriteLn\n") ++ (showLine sep (h+1) "Argumentos:\n")
+    ++ (concatMap (showExprS sep (h+2)) xprs)
+
+showAnidS sep h (Return e) = (showLine sep h "Instruccion: Retorno\n") ++ (showExpr sep (h+2) e)
+
+showAnidS sep h EmptyB = showLine sep h "Instruccion: Vacia\n"
 
 
-showAST :: String -> Int -> Node -> String 
-showAST sep h ns =
-    case ns of
-        (Node Empty []) -> ""
-        (Node ptk []) ->  (foldr (++) "" (replicate h sep)) ++ show ptk ++ "\n"
-        (Node ptk chlds) -> (foldr (++) "" (replicate h sep)) ++ show ptk ++ "\n" ++ concatMap (showAST sep (h+1)) chlds
-        --}
+
+showDecl :: String -> Int -> Decl -> String 
+showDecl sep h (Inicializacion t id e) = 
+  (showLine sep h "Declaracion:\n") ++ (showTipo sep (h+1) t)
+    ++ (showLine sep (h+1) "Variable:\n") ++ (showLine sep (h+2) (show id)++"\n")
+    ++ (showLine sep (h+1) "Inicializacion:\n") ++ (showExpr sep (h+2) e)
+
+showDecl sep h (Declaracion t []) = (showLine sep h "Esto es un error porque no puedes hacer declaraciones sin id's\n")
+
+showDecl sep h (Declaracion t ids) = 
+  (showLine sep h "Declaracion:\n") ++ (showTipo sep (h+1) t)
+    ++ (showLine sep (h+1) "Variables:\n") ++ (concatMap (\x -> showLine sep (h+2) ((show x) ++ "\n")) ids)
+
+showDecl sep h EmptyD = showLine sep h "Declaracion: Vacia\n"
+
+
+showTipo :: String -> Int -> Tipo -> String 
+showTipo sep h NumberT = showLine sep h "Tipo de Datos: Number\n"
+
+showTipo sep h BooleanT = showLine sep h "Tipo de Datos: Boolean\n"
+
+
+showExprS :: String -> Int -> ExprS -> String 
+showExprS sep h (ExprW e) = showExpr sep h e
+
+showExprS sep h (StringW lt) = showLine sep h ((show lt) ++ "\n")
+
+
+showFuncion :: String -> Int -> Funcion -> String 
+showFuncion sep h (FuncionSA lt) = 
+  (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
+
+showFuncion sep h (FuncionCA lt []) = 
+  (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
+    ++ (showLine sep (h+1) "Argumentos:\n")
+
+showFuncion sep h (FuncionCA lt xprs) = 
+  (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
+    ++ (showLine sep (h+1) "Argumentos:\n") ++ (concatMap (showExpr sep (h+2)) xprs)
+
+
+showExpr :: String -> Int -> Expr -> String
+showExpr sep h (Or e1 e2) = 
+  (showLine sep h "Operador Or:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (And e1 e2) = 
+  (showLine sep h "Operador And:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Eq e1 e2) = 
+  (showLine sep h "Operador Comparacion Equivalente:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Neq e1 e2) = 
+  (showLine sep h "Operador Comparacion Inequivalente:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Less e1 e2) = 
+  (showLine sep h "Operador Comparacion Menor:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Lesseq e1 e2) = 
+  (showLine sep h "Operador Comparacion Menor o Igual:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (More e1 e2) = 
+  (showLine sep h "Operador Comparacion Mayor:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Moreq e1 e2) = 
+  (showLine sep h "Operador Comparacion Mayor o Igual:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Plus e1 e2) = 
+  (showLine sep h "Operador Suma:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Minus e1 e2) = 
+  (showLine sep h "Operador Resta:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Mult e1 e2) = 
+  (showLine sep h "Operador Multiplicacion:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Divex e1 e2) = 
+  (showLine sep h "Operador Division Exacta '/':\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Modex e1 e2) = 
+  (showLine sep h "Operador Resto Exacto '%':\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Div e1 e2) = 
+  (showLine sep h "Operador Div:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Mod e1 e2) = 
+  (showLine sep h "Operador Mod:\n") 
+    ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
+    ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
+
+showExpr sep h (Not e) = (showLine sep h "Operador Unario Not:\n") ++ (showExpr sep (h+1) e)
+
+showExpr sep h (Uminus e) = (showLine sep h "Operador Unario Menos:\n") ++ (showExpr sep (h+1) e)
+
+showExpr sep h (Identifier i) = showLine sep h (show i ++ "\n")
+
+showExpr sep h (Integer n) = showLine sep h (show n ++ "\n")
+
+showExpr sep h (Floating n) = showLine sep h (show n ++ "\n")
+
+showExpr sep h (ExpTrue b) = showLine sep h (show b ++ "\n")
+
+showExpr sep h (ExpFalse b) = showLine sep h (show b ++ "\n")
+
+showExpr sep h (ExpFcall f) = showFuncion sep h f
+
+showExpr sep h (Bracket e) = (showLine sep h "Expresion Agrupada: \n") ++ (showExpr sep (h+1) e)
+
+showLine :: String -> Int -> String -> String
+showLine sep h st = (foldr (++) "" (replicate h sep)) ++ st
