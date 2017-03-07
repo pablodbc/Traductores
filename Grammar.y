@@ -84,19 +84,19 @@ FunDec  : func identifier'('Param')' begin Bloque end';'                {Proc $2
 Bloque  : {- lambda -}      {[]}
         | Bloque AnidS      {$2 : $1}
 
-AnidS   : if Expr then Bloque else Bloque end';'                        {Bifelse $2 (reverse $4) (reverse $6)}
-        | if Expr then Bloque end';'                                    {Bif $2 (reverse $4)}
+AnidS   : if Expr then Bloque else Bloque end';'                        {Bifelse $2 (reverse $4) (reverse $6) (takePos $1)}
+        | if Expr then Bloque end';'                                    {Bif $2 (reverse $4) (takePos $1)}
         | with ListaD do Bloque end';'                                  {Bwith (reverse $2) (reverse $4)}
-        | while Expr do Bloque end';'                                   {Bwhile $2 (reverse $4)}
+        | while Expr do Bloque end';'                                   {Bwhile $2 (reverse $4) (takePos $1)}
         | for identifier from Expr to Expr do Bloque end';'             {Bfor $2 $4 $6 (reverse $8)}
         | for identifier from Expr to Expr by Expr do Bloque end';'     {Bforby $2 $4 $6 $8 (reverse $10)}
-        | repeat Expr times Bloque end';'                               {Brepeat $2 (reverse $4)}
+        | repeat Expr times Bloque end';'                               {Brepeat $2 (reverse $4) (takePos $1)}
         | identifier '=' Expr';'                                        {Asig $1 $3}
         | Funcion                                                       {InsFcall $1}
         | read identifier ';'                                           {Read $2}
         | write ArgW ';'                                                {Write (reverse $2)}
         | writeln ArgW';'                                               {WriteLn (reverse $2)}
-        | return Expr';'                                                {Return $2}
+        | return Expr';'                                                {Return $2 (takePos $1)}
         | ';'                                                           {EmptyB}
 
         
@@ -133,23 +133,23 @@ Args    : Expr                          {[$1]}
 Funcion : identifier'('')'';'                                           {FuncionSA $1}
         | identifier'(' Args ')'';'                                     {FuncionCA $1 (reverse $3)}
         
-Expr    : Expr or Expr                  {Or $1 $3}
-        | Expr and Expr                 {And $1 $3}
-        | Expr '==' Expr                {Eq $1 $3}
-        | Expr '/=' Expr                {Neq $1 $3}
-        | Expr '<' Expr                 {Less $1 $3}
-        | Expr '<=' Expr                {Lesseq $1 $3}
-        | Expr '>' Expr                 {More $1 $3}
-        | Expr '>=' Expr                {Moreq $1 $3}
-        | Expr '+' Expr                 {Plus $1 $3}
-        | Expr '-' Expr                 {Minus $1 $3}
-        | Expr '*' Expr                 {Mult $1 $3}
-        | Expr '/' Expr                 {Divex $1 $3}
-        | Expr '%' Expr                 {Modex $1 $3}
-        | Expr div Expr                 {Div $1 $3}
-        | Expr mod Expr                 {Mod $1 $3}
-        | not Expr                      {Not $2}
-        | '-'Expr %prec NEG             {Uminus $2}
+Expr    : Expr or Expr                  {Or $1 $3 (takePos $2)}
+        | Expr and Expr                 {And $1 $3 (takePos $2)}
+        | Expr '==' Expr                {Eq $1 $3 (takePos $2)}
+        | Expr '/=' Expr                {Neq $1 $3 (takePos $2)}
+        | Expr '<' Expr                 {Less $1 $3 (takePos $2)}
+        | Expr '<=' Expr                {Lesseq $1 $3 (takePos $2)}
+        | Expr '>' Expr                 {More $1 $3 (takePos $2)}
+        | Expr '>=' Expr                {Moreq $1 $3 (takePos $2)}
+        | Expr '+' Expr                 {Plus $1 $3 (takePos $2)}
+        | Expr '-' Expr                 {Minus $1 $3 (takePos $2)}
+        | Expr '*' Expr                 {Mult $1 $3 (takePos $2)}
+        | Expr '/' Expr                 {Divex $1 $3 (takePos $2)}
+        | Expr '%' Expr                 {Modex $1 $3 (takePos $2)}
+        | Expr div Expr                 {Div $1 $3 (takePos $2)}
+        | Expr mod Expr                 {Mod $1 $3 (takePos $2)}
+        | not Expr                      {Not $2 (takePos $1)}
+        | '-'Expr %prec NEG             {Uminus $2 (takePos $1)}
         | identifier                    {Identifier $1}
         | integer                       {Integer $1}
         | floating                      {Floating $1}

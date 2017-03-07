@@ -1,9 +1,11 @@
 module Stdout where
 -- Lets print everything
 import qualified Lexer
+
 -- Token List printer
 getPos :: Lexer.AlexPosn -> (Int,Int)
 getPos (Lexer.AlexPn _ l c) = (l,c)
+
 printPlease :: [Lexer.Token] -> [String]
 printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 
@@ -112,6 +114,110 @@ makePrintable (Lexer.To p s) = "linea " ++ show(fst(getPos p)) ++ ", columna " +
 makePrintable (Lexer.Read p s) = "linea " ++ show(fst(getPos p)) ++ ", columna " ++ show(snd(getPos p)) ++ ": palabra reservada '" ++ (id s) ++ "'"
 
 makePrintable (Lexer.LexError p s) = "linea " ++ show(fst(getPos p)) ++ ", columna " ++ show(snd(getPos p)) ++ ": Caracter inesperado '" ++ (id s) ++ "'"
+
+
+takePos :: Lexer.Token -> Lexer.AlexPosn
+takePos (Lexer.Integer p s) = p
+
+takePos (Lexer.Floating p s) = p
+
+takePos (Lexer.Str p s) = p
+
+takePos (Lexer.Identifier p s) = p
+
+takePos (Lexer.Modex p s) = p
+
+takePos (Lexer.Divex p s) = p
+
+takePos (Lexer.Mult p s) = p
+
+takePos (Lexer.Minus p s) = p
+
+takePos (Lexer.CloseP p s) = p
+
+takePos (Lexer.OpenP p s) = p
+
+takePos (Lexer.Plus p s) = p
+
+takePos (Lexer.Def p s) = p
+
+takePos (Lexer.SemiColon p s) = p
+
+takePos (Lexer.Comma p s) = p
+
+takePos (Lexer.Less p s) = p
+
+takePos (Lexer.More p s) = p
+
+takePos (Lexer.Not p s) = p
+
+takePos (Lexer.And p s) = p
+
+takePos (Lexer.Or p s) = p
+
+takePos (Lexer.Eq p s) = p
+
+takePos (Lexer.Neq p s) = p
+
+takePos (Lexer.Moreq p s) = p
+
+takePos (Lexer.Lesseq p s) = p
+
+takePos (Lexer.Div p s) = p
+
+takePos (Lexer.Mod p s) = p
+
+takePos (Lexer.Arrow p s) = p
+
+takePos (Lexer.Number p s) = p
+
+takePos (Lexer.Boolean p s) = p
+
+takePos (Lexer.True' p s) = p
+
+takePos (Lexer.False' p s) = p
+
+takePos (Lexer.With p s) = p
+
+takePos (Lexer.Do p s) = p
+
+takePos (Lexer.End p s) = p
+
+takePos (Lexer.If p s) = p
+
+takePos (Lexer.Else p s) = p
+
+takePos (Lexer.Then p s) = p
+
+takePos (Lexer.While p s) = p
+
+takePos (Lexer.For p s) = p
+
+takePos (Lexer.Repeat p s) = p
+
+takePos (Lexer.Begin p s) = p
+
+takePos (Lexer.Return p s) = p
+
+takePos (Lexer.Func p s) = p
+
+takePos (Lexer.Times p s) = p
+
+takePos (Lexer.Program p s) = p
+
+takePos (Lexer.WriteLn p s) = p
+
+takePos (Lexer.Write p s) = p
+
+takePos (Lexer.By p s) = p
+
+takePos (Lexer.From p s) = p
+
+takePos (Lexer.To p s) = p
+
+takePos (Lexer.Read p s) = p
+
+takePos (Lexer.LexError p s) = p
 
 
 -- Show token Value
@@ -227,19 +333,19 @@ data FunDec   = Proc Lexer.Token [ParamL] [AnidS]                |
 
 data ParamL   = ParamL Tipo Lexer.Token deriving (Show)
 
-data AnidS    = Bifelse Expr [AnidS] [AnidS]                       |
-                Bif Expr [AnidS]                                   |
-                Bwith [Decl] [AnidS]                               |
-                Bwhile Expr [AnidS]                                |
-                Bfor Lexer.Token Expr Expr [AnidS]                 |
-                Bforby Lexer.Token Expr Expr Expr [AnidS]          |
-                Brepeat Expr [AnidS]                               |
-                Asig {leftSide :: Lexer.Token, rightSide :: Expr}  |
-                InsFcall Funcion                                   |
-                Read Lexer.Token                                   |
-                Write [ExprS]                                      |
-                WriteLn [ExprS]                                    |
-                Return Expr                                        |
+data AnidS    = Bifelse Expr [AnidS] [AnidS] Lexer.AlexPosn                         |
+                Bif Expr [AnidS] Lexer.AlexPosn                                     |
+                Bwith [Decl] [AnidS]                                                |
+                Bwhile Expr [AnidS] Lexer.AlexPosn                                  |
+                Bfor Lexer.Token Expr Expr [AnidS]                                  |
+                Bforby Lexer.Token Expr Expr Expr [AnidS]                           |
+                Brepeat Expr [AnidS] Lexer.AlexPosn                                 |
+                Asig {leftSide :: Lexer.Token, rightSide :: Expr}                   |
+                InsFcall Funcion                                                    |
+                Read Lexer.Token                                                    |
+                Write [ExprS]                                                       |
+                WriteLn [ExprS]                                                     |
+                Return Expr Lexer.AlexPosn                                          |
                 EmptyB                                       
                 deriving (Show)
 
@@ -260,31 +366,69 @@ data Funcion  = FuncionSA Lexer.Token         |
                 FuncionCA Lexer.Token [Expr]
                 deriving (Show)
 
-data Expr     = Or Expr Expr                   |
-                And Expr Expr                  |
-                Eq Expr Expr                   |
-                Neq Expr Expr                  |
-                Less Expr Expr                 |
-                Lesseq Expr Expr               |
-                More Expr Expr                 |
-                Moreq Expr Expr                |
-                Plus Expr Expr                 |
-                Minus Expr Expr                |
-                Mult Expr Expr                 |
-                Divex Expr Expr                |
-                Modex Expr Expr                |
-                Div Expr Expr                  |
-                Mod Expr Expr                  |
-                Not Expr                       |
-                Uminus Expr                    |
-                Identifier Lexer.Token         |
-                Integer Lexer.Token            |
-                Floating Lexer.Token           |
-                ExpTrue Lexer.Token            |
-                ExpFalse Lexer.Token           |
-                ExpFcall Funcion               |
+data Expr     = Or Expr Expr Lexer.AlexPosn                   |
+                And Expr Expr Lexer.AlexPosn                  |
+                Eq Expr Expr  Lexer.AlexPosn                  |
+                Neq Expr Expr  Lexer.AlexPosn                 |
+                Less Expr Expr  Lexer.AlexPosn                |
+                Lesseq Expr Expr  Lexer.AlexPosn              |
+                More Expr Expr Lexer.AlexPosn                 |
+                Moreq Expr Expr Lexer.AlexPosn                |
+                Plus Expr Expr Lexer.AlexPosn                 |
+                Minus Expr Expr Lexer.AlexPosn                |
+                Mult Expr Expr Lexer.AlexPosn                 |
+                Divex Expr Expr Lexer.AlexPosn                |
+                Modex Expr Expr Lexer.AlexPosn                |
+                Div Expr Expr Lexer.AlexPosn                  |
+                Mod Expr Expr  Lexer.AlexPosn                 |
+                Not Expr Lexer.AlexPosn                       |
+                Uminus Expr Lexer.AlexPosn                    |
+                Identifier Lexer.Token                        |
+                Integer Lexer.Token                           |
+                Floating Lexer.Token                          |
+                ExpTrue Lexer.Token                           |
+                ExpFalse Lexer.Token                          |
+                ExpFcall Funcion                              |
                 Bracket Expr
                 deriving (Show)
+
+
+
+
+showFunDec :: String -> Int -> FunDec -> String
+
+showFunDec sep h (Proc idt [] []) =
+    (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros: Vacio\n")
+    ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+
+showFunDec sep h (Proc idt [] ins) =
+    (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros: Vacio\n")
+    ++ (showLine sep (h+1) "Instrucciones:\n") ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showFunDec sep h (Proc id at []]) =
+    (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros:\n")
+    ++ (concatMap (showParamL sep (h+2)) at) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+
+showFunDec sep h (Proc id at ins) =
+    (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros:\n")
+    ++ (concatMap (showParamL sep (h+2)) at) ++ (showLine sep (h+1) "Instrucciones:\n")
+    ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showFunDec sep h (Func idt at t ins) =
+    (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros:\n")
+    ++ (concatMap (showParamL sep (h+2)) at) ++ (showTipo sep (h+1) t)
+    ++ (showLine sep (h+1) "Instrucciones:\n") ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showFunDec sep h (Func idt [] t ins) =
+    (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros: Vacio\n")
+    ++ (showTipo sep (h+1) t) ++ (showLine sep (h+1) "Instrucciones:\n")
+    ++ (concatMap (showAnidS sep (h+2)) ins)
 
 
 showParamL :: String -> Int -> ParamL -> String
@@ -294,32 +438,32 @@ showParamL sep h (ParamL t id) =
 
 
 showAnidS :: String -> Int -> AnidS -> String
-showAnidS sep h (Bifelse e [] []) = 
+showAnidS sep h (Bifelse e [] [] _) = 
   (showLine sep h "Instruccion de Control If Else:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones de Caso Verdadero: Vacio\n") 
     ++ (showLine sep (h+1) "Instrucciones de Caso Falso: Vacio\n")
 
-showAnidS sep h (Bifelse e ins1 []) = 
+showAnidS sep h (Bifelse e ins1 [] _) = 
   (showLine sep h "Instruccion de Control IF Else:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones de Caso Verdadero:\n") 
     ++ (concatMap (showAnidS sep (h+2)) ins1) ++ (showLine sep (h+1) "Instrucciones de Caso Falso: Vacio\n")
 
-showAnidS sep h (Bifelse e [] ins2) = 
+showAnidS sep h (Bifelse e [] ins2 _) = 
   (showLine sep h "Instruccion de Control IF Else:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones de Caso Verdadero: Vacio\n")
     ++ (showLine sep (h+1) "Instrucciones de Caso Falso:\n") ++ (concatMap (showAnidS sep (h+2)) ins2)
 
-showAnidS sep h (Bifelse e ins1 ins2) = 
+showAnidS sep h (Bifelse e ins1 ins2 _) = 
   (showLine sep h "Instruccion de Control IF Else:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones de Caso Verdadero:\n") 
     ++ (concatMap (showAnidS sep (h+2)) ins1) ++ (showLine sep (h+1) "Instrucciones de Caso Falso:\n") 
     ++ (concatMap (showAnidS sep (h+2)) ins2)
 
-showAnidS sep h (Bif e []) = 
+showAnidS sep h (Bif e [] _) = 
   (showLine sep h "Instruccion de Control If:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones: Vacio\n") 
 
-showAnidS sep h (Bif e ins) = 
+showAnidS sep h (Bif e ins _) = 
   (showLine sep h "Instruccion de Control IF:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones:\n") 
     ++ (concatMap (showAnidS sep (h+2)) ins)
@@ -341,11 +485,11 @@ showAnidS sep h (Bwith dls ins) =
     ++ (concatMap (showDecl sep (h+2)) dls) ++ (showLine sep (h+1) "Instrucciones:\n") 
     ++ (concatMap (showAnidS sep (h+2)) ins) 
 
-showAnidS sep h (Bwhile e []) = 
+showAnidS sep h (Bwhile e [] _) = 
   (showLine sep h "Instruccion de Control For:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones: Vacio\n") 
 
-showAnidS sep h (Bwhile e ins) = 
+showAnidS sep h (Bwhile e ins _) = 
   (showLine sep h "Instruccion de Control For:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones:\n") 
     ++ (concatMap (showAnidS sep (h+2)) ins)
@@ -378,11 +522,11 @@ showAnidS sep h (Bforby id e1 e2 e3 ins) =
     ++ (showExpr sep (h+2) e3) ++ (showLine sep (h+1) "Instrucciones:\n") 
     ++ (concatMap (showAnidS sep (h+2)) ins)
 
-showAnidS sep h (Brepeat e []) = 
+showAnidS sep h (Brepeat e [] _) = 
   (showLine sep h "Instruccion de Control Repeat:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
 
-showAnidS sep h (Brepeat e ins) = 
+showAnidS sep h (Brepeat e ins _) = 
   (showLine sep h "Instruccion de Control Repeat:\n") ++ (showLine sep (h+1) "Condicion:\n") 
     ++ (showExpr sep (h+2) e) ++ (showLine sep (h+1) "Instrucciones:\n") 
     ++ (concatMap (showAnidS sep (h+2)) ins)
@@ -406,7 +550,7 @@ showAnidS sep h (WriteLn xprs) =
   (showLine sep h "Instruccion: WriteLn\n") ++ (showLine sep (h+1) "Argumentos:\n")
     ++ (concatMap (showExprS sep (h+2)) xprs)
 
-showAnidS sep h (Return e) = (showLine sep h "Instruccion: Retorno\n") ++ (showExpr sep (h+2) e)
+showAnidS sep h (Return e _) = (showLine sep h "Instruccion: Retorno\n") ++ (showExpr sep (h+2) e)
 
 showAnidS sep h EmptyB = showLine sep h "Instruccion: Vacia\n"
 
@@ -443,9 +587,9 @@ showFuncion :: String -> Int -> Funcion -> String
 showFuncion sep h (FuncionSA lt) = 
   (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
 
-showFuncion sep h (FuncionCA lt []) = 
+{-- showFuncion sep h (FuncionCA lt []) = 
   (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
-    ++ (showLine sep (h+1) "Argumentos:\n")
+    ++ (showLine sep (h+1) "Argumentos:\n") --}
 
 showFuncion sep h (FuncionCA lt xprs) = 
   (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
@@ -453,84 +597,84 @@ showFuncion sep h (FuncionCA lt xprs) =
 
 
 showExpr :: String -> Int -> Expr -> String
-showExpr sep h (Or e1 e2) = 
+showExpr sep h (Or e1 e2 _) = 
   (showLine sep h "Operador Or:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (And e1 e2) = 
+showExpr sep h (And e1 e2 _) = 
   (showLine sep h "Operador And:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Eq e1 e2) = 
+showExpr sep h (Eq e1 e2 _) = 
   (showLine sep h "Operador Comparacion Equivalente:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Neq e1 e2) = 
+showExpr sep h (Neq e1 e2 _) = 
   (showLine sep h "Operador Comparacion Inequivalente:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Less e1 e2) = 
+showExpr sep h (Less e1 e2 _) = 
   (showLine sep h "Operador Comparacion Menor:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Lesseq e1 e2) = 
+showExpr sep h (Lesseq e1 e2 _) = 
   (showLine sep h "Operador Comparacion Menor o Igual:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (More e1 e2) = 
+showExpr sep h (More e1 e2 _) = 
   (showLine sep h "Operador Comparacion Mayor:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Moreq e1 e2) = 
+showExpr sep h (Moreq e1 e2 _) = 
   (showLine sep h "Operador Comparacion Mayor o Igual:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Plus e1 e2) = 
+showExpr sep h (Plus e1 e2 _) = 
   (showLine sep h "Operador Suma:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Minus e1 e2) = 
+showExpr sep h (Minus e1 e2 _) = 
   (showLine sep h "Operador Resta:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Mult e1 e2) = 
+showExpr sep h (Mult e1 e2 _) = 
   (showLine sep h "Operador Multiplicacion:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Divex e1 e2) = 
+showExpr sep h (Divex e1 e2 _) = 
   (showLine sep h "Operador Division Exacta '/':\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Modex e1 e2) = 
+showExpr sep h (Modex e1 e2 _) = 
   (showLine sep h "Operador Resto Exacto '%':\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Div e1 e2) = 
+showExpr sep h (Div e1 e2 _) = 
   (showLine sep h "Operador Div:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Mod e1 e2) = 
+showExpr sep h (Mod e1 e2 _) = 
   (showLine sep h "Operador Mod:\n") 
     ++ (showLine sep (h+1) "Operando Izquierdo:\n") ++ (showExpr sep (h+2) e1)
     ++ (showLine sep (h+1) "Operando Derecho:\n") ++ (showExpr sep (h+2) e2)
 
-showExpr sep h (Not e) = (showLine sep h "Operador Unario Not:\n") ++ (showExpr sep (h+1) e)
+showExpr sep h (Not e _) = (showLine sep h "Operador Unario Not:\n") ++ (showExpr sep (h+1) e)
 
-showExpr sep h (Uminus e) = (showLine sep h "Operador Unario Menos:\n") ++ (showExpr sep (h+1) e)
+showExpr sep h (Uminus e _) = (showLine sep h "Operador Unario Menos:\n") ++ (showExpr sep (h+1) e)
 
 showExpr sep h (Identifier i) = showLine sep h (show i ++ "\n")
 
