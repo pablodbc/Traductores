@@ -396,12 +396,13 @@ data Expr     = Or Expr Expr Lexer.AlexPosn                   |
 
 showInit :: String -> Int -> Init -> String
 
+showInit sep h (Program [] li) = 
+    (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1)) li)
+
 showInit sep h (Program lf li) =
     (showLine sep h "Lista de Declaraciones de funciones:\n") ++ (concatMap (showFunDec sep (h+1)) lf)
         ++ (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1)) li)
 
-showInit sep h (Program [] li) = 
-    (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1)) li)
 
 showFunDec :: String -> Int -> FunDec -> String
 
@@ -426,11 +427,10 @@ showFunDec sep h (Proc idt at ins) =
     ++ (concatMap (showParamL sep (h+2)) at) ++ (showLine sep (h+1) "Instrucciones:\n")
     ++ (concatMap (showAnidS sep (h+2)) ins)
 
-showFunDec sep h (Func idt at t ins) =
+showFunDec sep h (Func idt [] t []) =
     (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
-    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros:\n")
-    ++ (concatMap (showParamL sep (h+2)) at) ++ (showTipo sep (h+1) t)
-    ++ (showLine sep (h+1) "Instrucciones:\n") ++ (concatMap (showAnidS sep (h+2)) ins)
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros: Vacio\n")
+    ++ (showTipo sep (h+1) t) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
 
 showFunDec sep h (Func idt [] t ins) =
     (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
@@ -444,10 +444,13 @@ showFunDec sep h (Func idt at t []) =
     ++ (concatMap (showParamL sep (h+2)) at) ++ (showTipo sep (h+1) t)
     ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
 
-showFunDec sep h (Func idt [] t []) =
+showFunDec sep h (Func idt at t ins) =
     (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
-    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros: Vacio\n")
-    ++ (showTipo sep (h+1) t) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros:\n")
+    ++ (concatMap (showParamL sep (h+2)) at) ++ (showTipo sep (h+1) t)
+    ++ (showLine sep (h+1) "Instrucciones:\n") ++ (concatMap (showAnidS sep (h+2)) ins)
+
+
 
 
 showParamL :: String -> Int -> ParamL -> String
