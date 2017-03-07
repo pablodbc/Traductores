@@ -394,6 +394,8 @@ data Expr     = Or Expr Expr Lexer.AlexPosn                   |
 
 
 
+showInit :: String -> Int -> Init -> String
+
 
 showFunDec :: String -> Int -> FunDec -> String
 
@@ -429,6 +431,17 @@ showFunDec sep h (Func idt [] t ins) =
     ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros: Vacio\n")
     ++ (showTipo sep (h+1) t) ++ (showLine sep (h+1) "Instrucciones:\n")
     ++ (concatMap (showAnidS sep (h+2)) ins)
+
+showFunDec sep h (Func idt at t []) =
+    (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros:\n")
+    ++ (concatMap (showParamL sep (h+2)) at) ++ (showTipo sep (h+1) t)
+    ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
+
+showFunDec sep h (Func idt [] t []) =
+    (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
+    ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros: Vacio\n")
+    ++ (showTipo sep (h+1) t) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
 
 
 showParamL :: String -> Int -> ParamL -> String
