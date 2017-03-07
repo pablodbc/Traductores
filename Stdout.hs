@@ -397,12 +397,11 @@ data Expr     = Or Expr Expr Lexer.AlexPosn                   |
 showInit :: String -> Int -> Init -> String
 
 showInit sep h (Program lf li) =
-    (showLine sep h "Lista de Declaraciones de funciones:\n") ++ (concatMap (showFunDec sep (h+1) lf)
-        ++ (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1) li)
+    (showLine sep h "Lista de Declaraciones de funciones:\n") ++ (concatMap (showFunDec sep (h+1)) lf)
+        ++ (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1)) li)
 
-showInit sep h (Program [] li) =
-    (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1) li) 
-
+showInit sep h (Program [] li) = 
+    (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1)) li)
 
 showFunDec :: String -> Int -> FunDec -> String
 
@@ -416,12 +415,12 @@ showFunDec sep h (Proc idt [] ins) =
     ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros: Vacio\n")
     ++ (showLine sep (h+1) "Instrucciones:\n") ++ (concatMap (showAnidS sep (h+2)) ins)
 
-showFunDec sep h (Proc id at []]) =
+showFunDec sep h (Proc idt at []) =
     (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
     ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros:\n")
     ++ (concatMap (showParamL sep (h+2)) at) ++ (showLine sep (h+1) "Instrucciones: Vacio\n")
 
-showFunDec sep h (Proc id at ins) =
+showFunDec sep h (Proc idt at ins) =
     (showLine sep h "Declaracion de funcion:\n") ++ (showLine sep (h+1) "Nombre:\n")
     ++ (showLine sep (h+2) (show idt)) ++ "\n" ++ (showLine sep (h+1) "Parametros:\n")
     ++ (concatMap (showParamL sep (h+2)) at) ++ (showLine sep (h+1) "Instrucciones:\n")
