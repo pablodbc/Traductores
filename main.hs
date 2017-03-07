@@ -42,5 +42,6 @@ main = do
                 Left msg -> putStrLn msg
                 Right x -> do
                     let ast = parse x
-                    ast >>= print
+                    astToShow <- ast
+                    putStr $ Out.showInit ":^) " 0 astToShow
             

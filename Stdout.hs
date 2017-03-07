@@ -607,14 +607,10 @@ showExprS sep h (StringW lt) = showLine sep h ((show lt) ++ "\n")
 
 showFuncion :: String -> Int -> Funcion -> String 
 showFuncion sep h (FuncionSA lt) = 
-  (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
-
-{-- showFuncion sep h (FuncionCA lt []) = 
-  (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
-    ++ (showLine sep (h+1) "Argumentos:\n") --}
+  (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt) ++ "\n")
 
 showFuncion sep h (FuncionCA lt xprs) = 
-  (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt))
+  (showLine sep h "Llamado a Funcion: \n") ++ (showLine sep (h+1) "Nombre:\n") ++ (showLine sep (h+2) (show lt) ++ "\n")
     ++ (showLine sep (h+1) "Argumentos:\n") ++ (concatMap (showExpr sep (h+2)) xprs)
 
 
