@@ -396,6 +396,13 @@ data Expr     = Or Expr Expr Lexer.AlexPosn                   |
 
 showInit :: String -> Int -> Init -> String
 
+showInit sep h (Program lf li) =
+    (showLine sep h "Lista de Declaraciones de funciones:\n") ++ (concatMap (showFunDec sep (h+1) lf)
+        ++ (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1) li)
+
+showInit sep h (Program [] li) =
+    (showLine sep h "Programa principal:\n") ++ (concatMap (showAnidS sep (h+1) li) 
+
 
 showFunDec :: String -> Int -> FunDec -> String
 
