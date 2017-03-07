@@ -92,7 +92,7 @@ AnidS   : if Expr then Bloque else Bloque end';'                        {Bifelse
         | for identifier from Expr to Expr by Expr do Bloque end';'     {Bforby $2 $4 $6 $8 (reverse $10)}
         | repeat Expr times Bloque end';'                               {Brepeat $2 (reverse $4) (takePos $1)}
         | identifier '=' Expr';'                                        {Asig $1 $3}
-        | Funcion                                                       {InsFcall $1}
+        | Funcion';'                                                    {InsFcall $1}
         | read identifier ';'                                           {Read $2}
         | write ArgW ';'                                                {Write (reverse $2)}
         | writeln ArgW';'                                               {WriteLn (reverse $2)}
@@ -130,8 +130,8 @@ ExprS   : Expr                          {ExprW $1}
 Args    : Expr                          {[$1]}
         | Args ',' Expr                 {$3 : $1}
 
-Funcion : identifier'('')'';'                                           {FuncionSA $1}
-        | identifier'(' Args ')'';'                                     {FuncionCA $1 (reverse $3)}
+Funcion : identifier'('')'                                           {FuncionSA $1}
+        | identifier'(' Args ')'                                     {FuncionCA $1 (reverse $3)}
         
 Expr    : Expr or Expr                  {Or $1 $3 (takePos $2)}
         | Expr and Expr                 {And $1 $3 (takePos $2)}

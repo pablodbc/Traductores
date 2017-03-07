@@ -43,5 +43,5 @@ main = do
                 Right x -> do
                     let ast = parse x
                     astToShow <- ast
-                    putStr $ Out.showInit ":^) " 0 astToShow
+                    putStr $ Out.showInit "| " 0 astToShow
             
