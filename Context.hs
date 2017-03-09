@@ -57,4 +57,4 @@ findExpr :: String -> [Tabla] -> Maybe (Type,ValCalc)
 findExpr _ [] = Nothing
 findExpr s (x:xs) = case r of Nothing -> findExpr s xs
                             otherwise -> r
-                            where r = M.lookup x
+                            where r = M.lookup $ mapa x
