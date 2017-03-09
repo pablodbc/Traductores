@@ -16,7 +16,7 @@ data ValCalc  = CBoolean Bool | CNumber Double | Nein deriving (Eq,Show,Ord)
 
 data Tabla    = ExprTable {tipo :: Type, compType :: CompType, val :: ValCalc} |
                 FuncionTable {rtype :: Type}                                   |
-                SymTable {mapa :: Map String (Type,ValCalc)}
+                SymTable {mapa :: Map String (Type,ValCalc), h :: Int}
                 deriving (Eq,Show,Ord)
 
 data FunProto = FunProto {retype :: Type, args :: [Type], size :: Int} deriving (Eq,Show,Ord)
