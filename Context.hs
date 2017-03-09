@@ -91,14 +91,9 @@ isSymTable _ = False
 onlySymTable :: [Tabla] -> [Tabla]
 onlySymTable = P.filter (isSymTable)
 
-
-isNothing :: Maybe a -> Bool
-isNothing Nothing = True
-isNothing _ = False
-
 findExpr :: String -> [Tabla] -> Maybe (Type,ValCalc)
 
 findExpr _ [] = Nothing
-findExpr s (x:xs) = case (isNothing r) of True -> findExpr s xs
-                                          otherwise -> r
+findExpr s (x:xs) = case Nothing of True -> findExpr s xs
+								otherwise -> r
                             where r = M.lookup s (mapa x)
