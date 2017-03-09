@@ -6,27 +6,25 @@ import Data.Map as M
 import Control.Monad.RWS
 
 
-data CompType = Dynamic | Constant
+data CompType = Dynamic | Constant deriving (Eq,Show)
 
-data Type     = Boolean | Number
+data Type     = Boolean | Number deriving (Eq, Show)
 
-data Rtype    = Type | Void
+data Rtype    = Type | Void deriving (Eq,Show)
 
-type MBoolean = Maybe Bool
-type MDouble  = Maybe Double
-
-data ValCalc  = MBoolean | MDouble
+data ValCalc  = Bool | Double | Nein deriving (Eq,Show)
 
 
 data Tabla    = ExprTable {tipo :: Type, compType :: CompType, val :: ValCalc} |
                 FuncionTable {rtype :: Rtype}                                  |
-                SymTable {tipo :: Type, val :: ValCalc, ht :: Int}
+                SymTable {mapa :: Map String (Type,ValCalc)}
+                deriving (Eq,Show)
 
-data FunProto = FunProto {retype :: Rtype, args :: [Type], size :: Int}
+data FunProto = FunProto {retype :: Rtype, args :: [Type], size :: Int} deriving (Eq,Show)
 
-data FunHandler = FunHandler {id :: String, ret :: Bool} | None
+data FunHandler = FunHandler {id :: String, ret :: Bool} | None deriving (Eq,Show)
 
-data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int}
+data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int} deriving (Eq,Show)
 
 -- Monad que usaremos para hacer estas cosas. El primer tipo es arbitrario (No usaremos el reader)
 type ConMonad = RWS Bool String State
@@ -48,3 +46,17 @@ modifyTable f (State fs t fd h) = State fs (f t) fd h
 
 modifyHeight :: (Int -> Int) -> State -> State
 modifyHeight f (State fs t fd h) = State fs t fd (f h)
+
+isSymTable :: Tabla -> Bool
+isSymTable (SymTable _) = True
+isSymTable _ = False
+
+onlySymTable :: [Tabla] -> [Tabla]
+onlySymTable = filter (isSymTable)
+
+findExpr :: String -> [Tabla] -> Maybe (Type,ValCalc)
+
+findExpr _ [] = Nothing
+findExpr s (x:xs) = case r of Nothing -> findExpr s xs
+                            otherwise -> r
+                            where r = M.lookup x
