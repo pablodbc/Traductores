@@ -37,7 +37,7 @@ anaExpr (Out.ExpFcall f) = do
             case r of
                 Void -> do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
-                                                    ++ "Sacar aqui pos de f" 
+                                                    ++ (Out.showFuncionPos f)
                                                     ++ ". Llamado de procedimiento (no retorna nada) en una expresion que esperaba tipo de retorno.")
                 _ -> do
                     let st = modifyTable popTable st

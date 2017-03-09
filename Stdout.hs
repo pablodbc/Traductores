@@ -715,3 +715,8 @@ showExpr sep h (Bracket e) = (showLine sep h "Expresion Agrupada: \n") ++ (showE
 
 showLine :: String -> Int -> String -> String
 showLine sep h st = (foldr (++) "" (replicate h sep)) ++ st
+
+
+showFuncionPos :: Funcion -> String
+showFuncionPos (FuncionSA (Lexer.Identifier p _)) = printPos p
+showFuncionPos (FuncionCA (Lexer.Identifier p _) _) = printPos p
