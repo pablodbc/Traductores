@@ -12,9 +12,21 @@ anaFuncion :: Out.Funcion -> Context.ConMonad Context.State
 anaFuncion f = anaExpr (Out.ExpFcall f)
 
 anaExpr :: Out.Expr -> Context.ConMonad Context.State
-anaExpr (Out.ExpFalse _) = do
+anaExpr (Out.Integer (Lexer.Number _ s)) = do
     st <- get
-    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant False)) st )
+    return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (read s))) st )
+
+anaExpr (Out.Floating (Lexer.Number _ s)) = do
+    st <- get
+    return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (read s))) st )
+
+anaExpr (Out.ExpTrue (Lexer.Boolean _ s)) = do
+    st <- get
+    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant (read s))) st )
+
+anaExpr (Out.ExpFalse (Lexer.Boolean _ s)) = do
+    st <- get
+    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant (read s))) st )
 
 anaExpr (Out.ExpFcall f) = do
     anaFuncion f
@@ -23,12 +35,14 @@ anaExpr (Out.ExpFcall f) = do
         FuncionTable r -> do 
             case r of
                 Void -> do
-                    error ""
+                    error ("Error: Cerca de la siguiente posicion" 
+                                            ++ "Sacar aqui pos de f" 
+                                            ++ ". Llamado de procedimiento (no retorna nada) en una expresion que esperaba tipo de retorno.")
                 _ -> do
                     let st = modifyTable popTable st
                     return ( modifyTable (pushTable (Context.ExprTable r Context.Dynamic Context.Nein)) st )
         _ -> do
-            error ""
+            error "Error interno, algo salio mal y no esta la tabla de la funcion"
                 
 
 
