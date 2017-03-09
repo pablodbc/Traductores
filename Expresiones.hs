@@ -10,9 +10,48 @@ import Control.Exception
 
 anaFuncion :: Out.Funcion -> Context.ConMonad Context.State
 -- Esto esta terriblemente mal pero es para compilar
-anaFuncion f = anaExpr (Out.ExpFcall f)
+anaFuncion f = do
+    error "Analizar funcion esta incompleto"
+    anaExpr (Out.ExpFcall f)
 
 anaExpr :: Out.Expr -> Context.ConMonad Context.State
+anaExpr (Out.Not e p) = do
+    anaExpr e
+    st <- get
+    case topTable $ tablas st of
+        Context.ExprTable Context.Number _ _ -> do 
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " en Operacion 'not', se esperaba un Tipo Boolean y se encontro expresion Tipo Number")
+        Context.ExprTable Context.Boolean Context.Dynamic n -> do
+            let st = modifyTable popTable st
+            return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n)) st )
+        Context.ExprTable Context.Boolean c n -> do
+            let st = modifyTable popTable st
+            return ( modifyTable (pushTable (Context.ExprTable Context.Boolean c (modifyBoolValCalc (\x -> not x) n))) st )
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+
+anaExpr (Out.Uminus e p) = do
+    anaExpr e
+    st <- get
+    case topTable $ tablas st of
+        Context.ExprTable Context.Boolean _ _ -> do 
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " en Operacion '-', se esperaba un Tipo Number y se encontro expresion Tipo Boolean")
+        Context.ExprTable Context.Number Context.Dynamic n -> do
+            let st = modifyTable popTable st
+            return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n)) st )
+        Context.ExprTable Context.Number c n -> do
+            let st = modifyTable popTable st
+            return ( modifyTable (pushTable (Context.ExprTable Context.Number c (modifyDoubleValCalc (\x -> -x) n))) st )
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+
+
+anaExpr (Out.Identifier i) = error "Implementar analisis de llamado a variable"
+
 anaExpr (Out.Integer (Lexer.Number _ s)) = do
     st <- get
     return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (Context.CNumber (read s)))) st )
@@ -38,16 +77,12 @@ anaExpr (Out.ExpFcall f) = do
                 Void -> do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                                     ++ (Out.showFuncionPos f)
-                                                    ++ ". Llamado de procedimiento (no retorna nada) en una expresion que esperaba tipo de retorno.")
+                                                    ++ ", la cual es un llamado de procedimiento (no retorna nada) en una expresion que esperaba tipo de retorno.")
                 _ -> do
                     let st = modifyTable popTable st
                     return ( modifyTable (pushTable (Context.ExprTable r Context.Dynamic Context.Nein)) st )
         _ -> do
             error "Error interno, algo salio mal y no esta la tabla de la funcion"
-                
-
-
-
 
 anaExpr (Out.Bracket e) = anaExpr e
 

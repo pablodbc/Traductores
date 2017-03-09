@@ -39,6 +39,12 @@ type ConMonad = RWS Bool String State
 
 initialState = State M.empty [] None 0
 
+modifyBoolValCalc :: (Bool -> Bool) -> ValCalc -> ValCalc
+modifyBoolValCalc f (CBoolean b) = CBoolean (f b)
+
+modifyDoubleValCalc :: (Double -> Double) -> ValCalc -> ValCalc
+modifyDoubleValCalc f (CNumber n) = CNumber (f n)
+
 
 pushTable :: Tabla -> [Tabla] -> [Tabla]
 pushTable tabla tablas = tabla:tablas
