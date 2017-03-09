@@ -34,6 +34,8 @@ data FunHandler = FunHandler {id :: String, ret :: Bool} | None deriving (Eq,Sho
 
 data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int} deriving (Eq,Show,Ord)
 
+data FoundExpr = FoundExpr Type ValCalc Int deriving (Eq,Show,Ord)
+
 -- Monad que usaremos para hacer estas cosas. El primer tipo es arbitrario (Reader maneja el separador)
 type ConMonad = RWS String String State
 
@@ -58,7 +60,7 @@ modex x y = x - (y * (fromIntegral $ truncate (x/y)))
 
 
 -- Comparison Handler
-comparisonFunNum :: (Ord a, RealFrac a) => (a -> a -> Bool) -> a -> a -> ValCalc
+comparisonFunNum :: (Eq a, Ord a, RealFrac a) => (a -> a -> Bool) -> a -> a -> ValCalc
 comparisonFunNum f x y = CBoolean (f x y)
 
 comparisonFunBool :: (Bool -> Bool -> Bool) -> Bool -> Bool -> ValCalc
@@ -96,9 +98,9 @@ isNothing :: Maybe a -> Bool
 isNothing Nothing = True
 isNothing _ = False
 
-findExpr :: String -> [Tabla] -> Maybe (Type,ValCalc)
+findExpr :: String -> [Tabla] -> Maybe FoundExpr
 
 findExpr _ [] = Nothing
-findExpr s (x:xs) = case (isNothing r) of True -> findExpr s xs
-                                          otherwise -> r
+findExpr s (x:xs) = case r of Nothing -> findExpr s xs
+                              otherwise -> r >>= (\(t,v) -> return(FoundExpr t v (height x)))
                             where r = M.lookup s (mapa x)
