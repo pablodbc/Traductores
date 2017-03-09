@@ -39,22 +39,36 @@ type ConMonad = RWS String String State
 
 initialState = State M.empty [] None 0
 
-numberConversionHandler :: (RealFrac a, Integral b) => a -> b
-numberConversionHandler = floor
-
-applyIntegerFun ::(Integral a, RealFrac b) => (a -> a -> a) -> b -> b -> b
-applyIntegerFun f x y = fromIntegral(f (numberConversionHandler x) (numberConversionHandler y))
-
+-- ValCalc Modifiers
 modifyBoolValCalc :: (Bool -> Bool) -> ValCalc -> ValCalc
 modifyBoolValCalc f (CBoolean b) = CBoolean (f b)
 
 modifyDoubleValCalc :: (Double -> Double) -> ValCalc -> ValCalc
 modifyDoubleValCalc f (CNumber n) = CNumber (f n)
 
+-- Number Handlers
+numberConversionHandler :: (RealFrac a, Integral b) => a -> b
+numberConversionHandler = floor
+
+applyIntegerFun ::(Integral a, RealFrac b) => (a -> a -> a) -> b -> b -> b
+applyIntegerFun f x y = fromIntegral(f (numberConversionHandler x) (numberConversionHandler y))
+
 modex :: RealFrac a => a -> a -> a
 modex x y = x - (y * (fromIntegral $ truncate (x/y)))
 
 
+-- Comparison Handler
+comparisonFunNum :: (Ord a, RealFrac a) => (a -> a -> Bool) -> a -> a -> ValCalc
+comparisonFunNum f x y = CBoolean (f x y)
+
+comparisonFunBool :: (Bool -> Bool -> Bool) -> Bool -> Bool -> ValCalc
+comparisonFunBool f x y = CBoolean (f x y)
+
+
+
+
+
+-- State Handlers
 pushTable :: Tabla -> [Tabla] -> [Tabla]
 pushTable tabla tablas = tabla:tablas
 
