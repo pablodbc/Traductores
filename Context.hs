@@ -34,8 +34,8 @@ data FunHandler = FunHandler {id :: String, ret :: Bool} | None deriving (Eq,Sho
 
 data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int} deriving (Eq,Show,Ord)
 
--- Monad que usaremos para hacer estas cosas. El primer tipo es arbitrario (No usaremos el reader)
-type ConMonad = RWS Bool String State
+-- Monad que usaremos para hacer estas cosas. El primer tipo es arbitrario (Reader maneja el separador)
+type ConMonad = RWS String String State
 
 initialState = State M.empty [] None 0
 
@@ -45,12 +45,15 @@ numberConversionHandler = floor
 applyIntegerFun ::(Integral a, RealFrac b) => (a -> a -> a) -> b -> b -> b
 applyIntegerFun f x y = fromIntegral(f (numberConversionHandler x) (numberConversionHandler y))
 
-
 modifyBoolValCalc :: (Bool -> Bool) -> ValCalc -> ValCalc
 modifyBoolValCalc f (CBoolean b) = CBoolean (f b)
 
 modifyDoubleValCalc :: (Double -> Double) -> ValCalc -> ValCalc
 modifyDoubleValCalc f (CNumber n) = CNumber (f n)
+
+modex :: RealFrac a => a -> a -> a
+modex x y = x - (y * (fromIntegral $ truncate (x/y)))
+
 
 pushTable :: Tabla -> [Tabla] -> [Tabla]
 pushTable tabla tablas = tabla:tablas
