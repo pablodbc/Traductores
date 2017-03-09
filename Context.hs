@@ -40,5 +40,11 @@ pushTable tabla tablas = tabla:tablas
 popTable :: [Tabla] -> [Tabla]
 popTable (_:tablas) = tablas
 
+topTable :: [Tabla] -> Tabla
+topTable (tabla:tablas) = tabla
+
 modifyTable :: ([Tabla] -> [Tabla]) -> State -> State
 modifyTable f (State fs t fd h) = State fs (f t) fd h
+
+modifyHeight :: (Int -> Int) -> State -> State
+modifyHeight f (State fs t fd h) = State fs t fd (f h)
