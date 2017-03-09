@@ -34,7 +34,7 @@ data FunHandler = FunHandler {id :: String, ret :: Bool} | None deriving (Eq,Sho
 
 data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int} deriving (Eq,Show,Ord)
 
-data FoundExpr = FoundExpr Type ValCalc Int deriving (Eq,Show,Ord)
+data FoundSym = FoundSym Type ValCalc Int deriving (Eq,Show,Ord)
 
 -- Monad que usaremos para hacer estas cosas. El primer tipo es arbitrario (Reader maneja el separador)
 type ConMonad = RWS String String State
@@ -94,13 +94,9 @@ onlySymTable :: [Tabla] -> [Tabla]
 onlySymTable = P.filter (isSymTable)
 
 
-isNothing :: Maybe a -> Bool
-isNothing Nothing = True
-isNothing _ = False
+findSym :: String -> [Tabla] -> Maybe FoundExpr
 
-findExpr :: String -> [Tabla] -> Maybe FoundExpr
-
-findExpr _ [] = Nothing
-findExpr s (x:xs) = case r of Nothing -> findExpr s xs
-                              otherwise -> r >>= (\(t,v) -> return(FoundExpr t v (height x)))
+findSym _ [] = Nothing
+findSym s (x:xs) = case r of Nothing -> findExpr s xs
+                              Just (t,v) -> return(FoundExpr t v (height x)))
                             where r = M.lookup s (mapa x)
