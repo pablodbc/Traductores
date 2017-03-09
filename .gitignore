@@ -6,6 +6,8 @@ Stdout.o
 Grammar.hs 
 Grammar.hi 
 Grammar.o 
+Context.hi
+Context.o
 main.hi 
 main.o 
 retina
