@@ -94,9 +94,9 @@ onlySymTable :: [Tabla] -> [Tabla]
 onlySymTable = P.filter (isSymTable)
 
 
-findSym :: String -> [Tabla] -> Maybe FoundExpr
+findSym :: String -> [Tabla] -> Maybe FoundSym
 
 findSym _ [] = Nothing
-findSym s (x:xs) = case r of Nothing -> findExpr s xs
-                              Just (t,v) -> return(FoundExpr t v (height x)))
+findSym s (x:xs) = case r of Nothing -> findSym s xs
+                             Just (t,v) -> return(FoundSym t v (height x))
                             where r = M.lookup s (mapa x)
