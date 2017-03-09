@@ -11,7 +11,7 @@ data CompType = Dynamic | Constant deriving (Eq,Show,Ord)
 
 data Type     = Boolean | Number | Void deriving (Eq,Show,Ord)
 
-data ValCalc  = Bool | Double | Nein deriving (Eq,Show,Ord)
+data ValCalc  = CBoolean Bool | CNumber Double | Nein deriving (Eq,Show,Ord)
 
 
 data Tabla    = ExprTable {tipo :: Type, compType :: CompType, val :: ValCalc} |

@@ -14,19 +14,19 @@ anaFuncion f = anaExpr (Out.ExpFcall f)
 anaExpr :: Out.Expr -> Context.ConMonad Context.State
 anaExpr (Out.Integer (Lexer.Number _ s)) = do
     st <- get
-    return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (read s))) st )
+    return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (Context.CNumber (read s)))) st )
 
 anaExpr (Out.Floating (Lexer.Number _ s)) = do
     st <- get
-    return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (read s))) st )
+    return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (Context.CNumber (read s)))) st )
 
 anaExpr (Out.ExpTrue (Lexer.Boolean _ s)) = do
     st <- get
-    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant (read s))) st )
+    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant (Context.CBoolean True))) st )
 
 anaExpr (Out.ExpFalse (Lexer.Boolean _ s)) = do
     st <- get
-    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant (read s))) st )
+    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant (Context.CBoolean False))) st )
 
 anaExpr (Out.ExpFcall f) = do
     anaFuncion f
