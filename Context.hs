@@ -29,7 +29,7 @@ data FunHandler = FunHandler {id :: String, ret :: Bool} | None
 data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int}
 
 -- Monad que usaremos para hacer estas cosas. El primer tipo es arbitrario (No usaremos el reader)
-type ConMonad = RWS Bool [String] State
+type ConMonad = RWS Bool String State
 
 initialState = State M.empty [] None 0
 
