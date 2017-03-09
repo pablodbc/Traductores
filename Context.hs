@@ -4,25 +4,26 @@ import qualified Stdout as Out
 import qualified Grammar 
 import Data.Map as M 
 import Control.Monad.RWS
+import Prelude as P
 
 
-data CompType = Dynamic | Constant deriving (Eq,Show)
+data CompType = Dynamic | Constant deriving (Eq,Show,Ord)
 
-data Type     = Boolean | Number | Void deriving (Eq, Show)
+data Type     = Boolean | Number | Void deriving (Eq,Show,Ord)
 
-data ValCalc  = Bool | Double | Nein deriving (Eq,Show)
+data ValCalc  = Bool | Double | Nein deriving (Eq,Show,Ord)
 
 
 data Tabla    = ExprTable {tipo :: Type, compType :: CompType, val :: ValCalc} |
                 FuncionTable {rtype :: Type}                                   |
                 SymTable {mapa :: Map String (Type,ValCalc)}
-                deriving (Eq,Show)
+                deriving (Eq,Show,Ord)
 
-data FunProto = FunProto {retype :: Rtype, args :: [Type], size :: Int} deriving (Eq,Show)
+data FunProto = FunProto {retype :: Type, args :: [Type], size :: Int} deriving (Eq,Show,Ord)
 
-data FunHandler = FunHandler {id :: String, ret :: Bool} | None deriving (Eq,Show)
+data FunHandler = FunHandler {id :: String, ret :: Bool} | None deriving (Eq,Show,Ord)
 
-data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int} deriving (Eq,Show)
+data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int} deriving (Eq,Show,Ord)
 
 -- Monad que usaremos para hacer estas cosas. El primer tipo es arbitrario (No usaremos el reader)
 type ConMonad = RWS Bool String State
@@ -50,11 +51,16 @@ isSymTable (SymTable _) = True
 isSymTable _ = False
 
 onlySymTable :: [Tabla] -> [Tabla]
-onlySymTable = filter (isSymTable)
+onlySymTable = P.filter (isSymTable)
+
+
+isNothing :: Maybe a -> Bool
+isNothing Nothing = True
+isNothing _ = False
 
 findExpr :: String -> [Tabla] -> Maybe (Type,ValCalc)
 
 findExpr _ [] = Nothing
-findExpr s (x:xs) = case r of Nothing -> findExpr s xs
-                            otherwise -> r
-                            where r = M.lookup $ mapa x
+findExpr s (x:xs) = case (isNothing r) of True -> findExpr s xs
+                                          otherwise -> r
+                            where r = M.lookup s (mapa x)
