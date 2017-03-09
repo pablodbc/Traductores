@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveDataTypeable #-}
 module Context where
 import qualified Lexer
 import qualified Stdout as Out
@@ -5,7 +6,15 @@ import qualified Grammar
 import Data.Map as M 
 import Control.Monad.RWS
 import Prelude as P
+import Control.Exception as E
+import Data.Typeable as T
 
+data ContextError = ContextError String
+    deriving (T.Typeable)
+
+instance E.Exception ContextError
+instance Show ContextError where
+    show (ContextError s) = "Error de Contexto: " ++ s
 
 data CompType = Dynamic | Constant deriving (Eq,Show,Ord)
 
@@ -16,7 +25,7 @@ data ValCalc  = CBoolean Bool | CNumber Double | Nein deriving (Eq,Show,Ord)
 
 data Tabla    = ExprTable {tipo :: Type, compType :: CompType, val :: ValCalc} |
                 FuncionTable {rtype :: Type}                                   |
-                SymTable {mapa :: Map String (Type,ValCalc), h :: Int}
+                SymTable {mapa :: Map String (Type,ValCalc), height :: Int}
                 deriving (Eq,Show,Ord)
 
 data FunProto = FunProto {retype :: Type, args :: [Type], size :: Int} deriving (Eq,Show,Ord)
@@ -47,7 +56,7 @@ modifyHeight :: (Int -> Int) -> State -> State
 modifyHeight f (State fs t fd h) = State fs t fd (f h)
 
 isSymTable :: Tabla -> Bool
-isSymTable (SymTable _) = True
+isSymTable (SymTable _ _) = True
 isSymTable _ = False
 
 onlySymTable :: [Tabla] -> [Tabla]

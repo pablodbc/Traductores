@@ -6,6 +6,11 @@ import qualified Lexer
 getPos :: Lexer.AlexPosn -> (Int,Int)
 getPos (Lexer.AlexPn _ l c) = (l,c)
 
+
+printPos :: Lexer.AlexPosn -> String
+printPos (Lexer.AlexPn _ l c) = "linea " ++ show(l) ++ ", columna " ++ show(c)
+
+
 printPlease :: [Lexer.Token] -> [String]
 printPlease = foldr (\x acc -> (makePrintable x) : acc) []
 

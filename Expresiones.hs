@@ -5,6 +5,7 @@ import qualified Grammar
 import Data.Map as M 
 import Control.Monad.RWS
 import Context as Context
+import Control.Exception
 
 
 anaFuncion :: Out.Funcion -> Context.ConMonad Context.State
@@ -35,9 +36,9 @@ anaExpr (Out.ExpFcall f) = do
         FuncionTable r -> do 
             case r of
                 Void -> do
-                    error ("Error: Cerca de la siguiente posicion" 
-                                            ++ "Sacar aqui pos de f" 
-                                            ++ ". Llamado de procedimiento (no retorna nada) en una expresion que esperaba tipo de retorno.")
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                    ++ "Sacar aqui pos de f" 
+                                                    ++ ". Llamado de procedimiento (no retorna nada) en una expresion que esperaba tipo de retorno.")
                 _ -> do
                     let st = modifyTable popTable st
                     return ( modifyTable (pushTable (Context.ExprTable r Context.Dynamic Context.Nein)) st )
