@@ -39,12 +39,18 @@ type ConMonad = RWS Bool String State
 
 initialState = State M.empty [] None 0
 
+numberConversionHandler :: (RealFrac a, Integral b) => a -> b
+numberConversionHandler = floor
+
+applyIntegerFun ::(Integral a, RealFrac b) => (a -> a -> a) -> b -> b -> b
+applyIntegerFun f x y = fromIntegral(f (numberConversionHandler x) (numberConversionHandler y))
+
+
 modifyBoolValCalc :: (Bool -> Bool) -> ValCalc -> ValCalc
 modifyBoolValCalc f (CBoolean b) = CBoolean (f b)
 
 modifyDoubleValCalc :: (Double -> Double) -> ValCalc -> ValCalc
 modifyDoubleValCalc f (CNumber n) = CNumber (f n)
-
 
 pushTable :: Tabla -> [Tabla] -> [Tabla]
 pushTable tabla tablas = tabla:tablas
