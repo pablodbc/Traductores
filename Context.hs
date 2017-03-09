@@ -8,15 +8,13 @@ import Control.Monad.RWS
 
 data CompType = Dynamic | Constant deriving (Eq,Show)
 
-data Type     = Boolean | Number deriving (Eq, Show)
-
-data Rtype    = Type | Void deriving (Eq,Show)
+data Type     = Boolean | Number | Void deriving (Eq, Show)
 
 data ValCalc  = Bool | Double | Nein deriving (Eq,Show)
 
 
 data Tabla    = ExprTable {tipo :: Type, compType :: CompType, val :: ValCalc} |
-                FuncionTable {rtype :: Rtype}                                  |
+                FuncionTable {rtype :: Type}                                   |
                 SymTable {mapa :: Map String (Type,ValCalc)}
                 deriving (Eq,Show)
 
