@@ -8,6 +8,27 @@ import Context as Context
 import Control.Exception
 
 
+anaExprS :: [Out.ExprS] -> Context.ConMonad Context.State
+anaExprS (x:[]) = do
+    case x of
+        (Out.StringW _) -> do
+            st <- get
+            return (st)
+        (Out.ExprW e) -> do
+            anaExpr e
+            st <- get
+            return (modifyTable popTable st)
+anaExprS (x:xs) = do
+    case x of
+        (Out.StringW _) -> do
+            anaExprS xs
+        (Out.ExprW e) -> do
+            anaExpr e
+            st <- get
+            put (modifyTable popTable st)
+            anaExprS xs
+
+
 anaFuncion :: Out.Funcion -> Context.ConMonad Context.State
 -- Esto esta terriblemente mal pero es para compilar
 anaFuncion (FuncionSA lt) = do
