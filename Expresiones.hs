@@ -79,9 +79,9 @@ anaArgs [] x p s = do throw $ Context.ContextError ("Cerca de la siguiente posic
 anaArgs (a:args) (x:xprs) p s = do
     anaExpr x
     st <- get
-
+    put $ modifyTable popTable st
     let tp = tipo $ topTable $ tablas st
-
+    
     case tp == a of
         True -> anaArgs args xprs p s
         False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
