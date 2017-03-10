@@ -7,7 +7,7 @@ import Stdout as Out
 import Grammar as Grammar
 import Context as Context
 import Expresiones as Expresiones
-
+import Instrucciones as Instrucciones
 
 
 argError :: [String] -> Either String String

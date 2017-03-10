@@ -10,6 +10,8 @@ Context.hi
 Context.o
 Expresiones.hi
 Expresiones.o
+Instrucciones.hi
+Instrucciones.o
 main.hi 
 main.o 
 retina
