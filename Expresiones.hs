@@ -15,6 +15,80 @@ anaFuncion f = do
     anaExpr (Out.ExpFcall f)
 
 anaExpr :: Out.Expr -> Context.ConMonad Context.State
+anaExpr (Out.Or e1 e2 p) = do
+    anaExpr e1
+    st <- get
+    let et1 = topTable $ tablas st
+    case et1 of
+        Context.ExprTable Context.Number _ _ -> do 
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " en Operacion 'or', se esperaba un Tipo Boolean y se encontro expresion Tipo Number en operando izquierdo")
+        Context.ExprTable Context.Boolean c n -> do
+            put $ modifyTable popTable st
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+
+    anaExpr e2
+    st <- get
+    let et2 = topTable $ tablas st
+    case et2 of
+        Context.ExprTable Context.Number _ _ -> do 
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " en Operacion 'or', se esperaba un Tipo Boolean y se encontro expresion Tipo Number en operando derecho")
+        Context.ExprTable Context.Boolean Context.Dynamic n -> do
+            let st = modifyTable popTable st
+            return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n)) st )
+        Context.ExprTable Context.Boolean c n -> do
+            case et1 of
+                Context.ExprTable Context.Boolean Context.Dynamic n1-> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n)) st )
+                Context.ExprTable Context.Boolean c (Context.CBoolean n1) -> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean c (modifyBoolValCalc (n1||) n))) st )
+
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+
+anaExpr (Out.And e1 e2 p) = do
+    anaExpr e1
+    st <- get
+    let et1 = topTable $ tablas st
+    case et1 of
+        Context.ExprTable Context.Number _ _ -> do 
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " en Operacion 'and', se esperaba un Tipo Boolean y se encontro expresion Tipo Number en operando izquierdo")
+        Context.ExprTable Context.Boolean c n -> do
+            put $ modifyTable popTable st
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+
+    anaExpr e2
+    st <- get
+    let et2 = topTable $ tablas st
+    case et2 of
+        Context.ExprTable Context.Number _ _ -> do 
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " en Operacion 'and', se esperaba un Tipo Boolean y se encontro expresion Tipo Number en operando derecho")
+        Context.ExprTable Context.Boolean Context.Dynamic n -> do
+            let st = modifyTable popTable st
+            return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n)) st )
+        Context.ExprTable Context.Boolean c n -> do
+            case et1 of
+                Context.ExprTable Context.Boolean Context.Dynamic n1-> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n)) st )
+                Context.ExprTable Context.Boolean c (Context.CBoolean n1) -> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean c (modifyBoolValCalc (n1&&) n))) st )
+
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+
 anaExpr (Out.Eq e1 e2 p) = do
     anaExpr e1
     st <- get
