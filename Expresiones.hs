@@ -10,7 +10,40 @@ import Control.Exception
 
 anaFuncion :: Out.Funcion -> Context.ConMonad Context.State
 -- Esto esta terriblemente mal pero es para compilar
-anaFuncion f = do
+anaFuncion (FuncionSA lt@(Lexer.Token p s)) = do
+    st <- get
+    case b (funcs st) of
+        Nothing -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " en llamado a funcion no declarada: " ++ s)
+        Just f -> do
+            case f of
+                FunProto t _ 0 -> do
+                    return ( modifyTable (pushTable (Context.FuncionTable t)) st )
+                _ -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " funcion: " ++ s ++ " no esperaba argumentos")
+        where b = Context.findFun s 
+
+anaFuncion (FuncionCA lt@(Lexer.Token p s) xprs) = do
+    st <- get
+    case b (funcs st) of
+        Nothing -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " en llamado a funcion no declarada: " ++ s)
+        Just f -> do
+            case f of
+                FunProto t _ 0 -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " funcion: " ++ s ++ " esperaba argumentos")
+                FunProto t a i -> do
+                    anaArgs a xprs
+                    return ( modifyTable (pushTable (Context.FuncionTable t)) st )
+        where b = Context.findFun s 
+
+anaArgs :: [Type] -> [Expr]
+
     error "Analizar funcion esta incompleto"
     anaExpr (Out.ExpFcall f)
 
@@ -673,7 +706,7 @@ anaExpr (Out.Uminus e p) = do
 
 anaExpr (Out.Identifier i@(Lexer.Identifier p s)) = do
     st <- get
-    case findSym s (tablas st) of
+    case findSym s (onlySymTable(tablas st)) of
             Nothing -> do 
                 throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)

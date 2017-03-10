@@ -100,3 +100,14 @@ findSym _ [] = Nothing
 findSym s (x:xs) = case r of Nothing -> findSym s xs
                              Just (t,v) -> return(FoundSym t v (height x))
                             where r = M.lookup s (mapa x)
+
+
+-- Para encontrar una funcion con un string creo que sería un simple lookup, lo dejaré aquí
+
+findFun :: String -> Map String FunProto -> Maybe FunProto
+findFun s m = M.lookup s m
+
+
+-- Utilidad para recorrer 2 listas
+
+
