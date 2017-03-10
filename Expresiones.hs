@@ -671,8 +671,15 @@ anaExpr (Out.Uminus e p) = do
         _ -> do
             error "Error interno, algo salio mal y no esta la tabla de la expresion"
 
-
-anaExpr (Out.Identifier i) = error "Implementar analisis de llamado a variable"
+anaExpr (Out.Identifier i@(Lexer.Identifier p s)) = do
+    st <- get
+    case findSym s (tablas st) of
+            Nothing -> do 
+                throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ ". Variable " ++ s ++ " no declarada.")
+            Just (FoundSym t v _ )-> do
+                return ( modifyTable (pushTable (Context.ExprTable t Context.Dynamic v)) st )
 
 anaExpr (Out.Integer (Lexer.Number _ s)) = do
     st <- get
