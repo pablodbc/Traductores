@@ -15,6 +15,67 @@ anaFuncion f = do
     anaExpr (Out.ExpFcall f)
 
 anaExpr :: Out.Expr -> Context.ConMonad Context.State
+anaExpr (Out.Eq e1 e2 p) = do
+    anaExpr e1
+    st <- get
+    let et1 = topTable $ tablas st
+    case et1 of
+        Context.ExprTable Context.Boolean _ _ -> do 
+            put $ modifyTable popTable st
+        Context.ExprTable Context.Number _ _ -> do
+            put $ modifyTable popTable st
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+
+    anaExpr e2
+    st <- get
+    let et2 = topTable $ tablas st
+    case et2 of
+        Context.ExprTable Context.Boolean Context.Dynamic n2 -> do 
+            case et1 of
+                Context.ExprTable Context.Boolean _ _ -> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n2)) st )
+                _ -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                    ++ (Out.printPos p)
+                                                    ++ " en Operacion '==', Conflicto de Tipos comparados. Se esperaba un Tipo Number y se encontro expresion Tipo Boolean en operando derecho")
+        Context.ExprTable Context.Boolean c2 (CBoolean n2) -> do 
+            case et1 of
+                Context.ExprTable Context.Boolean Context.Dynamic n1 -> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n1)) st )
+                Context.ExprTable Context.Boolean c1 (CBoolean n1) -> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Boolean c1 (comparisonFunBool (==) n1 n2))) st )
+                _ -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                    ++ (Out.printPos p)
+                                                    ++ " en Operacion '==', Conflicto de Tipos comparados. Se esperaba un Tipo Number y se encontro expresion Tipo Boolean en operando derecho")
+        Context.ExprTable Context.Number Context.Dynamic n2 -> do 
+            case et1 of
+                Context.ExprTable Context.Number _ _ -> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n2)) st )
+                _ -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                    ++ (Out.printPos p)
+                                                    ++ " en Operacion '==', Conflicto de Tipos comparados. Se esperaba un Tipo Boolean y se encontro expresion Tipo Number en operando derecho")
+        Context.ExprTable Context.Number c2 (CNumber n2) -> do 
+            case et1 of
+                Context.ExprTable Context.Number Context.Dynamic n1 -> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n1)) st )
+                Context.ExprTable Context.Number c1 (CNumber n1) -> do
+                    let st = modifyTable popTable st
+                    return ( modifyTable (pushTable (Context.ExprTable Context.Number c1 (comparisonFunNum (==) n1 n2))) st )
+                _ -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                    ++ (Out.printPos p)
+                                                    ++ " en Operacion '/=', Conflicto de Tipos comparados. Se esperaba un Tipo Boolean y se encontro expresion Tipo Number en operando derecho")
+
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la expresion"
 
 anaExpr (Out.Neq e1 e2 p) = do
     anaExpr e1
