@@ -225,6 +225,111 @@ takePos (Lexer.Read p s) = p
 takePos (Lexer.LexError p s) = p
 
 
+
+takeStr :: Lexer.Token -> String
+takeStr (Lexer.Integer p s) = s
+
+takeStr (Lexer.Floating p s) = s
+
+takeStr (Lexer.Str p s) = s
+
+takeStr (Lexer.Identifier p s) = s
+
+takeStr (Lexer.Modex p s) = s
+
+takeStr (Lexer.Divex p s) = s
+
+takeStr (Lexer.Mult p s) = s
+
+takeStr (Lexer.Minus p s) = s
+
+takeStr (Lexer.CloseP p s) = s
+
+takeStr (Lexer.OpenP p s) = s
+
+takeStr (Lexer.Plus p s) = s
+
+takeStr (Lexer.Def p s) = s
+
+takeStr (Lexer.SemiColon p s) = s
+
+takeStr (Lexer.Comma p s) = s
+
+takeStr (Lexer.Less p s) = s
+
+takeStr (Lexer.More p s) = s
+
+takeStr (Lexer.Not p s) = s
+
+takeStr (Lexer.And p s) = s
+
+takeStr (Lexer.Or p s) = s
+
+takeStr (Lexer.Eq p s) = s
+
+takeStr (Lexer.Neq p s) = s
+
+takeStr (Lexer.Moreq p s) = s
+
+takeStr (Lexer.Lesseq p s) = s
+
+takeStr (Lexer.Div p s) = s
+
+takeStr (Lexer.Mod p s) = s
+
+takeStr (Lexer.Arrow p s) = s
+
+takeStr (Lexer.Number p s) = s
+
+takeStr (Lexer.Boolean p s) = s
+
+takeStr (Lexer.True' p s) = s
+
+takeStr (Lexer.False' p s) = s
+
+takeStr (Lexer.With p s) = s
+
+takeStr (Lexer.Do p s) = s
+
+takeStr (Lexer.End p s) = s
+
+takeStr (Lexer.If p s) = s
+
+takeStr (Lexer.Else p s) = s
+
+takeStr (Lexer.Then p s) = s
+
+takeStr (Lexer.While p s) = s
+
+takeStr (Lexer.For p s) = s
+
+takeStr (Lexer.Repeat p s) = s
+
+takeStr (Lexer.Begin p s) = s
+
+takeStr (Lexer.Return p s) = s
+
+takeStr (Lexer.Func p s) = s
+
+takeStr (Lexer.Times p s) = s
+
+takeStr (Lexer.Program p s) = s
+
+takeStr (Lexer.WriteLn p s) = s
+
+takeStr (Lexer.Write p s) = s
+
+takeStr (Lexer.By p s) = s
+
+takeStr (Lexer.From p s) = s
+
+takeStr (Lexer.To p s) = s
+
+takeStr (Lexer.Read p s) = s
+
+takeStr (Lexer.LexError p s) = s
+
+
 -- Show token Value
 instance Show Lexer.Token where
     show (Lexer.Integer _ s) = "Literal Numerico: '" ++ (show s) ++ "'"

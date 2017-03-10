@@ -1,6 +1,6 @@
 module Expresiones where
 import qualified Lexer as Lexer
-import qualified Stdout as Out
+import Stdout as Out
 import qualified Grammar 
 import Data.Map as M 
 import Control.Monad.RWS
@@ -10,9 +10,11 @@ import Control.Exception
 
 anaFuncion :: Out.Funcion -> Context.ConMonad Context.State
 -- Esto esta terriblemente mal pero es para compilar
-anaFuncion (FuncionSA lt@(Lexer.Token p s)) = do
+anaFuncion (FuncionSA lt) = do
+    let p = takePos lt
+    let s = takeStr lt
     st <- get
-    case b (funcs st) of
+    case Context.findFun s (funcs st) of
         Nothing -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ " en llamado a funcion no declarada: " ++ s)
@@ -23,11 +25,12 @@ anaFuncion (FuncionSA lt@(Lexer.Token p s)) = do
                 _ -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ " funcion: " ++ s ++ " no esperaba argumentos")
-        where b = Context.findFun s 
 
-anaFuncion (FuncionCA lt@(Lexer.Token p s) xprs) = do
+anaFuncion (FuncionCA lt xprs) = do
+    let p = takePos lt
+    let s = takeStr lt
     st <- get
-    case b (funcs st) of
+    case Context.findFun s (funcs st) of
         Nothing -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ " en llamado a funcion no declarada: " ++ s)
@@ -38,14 +41,31 @@ anaFuncion (FuncionCA lt@(Lexer.Token p s) xprs) = do
                                             ++ (Out.printPos p)
                                             ++ " funcion: " ++ s ++ " esperaba argumentos")
                 FunProto t a i -> do
-                    anaArgs a xprs
+                    anaArgs a xprs p s
                     return ( modifyTable (pushTable (Context.FuncionTable t)) st )
-        where b = Context.findFun s 
 
-anaArgs :: [Type] -> [Expr]
+anaArgs :: [Type] -> [Expr] -> Lexer.AlexPosn -> String -> Context.ConMonad Context.State
+anaArgs [] [] _ _= do
+    st <- get
+    return st
+anaArgs a [] p s = do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " funcion: " ++ s ++ " le faltan argumentos")
 
-    error "Analizar funcion esta incompleto"
-    anaExpr (Out.ExpFcall f)
+anaArgs [] x p s = do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " funcion: " ++ s ++ " tiene demasiados argumentos")
+anaArgs (a:args) (x:xprs) p s = do
+    anaExpr x
+    st <- get
+
+    let tp = tipo $ topTable $ tablas st
+
+    case tp == a of
+        True -> anaArgs args xprs p s
+        False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " funcion: " ++ s ++ " presenta un desajuste de tipos")
 
 anaExpr :: Out.Expr -> Context.ConMonad Context.State
 anaExpr (Out.Or e1 e2 p) = do
