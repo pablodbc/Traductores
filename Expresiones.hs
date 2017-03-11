@@ -360,7 +360,7 @@ anaExpr (Out.Eq e1 e2 p) = do
             case et1 of
                 Context.ExprTable Context.Number _ _ -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n2))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n2))
                     return ()
                 _ -> do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
@@ -370,11 +370,11 @@ anaExpr (Out.Eq e1 e2 p) = do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1 -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n1))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n1))
                     return ()
                 Context.ExprTable Context.Number c1 (CNumber n1) -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number c1 (comparisonFunNum (==) n1 n2)))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean c1 (comparisonFunNum (==) n1 n2)))
                     return ()
                 _ -> do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
@@ -428,7 +428,7 @@ anaExpr (Out.Neq e1 e2 p) = do
             case et1 of
                 Context.ExprTable Context.Number _ _ -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n2))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n2))
                     return ()
                 _ -> do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
@@ -438,11 +438,11 @@ anaExpr (Out.Neq e1 e2 p) = do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1 -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n1))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n1))
                     return ()
                 Context.ExprTable Context.Number c1 (CNumber n1) -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number c1 (comparisonFunNum (/=) n1 n2)))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean c1 (comparisonFunNum (/=) n1 n2)))
                     return ()
                 _ -> do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
@@ -476,17 +476,17 @@ anaExpr (Out.Less e1 e2 p) = do
                                             ++ " en Operacion '<', se esperaba un Tipo Number y se encontro expresion Tipo Boolean en operando derecho")
         Context.ExprTable Context.Number Context.Dynamic n -> do
             modify $ modifyTable popTable
-            modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
+            modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n))
             return ()
         Context.ExprTable Context.Number c n@(Context.CNumber n2) -> do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n1))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n1))
                     return ()
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (comparisonFunNum (<) n1 n2)))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean c (comparisonFunNum (<) n1 n2)))
                     return ()
 
         _ -> do
@@ -516,17 +516,17 @@ anaExpr (Out.Lesseq e1 e2 p) = do
                                             ++ " en Operacion '<=', se esperaba un Tipo Number y se encontro expresion Tipo Boolean en operando derecho")
         Context.ExprTable Context.Number Context.Dynamic n -> do
             modify $ modifyTable popTable
-            modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
+            modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n))
             return ()
         Context.ExprTable Context.Number c n@(Context.CNumber n2) -> do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n1))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n1))
                     return ()
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (comparisonFunNum (<=) n1 n2)))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean c (comparisonFunNum (<=) n1 n2)))
                     return ()
 
         _ -> do
@@ -556,17 +556,17 @@ anaExpr (Out.More e1 e2 p) = do
                                             ++ " en Operacion '>', se esperaba un Tipo Number y se encontro expresion Tipo Boolean en operando derecho")
         Context.ExprTable Context.Number Context.Dynamic n -> do
             modify $ modifyTable popTable
-            modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
+            modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n))
             return ()
         Context.ExprTable Context.Number c n@(Context.CNumber n2) -> do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n1))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n1))
                     return ()
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (comparisonFunNum (>) n1 n2)))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean c (comparisonFunNum (>) n1 n2)))
                     return ()
 
         _ -> do
@@ -596,17 +596,17 @@ anaExpr (Out.Moreq e1 e2 p) = do
                                             ++ " en Operacion '>=', se esperaba un Tipo Number y se encontro expresion Tipo Boolean en operando derecho")
         Context.ExprTable Context.Number Context.Dynamic n -> do
             modify $ modifyTable popTable
-            modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
+            modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n))
             return ()
         Context.ExprTable Context.Number c n@(Context.CNumber n2) -> do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n1))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Dynamic n1))
                     return ()
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
                     modify $ modifyTable popTable
-                    modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (comparisonFunNum (>=) n1 n2)))
+                    modify $ modifyTable (pushTable (Context.ExprTable Context.Boolean c (comparisonFunNum (>=) n1 n2)))
                     return ()
 
         _ -> do
