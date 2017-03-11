@@ -46,9 +46,7 @@ main = do
                 Left msg -> putStrLn msg
                 Right x -> do
                     ast <- parse x
-                    let (s, w) = execRWS (anaInit ast) "" initialState
+                    let (s, w) = execRWS (anaInit ast) "   " initialState
                     putStr w
-                    --astToShow <- ast
-                    --putStr $ Out.showInit "| " 0 astToShow
 
             
