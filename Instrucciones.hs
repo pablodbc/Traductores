@@ -88,7 +88,7 @@ anaAnidS (Bifelse e ins1 ins2 p) = do
 anaAnidS (Bwith [] []) = do
     st <- get
     sep <- ask
-    tell (Out.showLine sep (h st) ("Alcance _with" ++ ":\n"))
+    tell (Out.showLine sep (h st) ("Alcance _with" ++ (show (h st)) ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     return ()
@@ -137,8 +137,6 @@ anaAnidS (Bwhile e [] p) = do
                                             ++ (Out.printPos p)
                                             ++ ", en el While Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
-
-
 anaAnidS (Bwhile e ins p) = do
     anaExpr e
     st <- get
@@ -149,6 +147,126 @@ anaAnidS (Bwhile e ins p) = do
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ ", en el While Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
+
+anaAnidS (Bfor (Lexer.Identifier p s) e1 e2 []) = do
+    st <- get
+    let symT = (SymTable M.empty (h st))
+    modify $ modifyTable (pushTable (Context.insertSym symT s Context.Number Context.Nein))
+
+    case Context.stringInExpr s e1 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            st <- get
+            put st
+
+    case Context.stringInExpr s e2 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            return ()
+
+    st <- get
+    sep <- ask
+    modify $ modifyHeight (+1)
+    tell (Out.showLine sep (h st) ("Alcance _for " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st) +2) (s ++ " : number\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    modify $ modifyHeight (\x -> x-1)
+    modify (modifyTable popTable)
+    return ()
+
+anaAnidS (Bfor (Lexer.Identifier p s) e1 e2 ins) = do
+    st <- get
+    let symT = (SymTable M.empty (h st))
+    modify $ modifyTable (pushTable (Context.insertSym symT s Context.Number Context.Nein))
+
+    case Context.stringInExpr s e1 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            st <- get
+            put st
+
+    case Context.stringInExpr s e2 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            return ()
+
+    st <- get
+    sep <- ask
+    modify $ modifyHeight (+1)
+    tell (Out.showLine sep (h st) ("Alcance _for " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st) +2) (s ++ " : number\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    mapM_ anaAnidS ins
+    modify $ modifyHeight (\x -> x-1)
+    modify (modifyTable popTable)
+    return ()
+
+anaAnidS (Bforby (Lexer.Identifier p s) e1 e2 e3 []) = do
+    st <- get
+    let symT = (SymTable M.empty (h st))
+    modify $ modifyTable (pushTable (Context.insertSym symT s Context.Number Context.Nein))
+
+    case Context.stringInExpr s e1 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            st <- get
+            put st
+
+    case Context.stringInExpr s e2 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            return ()
+
+    case Context.stringInExpr s e3 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            return ()
+
+    st <- get
+    sep <- ask
+    modify $ modifyHeight (+1)
+    tell (Out.showLine sep (h st) ("Alcance _for " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st) +2) (s ++ " : number\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    modify $ modifyHeight (\x -> x-1)
+    modify (modifyTable popTable)
+    return ()
+
+anaAnidS (Bforby (Lexer.Identifier p s) e1 e2 e3 ins) = do
+    st <- get
+    let symT = (SymTable M.empty (h st))
+    modify $ modifyTable (pushTable (Context.insertSym symT s Context.Number Context.Nein))
+
+    case Context.stringInExpr s e1 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            st <- get
+            put st
+
+    case Context.stringInExpr s e2 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            return ()
+
+    case Context.stringInExpr s e3 of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            return ()
+
+    st <- get
+    sep <- ask
+    modify $ modifyHeight (+1)
+    tell (Out.showLine sep (h st) ("Alcance _for " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st) +2) (s ++ " : number\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    mapM_ anaAnidS ins
+    modify $ modifyHeight (\x -> x-1)
+    modify (modifyTable popTable)
+    return ()
 
 anaAnidS (Brepeat e [] p) = do
     anaExpr e
