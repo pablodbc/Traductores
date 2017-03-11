@@ -85,6 +85,48 @@ anaAnidS (Bifelse e ins1 ins2 p) = do
                                             ++ (Out.printPos p)
                                             ++ ", en el If Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
+anaAnidS (Bwith [] []) = do
+    st <- get
+    sep <- ask
+    tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    return ()
+
+anaAnidS (Bwith [] ins) = do
+    st <- get
+    sep <- ask
+    modify $ modifyHeight (+1)
+    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    mapM_ anaAnidS ins
+    modify $ modifyHeight (\x -> x-1)
+    return ()
+
+anaAnidS (Bwith dls []) = do
+    st <- get
+    sep <- ask
+    modify $ modifyHeight (+1)
+    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    mapM_ anaDecl dls
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    modify $ modifyHeight (\x -> x-1)
+    return ()
+
+anaAnidS (Bwith dls ins) = do
+    st <- get
+    sep <- ask
+    modify $ modifyHeight (+1)
+    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    mapM_ anaDecl dls
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    mapM_ anaAnidS ins
+    modify $ modifyHeight (\x -> x-1)
+    return ()
+
 anaAnidS (Bwhile e [] p) = do
     anaExpr e
     st <- get
