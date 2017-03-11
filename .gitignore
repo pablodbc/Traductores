@@ -17,7 +17,8 @@ Programa.o
 main.hi 
 main.o 
 retina
-
+resultados
+errores
 #########
 #Pablo usa estos
 p.rtn
