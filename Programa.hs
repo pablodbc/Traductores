@@ -68,6 +68,7 @@ anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
         [] -> do
             return ()
         _ -> mapM_ anaAnidS ins
+    modify $ modifyHandler (backToNone)
     modify (modifyHeight (\x -> x-1))
     modify (modifyTable popTable)
 

@@ -135,6 +135,9 @@ modifyHandler f (State fs t fd h) = State fs t (f fd) h
 replace :: String -> Bool -> FunHandler -> FunHandler
 replace s b _ = FunHandler s b
 
+backToNone :: FunHandler -> FunHandler
+backToNone = (\_ -> None)
+
 
 -- Utilidad para saber si una variable esta presente en su propia declaracion
 stringInFuncion :: String -> Out.Funcion -> Bool 
