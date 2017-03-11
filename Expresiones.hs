@@ -47,7 +47,7 @@ anaDecl (Inicializacion t (Lexer.Identifier p s) e) = do
                                                             ++ " , se declaro Tipo Number pero se inicializo con una expresion Tipo Boolean")
                         Context.ExprTable Context.Number _ _ -> do
                             sep <- ask
-                            tell (Out.showLine sep ((h st) +1) (s ++ " : number\n"))
+                            tell (Out.showLine sep ((h st) +2) (s ++ " : number\n"))
                             put $ modifyTable popTable st
                             return ()
                         _ -> do
@@ -63,7 +63,7 @@ anaDecl (Inicializacion t (Lexer.Identifier p s) e) = do
                                                             ++ " , se declaro Tipo Boolean pero se inicializo con una expresion Tipo Number")
                         Context.ExprTable Context.Boolean _ _ -> do
                             sep <- ask
-                            tell (Out.showLine sep ((h st) +1) (s ++ " : boolean\n"))
+                            tell (Out.showLine sep ((h st) +2) (s ++ " : boolean\n"))
                             put $ modifyTable popTable st
                             return ()
                         _ -> do
@@ -108,10 +108,10 @@ anaID t ((Lexer.Identifier p s):[]) = do
             case t of
                 Context.Number -> do
                     sep <- ask
-                    tell (Out.showLine sep ((h st) +1) (s ++ " : number\n"))
+                    tell (Out.showLine sep ((h st) +2) (s ++ " : number\n"))
                 Context.Boolean -> do
                     sep <- ask
-                    tell (Out.showLine sep ((h st) +1) (s ++ " : boolean\n"))
+                    tell (Out.showLine sep ((h st) +2) (s ++ " : boolean\n"))
             let st = modifyTable popTable st
             put $ modifyTable (pushTable (Context.insertSym symT s t Context.Nein)) st
             return ()
@@ -144,10 +144,10 @@ anaID t ((Lexer.Identifier p s):rest) = do
             case t of
                 Context.Number -> do
                     sep <- ask
-                    tell (Out.showLine sep ((h st) +1) (s ++ " : number\n"))
+                    tell (Out.showLine sep ((h st) +2) (s ++ " : number\n"))
                 Context.Boolean -> do
                     sep <- ask
-                    tell (Out.showLine sep ((h st) +1) (s ++ " : boolean\n"))
+                    tell (Out.showLine sep ((h st) +2) (s ++ " : boolean\n"))
             let st = modifyTable popTable st
             put $ modifyTable (pushTable (Context.insertSym symT s t Context.Nein)) st
             anaID t rest
