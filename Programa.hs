@@ -14,7 +14,7 @@ import Prelude as P
 anaFunDec :: Out.FunDec -> Context.ConMonad ()
 anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
     modify $ modifyHeight (+1)
-    modify $ modifyTable (pushTable(FuncionTable Void))
+    modify $ modifyHandler (replace s False)
     st <- get
     sep <- ask
     tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
@@ -40,18 +40,15 @@ anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
         _ -> mapM_ anaAnidS ins
     modify (modifyHeight (\x -> x-1))
     modify (modifyTable popTable)
-    modify (modifyTable popTable)
 
 anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
     modify $ modifyHeight (+1)
-    case t of
-        NumberT -> do modify $ modifyTable (pushTable(FuncionTable Number))
-        BooleanT -> do modify $ modifyTable (pushTable(FuncionTable Boolean))
+    let tp = fromTipo t
+    modify $ modifyHandler (replace s False)
     st <- get
     sep <- ask
     tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
-    let tp = if (t == NumberT) then Number else Boolean
     case Context.findFun s (funcs st) of
         Nothing -> do
             case params of
@@ -72,7 +69,6 @@ anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
             return ()
         _ -> mapM_ anaAnidS ins
     modify (modifyHeight (\x -> x-1))
-    modify (modifyTable popTable)
     modify (modifyTable popTable)
 
 
@@ -105,7 +101,7 @@ anaParamLs (ParamL t (Lexer.Identifier p s):rest) = do
     let symT = topTable $ tablas st
     case symT of
         (SymTable _ _) -> do
-            case fromTipo t of
+            case (fromTipo t) of
                 Context.Number -> do
                     sep <- ask
                     tell (Out.showLine sep ((h st) +1) (s ++ " : number\n"))
@@ -117,3 +113,4 @@ anaParamLs (ParamL t (Lexer.Identifier p s):rest) = do
             anaParamLs rest
         _ -> do
             error "Error interno, algo salio mal y no esta la tabla de la simbolos"
+

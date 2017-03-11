@@ -138,6 +138,13 @@ fromTipo :: Out.Tipo -> Type
 fromTipo Out.BooleanT = Boolean
 fromTipo Out.NumberT = Number
 
+--Utilidad para modificar un handler
+modifyHandler :: (FunHandler -> FunHandler) -> State -> State
+modifyHandler f (State fs t fd h) = State fs t (f fd) h
+
+replace :: String -> Bool -> FunHandler -> FunHandler
+replace s b _ = FunHandler s b
+
 
 -- Utilidad para saber si una variable esta presente en su propia declaracion
 stringInFuncion :: String -> Out.Funcion -> Bool 
