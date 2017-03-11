@@ -173,6 +173,6 @@ anaInit (Program fs ins) = do
     mapM_ anaFunDec fs
     st <- get
     sep <- ask
-    tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
+    tell (Out.showLine sep (h st) ("Alcance _program:\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     mapM_ anaAnidS ins
