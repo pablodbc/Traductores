@@ -958,10 +958,10 @@ anaExpr (Out.Identifier i@(Lexer.Identifier p s)) = do
                 put ( modifyTable (pushTable (Context.ExprTable t Context.Dynamic v)) st )
                 return ()
 
-anaExpr (Out.Integer (Lexer.Number _ s)) = do
+anaExpr (Out.Integer (Lexer.Integer _ s)) = do
     modify ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (Context.CNumber (read s)))) )
 
-anaExpr (Out.Floating (Lexer.Number _ s)) = do
+anaExpr (Out.Floating (Lexer.Floating _ s)) = do
     modify ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (Context.CNumber (read s)))) )
 
 anaExpr (Out.ExpTrue (Lexer.Boolean _ s)) = do
