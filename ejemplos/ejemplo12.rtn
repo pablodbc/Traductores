@@ -1,0 +1,7 @@
+program
+with
+number b;
+do
+b = 1 / (2 mod 2);
+end;
+end;

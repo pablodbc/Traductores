@@ -758,17 +758,19 @@ anaExpr (Out.Divex e1 e2 p) = do
             modify $ modifyTable popTable
             modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
             return ()
+        Context.ExprTable Context.Number c (Context.CNumber 0) -> do
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                        ++ (Out.printPos p)
+                                                        ++ " en Operacion '/', division entre 0")
         Context.ExprTable Context.Number c n -> do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
+                    tell ("Pase por Dinamico\n")
                     return ()
-                Context.ExprTable Context.Number c (Context.CNumber 0) -> do
-                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
-                                                                ++ (Out.printPos p)
-                                                                ++ " en Operacion '/', division entre 0")
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
+                    tell (show(n1)++" Pase por Constante\n")
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (modifyDoubleValCalc (\x -> n1 / x) n)))
                     return ()
@@ -802,16 +804,16 @@ anaExpr (Out.Modex e1 e2 p) = do
             modify $ modifyTable popTable
             modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
             return ()
+        Context.ExprTable Context.Number c (Context.CNumber 0) -> do
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                        ++ (Out.printPos p)
+                                                        ++ " en Operacion '%', division entre 0")
         Context.ExprTable Context.Number c n -> do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
                     return ()
-                Context.ExprTable Context.Number c (Context.CNumber 0) -> do
-                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
-                                                                ++ (Out.printPos p)
-                                                                ++ " en Operacion '%', division entre 0")
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (modifyDoubleValCalc (\x -> modex n1 x) n)))
@@ -846,16 +848,16 @@ anaExpr (Out.Div e1 e2 p) = do
             modify $ modifyTable popTable
             modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
             return ()
+        Context.ExprTable Context.Number c (Context.CNumber 0) -> do
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                        ++ (Out.printPos p)
+                                                        ++ " en Operacion 'div', division entre 0")
         Context.ExprTable Context.Number c n -> do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
                     return ()
-                Context.ExprTable Context.Number c (Context.CNumber 0) -> do
-                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
-                                                                ++ (Out.printPos p)
-                                                                ++ " en Operacion 'div', division entre 0")
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (modifyDoubleValCalc (applyIntegerFun div n1) n)))
@@ -890,16 +892,16 @@ anaExpr (Out.Mod e1 e2 p) = do
             modify $ modifyTable popTable
             modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
             return ()
+        Context.ExprTable Context.Number c (Context.CNumber 0) -> do
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                        ++ (Out.printPos p)
+                                                        ++ " en Operacion 'mod', division entre 0")
         Context.ExprTable Context.Number c n -> do
             case et1 of
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
                     return ()
-                Context.ExprTable Context.Number c (Context.CNumber 0) -> do
-                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
-                                                                ++ (Out.printPos p)
-                                                                ++ " en Operacion 'mod', division entre 0")
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (modifyDoubleValCalc (applyIntegerFun mod n1) n)))
