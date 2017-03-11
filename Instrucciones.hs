@@ -88,7 +88,7 @@ anaAnidS (Bifelse e ins1 ins2 p) = do
 anaAnidS (Bwith [] []) = do
     st <- get
     sep <- ask
-    tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
+    tell (Out.showLine sep (h st) ("Alcance _with" ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     return ()
@@ -221,7 +221,7 @@ anaAnidS (Read lt) = do
                 throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ ". Variable " ++ s ++ " no declarada.")
-            Just (Context.FoundSym t v _ )-> return ()
+            Just (Context.FoundSym t v _ )-> do return ()
 
 anaAnidS (Write args) = do
     anaExprS args
@@ -235,18 +235,24 @@ anaAnidS (Return e p) = do
     anaExpr e
     st <- get
     modify (modifyTable popTable)
-    case findFuncionTable (tablas st) of
-        Nothing -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+    let fid = Context.id (funDecl st)
+    let isret = ret (funDecl st)
+    case isret of
+        True -> do
+            case findFun fid (funcs st) of
+                Just (FunProto t lt _) -> do
+                    case (tipo (head $ tablas st) == t) of
+                        True -> do return ()
+                        False -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ ". Instruccion de retorno en bloque principal")
-        Just (FuncionTable rt) -> do
-            let tExp = tipo $ head $ tablas st
-            case tExp == rt of
-                True -> return()
-                False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
-                                            ++ (Out.printPos p)
-                                            ++ ". Se esperaba una variable de tipo " ++ show(rt))
+                                            ++ ", se esperaba una expresion de tipo " ++ (show t))
 
+                Nothing -> do 
+                    error "Error interno, algo salio mal y la función no se encuentra en el mapa"
+
+        False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ ", no se esperaba una funcion de retorno en procedimiento")
 anaAnidS (EmptyB) = do
     return ()
         

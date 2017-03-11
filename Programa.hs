@@ -114,3 +114,19 @@ anaParamLs (ParamL t (Lexer.Identifier p s):rest) = do
         _ -> do
             error "Error interno, algo salio mal y no esta la tabla de la simbolos"
 
+
+anaInit :: Init -> ConMonad ()
+
+anaInit (Program fs ins) = do
+    modify $ insertFunProto "home" (FunProto Void [] 0)
+    modify $ insertFunProto "openeye" (FunProto Void [] 0)
+    modify $ insertFunProto "closeeye" (FunProto Void [] 0)
+    modify $ insertFunProto "forward" (FunProto Void [Number] 1)
+    modify $ insertFunProto "backward" (FunProto Void [Number] 1)
+    modify $ insertFunProto "rotatel" (FunProto Void [Number] 1)
+    modify $ insertFunProto "rotater" (FunProto Void [Number] 1)
+    modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
+    modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
+
+    mapM_ anaFunDec fs
+    mapM_ anaAnidS ins
