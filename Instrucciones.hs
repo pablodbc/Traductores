@@ -86,18 +86,20 @@ anaAnidS (Bifelse e ins1 ins2 p) = do
                                             ++ ", en el If Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 anaAnidS (Bwith [] []) = do
+    modify $ modifyHeight (+1)
     st <- get
     sep <- ask
-    tell (Out.showLine sep (h st) ("Alcance _with" ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep (h st) ("Alcance _with" ++ (show ((h st) - 1)) ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    modify $ modifyHeight (\x -> x-1)
     return ()
 
 anaAnidS (Bwith [] ins) = do
+    modify $ modifyHeight (+1)
     st <- get
     sep <- ask
-    modify $ modifyHeight (+1)
-    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show ((h st) - 1)) ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     mapM_ anaAnidS ins
@@ -105,10 +107,10 @@ anaAnidS (Bwith [] ins) = do
     return ()
 
 anaAnidS (Bwith dls []) = do
+    modify $ modifyHeight (+1)
     st <- get
     sep <- ask
-    modify $ modifyHeight (+1)
-    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show ((h st) - 1)) ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     mapM_ anaDecl dls
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
@@ -116,10 +118,10 @@ anaAnidS (Bwith dls []) = do
     return ()
 
 anaAnidS (Bwith dls ins) = do
+    modify $ modifyHeight (+1)
     st <- get
     sep <- ask
-    modify $ modifyHeight (+1)
-    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show (h st)) ++ ":\n"))
+    tell (Out.showLine sep (h st) ("Alcance _with " ++ (show ((h st) - 1)) ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     mapM_ anaDecl dls
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
