@@ -22,7 +22,7 @@ anaAnidS (Bif e [] p) = do
             modify(modifyTable popTable)
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el If Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 
 
@@ -35,7 +35,7 @@ anaAnidS (Bif e ins p) = do
             mapM_ anaAnidS ins
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el If Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 
 
@@ -47,7 +47,7 @@ anaAnidS (Bifelse e [] [] p) = do
             modify(modifyTable popTable)
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el If Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 
 anaAnidS (Bifelse e ins1 [] p) = do
@@ -59,7 +59,7 @@ anaAnidS (Bifelse e ins1 [] p) = do
             mapM_ anaAnidS ins1
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el If Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 anaAnidS (Bifelse e [] ins2 p) = do
     anaExpr e
@@ -70,7 +70,7 @@ anaAnidS (Bifelse e [] ins2 p) = do
             mapM_ anaAnidS ins2
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el If Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 
 anaAnidS (Bifelse e ins1 ins2 p) = do
@@ -83,7 +83,7 @@ anaAnidS (Bifelse e ins1 ins2 p) = do
             mapM_ anaAnidS ins2
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el If Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 anaAnidS (Bwhile e [] p) = do
     anaExpr e
@@ -93,7 +93,7 @@ anaAnidS (Bwhile e [] p) = do
             modify(modifyTable popTable)
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el While Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 
 
@@ -106,7 +106,7 @@ anaAnidS (Bwhile e ins p) = do
             mapM_ anaAnidS ins
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el While Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 anaAnidS (Brepeat e [] p) = do
     anaExpr e
@@ -116,7 +116,7 @@ anaAnidS (Brepeat e [] p) = do
             modify(modifyTable popTable)
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el Repeat Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 
 
@@ -129,7 +129,7 @@ anaAnidS (Brepeat e ins p) = do
             mapM_ anaAnidS ins
         Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ " Se esperaba una expresión booleana y se detectó una expresión numérica")
+                                            ++ ", en el Repeat Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
 
 anaAnidS (Asig lt e) = do
@@ -151,7 +151,24 @@ anaAnidS (Asig lt e) = do
                     False -> do
                         throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                                         ++ (Out.printPos p)
-                                                        ++ " Asignacion invalida, deben ser del mismo tipo")
+                                                        ++ " Asignacion invalida, expresion de distinto tipo a variable asignada")
+
+anaAnidS (InsFcall f) = do
+    anaFuncion f
+    st <- get
+    case topTable $ tablas st of
+        FuncionTable r -> do 
+            case r of
+                Void -> do
+                    modify (modifyTable popTable)
+                    return ()
+                    
+                _ -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                    ++ (Out.showFuncionPos f)
+                                                    ++ ", la cual es un llamado de procedimiento (no retorna nada) en una expresion que esperaba tipo de retorno.")
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la funcion"
 
 anaAnidS (Read lt) = do
     let p = takePos lt
