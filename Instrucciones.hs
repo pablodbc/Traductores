@@ -311,9 +311,9 @@ anaAnidS (Asig lt e) = do
                     True -> do
                         return ()
                     False -> do
-                        throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                        throw $ Context.ContextError ("Cerca de la siguiente posicion " 
                                                         ++ (Out.printPos p)
-                                                        ++ " Asignacion invalida, expresion de distinto tipo a variable asignada")
+                                                        ++ ". Asignacion invalida, expresion de distinto tipo a variable asignada")
 
 anaAnidS (InsFcall f) = do
     anaFuncion f
