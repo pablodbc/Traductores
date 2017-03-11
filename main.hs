@@ -8,6 +8,7 @@ import Grammar as Grammar
 import Context as Context
 import Expresiones as Expresiones
 import Instrucciones as Instrucciones
+import Programa as Programa
 
 
 argError :: [String] -> Either String String

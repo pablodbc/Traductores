@@ -2,7 +2,7 @@ module Expresiones where
 import qualified Lexer as Lexer
 import Stdout as Out
 import qualified Grammar 
-import Data.Map as M 
+import Data.Map.Lazy as M 
 import Control.Monad.RWS
 import Context as Context
 import Control.Exception
@@ -47,7 +47,7 @@ anaDecl (Inicializacion t (Lexer.Identifier p s) e) = do
                                                             ++ " , se declaro Tipo Number pero se inicializo con una expresion Tipo Boolean")
                         Context.ExprTable Context.Number _ _ -> do
                             sep <- ask
-                            tell (Out.showLine sep ((h st) +1) (s ++ " : number"))
+                            tell (Out.showLine sep ((h st) +1) (s ++ " : number\n"))
                             return $ modifyTable popTable st
                         _ -> do
                             error "Error interno, algo salio mal y no esta la tabla de la expresion"
@@ -62,7 +62,7 @@ anaDecl (Inicializacion t (Lexer.Identifier p s) e) = do
                                                             ++ " , se declaro Tipo Boolean pero se inicializo con una expresion Tipo Number")
                         Context.ExprTable Context.Boolean _ _ -> do
                             sep <- ask
-                            tell (Out.showLine sep ((h st) +1) (s ++ " : boolean"))
+                            tell (Out.showLine sep ((h st) +1) (s ++ " : boolean\n"))
                             return $ modifyTable popTable st
                         _ -> do
                             error "Error interno, algo salio mal y no esta la tabla de la expresion"
@@ -84,6 +84,11 @@ anaID :: Context.Type -> [Lexer.Token] -> Context.ConMonad Context.State
 anaID t ((Lexer.Identifier p s):[]) = do
     st <- get
     let symT = topTable $ tablas st
+    case symT of
+        (SymTable _ _) -> do
+            put st
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la simbolos"
     case findSym s (onlySymTable(tablas st)) of
         Just (FoundSym _ _ h ) -> do
             case h == (height symT) of
@@ -102,10 +107,10 @@ anaID t ((Lexer.Identifier p s):[]) = do
             case t of
                 Context.Number -> do
                     sep <- ask
-                    tell (Out.showLine sep ((h st) +1) (s ++ " : number"))
+                    tell (Out.showLine sep ((h st) +1) (s ++ " : number\n"))
                 Context.Boolean -> do
                     sep <- ask
-                    tell (Out.showLine sep ((h st) +1) (s ++ " : boolean"))
+                    tell (Out.showLine sep ((h st) +1) (s ++ " : boolean\n"))
             let st = modifyTable popTable st
             return $ modifyTable (pushTable (Context.insertSym symT s t Context.Nein)) st
         _ -> do
@@ -114,6 +119,11 @@ anaID t ((Lexer.Identifier p s):[]) = do
 anaID t ((Lexer.Identifier p s):rest) = do
     st <- get
     let symT = topTable $ tablas st
+    case symT of
+        (SymTable _ _) -> do
+            put st
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la simbolos"
     case findSym s (onlySymTable(tablas st)) of
         Just (FoundSym _ _ h ) -> do
             case h == (height symT) of
@@ -132,10 +142,10 @@ anaID t ((Lexer.Identifier p s):rest) = do
             case t of
                 Context.Number -> do
                     sep <- ask
-                    tell (Out.showLine sep ((h st) +1) (s ++ " : number"))
+                    tell (Out.showLine sep ((h st) +1) (s ++ " : number\n"))
                 Context.Boolean -> do
                     sep <- ask
-                    tell (Out.showLine sep ((h st) +1) (s ++ " : boolean"))
+                    tell (Out.showLine sep ((h st) +1) (s ++ " : boolean\n"))
             let st = modifyTable popTable st
             put $ modifyTable (pushTable (Context.insertSym symT s t Context.Nein)) st
             anaID t rest

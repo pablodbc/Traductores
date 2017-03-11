@@ -115,9 +115,17 @@ findFun :: String -> M.Map String FunProto -> Maybe FunProto
 findFun s m = M.lookup s m
 
 
+insertFunProto :: String -> FunProto -> State -> State
+insertFunProto s p (State fs t fd h) = State (M.insert s p fs) t fd h
 
+-- Tipo y Type Handlers
+getTypeList :: [Out.ParamL] -> [Context.Type]
+getTypeList [] = []
+getTypeList ((Out.ParamL t _):rest) = (fromTipo t) : getTypeList rest
 
--- Utilidad para recorrer 2 listas
+fromTipo :: Out.Tipo -> Context.Type
+fromTipo Out.BooleanT = Context.Boolean
+fromTipo Out.NumberT = Context.Number
 
 
 -- Utilidad para saber si una variable esta presente en su propia declaracion
