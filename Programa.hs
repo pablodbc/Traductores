@@ -128,6 +128,8 @@ anaInit (Program [] []) = do
     modify $ insertFunProto "rotater" (FunProto Void [Number] 1)
     modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
     modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
+    st <- get
+    sep <- ask
     tell (Out.showLine sep (h st) ("Alcance _program:\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
