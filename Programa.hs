@@ -46,7 +46,7 @@ anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
     sep <- ask
     modify $ modifyHeight (+1)
     let tp = fromTipo t
-    modify $ modifyHandler (replace s False)
+    modify $ modifyHandler (replace s True)
     tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     case Context.findFun s (funcs st) of

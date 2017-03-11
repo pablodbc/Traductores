@@ -79,6 +79,7 @@ popTable :: [Tabla] -> [Tabla]
 popTable (_:tablas) = tablas
 
 topTable :: [Tabla] -> Tabla
+topTable [] = error "hola"
 topTable (tabla:tablas) = tabla
 
 modifyTable :: ([Tabla] -> [Tabla]) -> State -> State
