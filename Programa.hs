@@ -39,7 +39,7 @@ anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
             return ()
         _ -> mapM_ anaAnidS ins
     modify (modifyHeight (\x -> x-1))
-    modify (modifyTable popTable)
+    --modify (modifyTable popTable)
 
 anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
     st <- get
@@ -70,7 +70,7 @@ anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
         _ -> mapM_ anaAnidS ins
     modify $ modifyHandler (backToNone)
     modify (modifyHeight (\x -> x-1))
-    modify (modifyTable popTable)
+    --modify (modifyTable popTable)
 
 
 

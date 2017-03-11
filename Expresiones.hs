@@ -767,10 +767,8 @@ anaExpr (Out.Divex e1 e2 p) = do
                 Context.ExprTable Context.Number Context.Dynamic n1-> do
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number Context.Dynamic n))
-                    tell ("Pase por Dinamico\n")
                     return ()
                 Context.ExprTable Context.Number c (Context.CNumber n1) -> do
-                    tell (show(n1)++" Pase por Constante\n")
                     modify $ modifyTable popTable
                     modify $ modifyTable (pushTable (Context.ExprTable Context.Number c (modifyDoubleValCalc (\x -> n1 / x) n)))
                     return ()
