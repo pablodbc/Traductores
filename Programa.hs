@@ -142,9 +142,12 @@ anaInit (Program [] ins) = do
 
     st <- get
     sep <- ask
+    modify $ modifyHeight (+1)
     tell (Out.showLine sep (h st) ("Alcance _program:\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     mapM_ anaAnidS ins
+    modify $ modifyHeight (\x -> x-1)
 
 anaInit (Program fs []) = do
     modify $ insertFunProto "home" (FunProto Void [] 0)
@@ -157,7 +160,14 @@ anaInit (Program fs []) = do
     modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
     modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
 
+    st <- get
+    sep <- ask
     mapM_ anaFunDec fs
+    modify $ modifyHeight (+1)
+    tell (Out.showLine sep (h st) ("Alcance _program:\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    modify $ modifyHeight (\x -> x-1)
 
 anaInit (Program fs ins) = do
     modify $ insertFunProto "home" (FunProto Void [] 0)
@@ -173,6 +183,9 @@ anaInit (Program fs ins) = do
     mapM_ anaFunDec fs
     st <- get
     sep <- ask
+    modify $ modifyHeight (+1)
     tell (Out.showLine sep (h st) ("Alcance _program:\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     mapM_ anaAnidS ins
+    modify $ modifyHeight (\x -> x-1)
