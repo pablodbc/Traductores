@@ -130,6 +130,7 @@ anaAnidS (Bwith dls ins) = do
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     mapM_ anaAnidS ins
     modify $ modifyHeight (\x -> x-1)
+    modify $ modifyTable popTable
     return ()
 
 anaAnidS (Bwhile e [] p) = do
@@ -277,9 +278,9 @@ anaAnidS (Brepeat e [] p) = do
     anaExpr e
     st <- get
     case (tipo $ topTable $ tablas st) of
-        Boolean -> do
+        Number -> do
             modify(modifyTable popTable)
-        Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+        Boolean -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ ", en el Repeat Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 
@@ -289,10 +290,10 @@ anaAnidS (Brepeat e ins p) = do
     anaExpr e
     st <- get
     case (tipo $ topTable $ tablas st) of
-        Boolean -> do
+        Number -> do
             modify (modifyTable popTable)
             mapM_ anaAnidS ins
-        Number -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+        Boolean -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ ", en el Repeat Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
 

@@ -964,10 +964,10 @@ anaExpr (Out.Integer (Lexer.Integer _ s)) = do
 anaExpr (Out.Floating (Lexer.Floating _ s)) = do
     modify ( modifyTable (pushTable (Context.ExprTable Context.Number Context.Constant (Context.CNumber (read s)))) )
 
-anaExpr (Out.ExpTrue (Lexer.Boolean _ s)) = do
+anaExpr (Out.ExpTrue (Lexer.True' _ s)) = do
     modify ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant (Context.CBoolean True))) )
 
-anaExpr (Out.ExpFalse (Lexer.Boolean _ s)) = do
+anaExpr (Out.ExpFalse (Lexer.False' _ s)) = do
     modify ( modifyTable (pushTable (Context.ExprTable Context.Boolean Context.Constant (Context.CBoolean False))) )
 
 anaExpr (Out.ExpFcall f) = do

@@ -10,6 +10,7 @@ import Expresiones as Expresiones
 import Instrucciones as Instrucciones
 import Programa as Programa
 import Control.Monad.RWS
+import Control.DeepSeq
 
 
 argError :: [String] -> Either String String
@@ -47,6 +48,7 @@ main = do
                 Right x -> do
                     ast <- parse x
                     let (s, w) = execRWS (anaInit ast) "   " initialState
-                    putStr w
+                    let final = deepseq w w
+                    putStr $! final
 
             

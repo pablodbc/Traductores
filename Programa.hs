@@ -133,6 +133,7 @@ anaInit (Program [] []) = do
     tell (Out.showLine sep (h st) ("Alcance _program:\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    return $! ()
 
 anaInit (Program [] ins) = do
     modify $ insertFunProto "home" (FunProto Void [] 0)
@@ -153,6 +154,7 @@ anaInit (Program [] ins) = do
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     mapM_ anaAnidS ins
     modify $ modifyHeight (\x -> x-1)
+    return $! ()
 
 anaInit (Program fs []) = do
     modify $ insertFunProto "home" (FunProto Void [] 0)
@@ -173,6 +175,7 @@ anaInit (Program fs []) = do
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     modify $ modifyHeight (\x -> x-1)
+    return $! ()
 
 anaInit (Program fs ins) = do
     modify $ insertFunProto "home" (FunProto Void [] 0)
@@ -194,3 +197,4 @@ anaInit (Program fs ins) = do
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     mapM_ anaAnidS ins
     modify $ modifyHeight (\x -> x-1)
+    return $! ()
