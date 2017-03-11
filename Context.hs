@@ -134,9 +134,9 @@ getTypeList :: [Out.ParamL] -> [Context.Type]
 getTypeList [] = []
 getTypeList ((Out.ParamL t _):rest) = (fromTipo t) : getTypeList rest
 
-fromTipo :: Out.Tipo -> Context.Type
-fromTipo Out.BooleanT = Context.Boolean
-fromTipo Out.NumberT = Context.Number
+fromTipo :: Out.Tipo -> Type
+fromTipo Out.BooleanT = Boolean
+fromTipo Out.NumberT = Number
 
 
 -- Utilidad para saber si una variable esta presente en su propia declaracion
