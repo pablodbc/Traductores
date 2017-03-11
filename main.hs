@@ -9,6 +9,7 @@ import Context as Context
 import Expresiones as Expresiones
 import Instrucciones as Instrucciones
 import Programa as Programa
+import Control.Monad.RWS
 
 
 argError :: [String] -> Either String String
@@ -44,7 +45,10 @@ main = do
             case parseArg ss of
                 Left msg -> putStrLn msg
                 Right x -> do
-                    let ast = parse x
-                    astToShow <- ast
-                    putStr $ Out.showInit "| " 0 astToShow
+                    ast <- parse x
+                    let (s, w) = execRWS (anaInit ast) "" initialState
+                    putStr w
+                    --astToShow <- ast
+                    --putStr $ Out.showInit "| " 0 astToShow
+
             
