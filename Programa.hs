@@ -14,6 +14,7 @@ import Prelude as P
 anaFunDec :: Out.FunDec -> Context.ConMonad ()
 anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
     modify $ modifyHeight (+1)
+    modify $ modifyTable (pushTable(FuncionTable Void))
     st <- get
     sep <- ask
     tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
@@ -38,6 +39,7 @@ anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
             return ()
         _ -> mapM_ anaAnidS ins
     modify (modifyHeight (\x -> x-1))
+    modify (modifyTable popTable)
     modify (modifyTable popTable)
 
 

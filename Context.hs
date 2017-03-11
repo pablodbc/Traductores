@@ -109,6 +109,16 @@ insertSym (SymTable m h) s t v = SymTable (M.insert s (t,v) m) h
 
 
 
+isFuncionTable :: Tabla -> Bool
+isFuncionTable (FuncionTable _) = True
+isFuncionTable _ = False
+
+findFuncionTable :: [Tabla] -> Tabla
+
+findFuncionTable = find (isFuncionTable)
+
+
+
 -- Para encontrar una funcion con un string creo que sería un simple lookup, lo dejaré aquí
 
 findFun :: String -> M.Map String FunProto -> Maybe FunProto
