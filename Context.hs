@@ -120,3 +120,62 @@ findFun s m = M.lookup s m
 -- Utilidad para recorrer 2 listas
 
 
+-- Utilidad para saber si una variable esta presente en su propia declaracion
+stringInFuncion :: String -> Out.Funcion -> Bool 
+stringInFuncion s (Out.FuncionSA lt) = False
+
+stringInFuncion s (Out.FuncionCA lt xprs) = foldr (||) False (map (stringInExpr s) xprs)
+
+
+stringInExpr :: String -> Out.Expr -> Bool
+stringInExpr s (Out.Or e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.And e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Eq e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Neq e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Less e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Lesseq e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.More e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Moreq e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Plus e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Minus e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Mult e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Divex e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Modex e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Div e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Mod e1 e2 _) = (stringInExpr s e1) || (stringInExpr s e2)
+
+stringInExpr s (Out.Not e _) = (stringInExpr s e)
+
+stringInExpr s (Out.Uminus e _) = (stringInExpr s e)
+
+stringInExpr s (Out.Identifier (Lexer.Identifier p id)) 
+    | (s == id) = throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                    ++ (Out.printPos p)
+                                                    ++ ", se encontro el uso de la variable "++id++" dentro de su propia definicion")
+    | otherwise = False
+
+stringInExpr s (Out.Integer n) = False
+
+stringInExpr s (Out.Floating n) = False
+
+stringInExpr s (Out.ExpTrue b) = False
+
+stringInExpr s (Out.ExpFalse b) = False
+
+stringInExpr s (Out.ExpFcall f) = (stringInFuncion s f)
+
+stringInExpr s (Out.Bracket e) = (stringInExpr s e)
