@@ -8,6 +8,141 @@ import Context as Context
 import Control.Exception
 
 
+anaDecl :: Out.Decl -> Context.ConMonad Context.State
+anaDecl (Inicializacion t (Lexer.Identifier p s) e) = do
+    st <- get
+    let symT = topTable $ tablas st
+    case findSym s (onlySymTable(tablas st)) of
+        Just (FoundSym _ _ h ) -> do
+            case h == (height symT) of
+                True -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ ". Variable " ++ s ++ " declarada dos veces en el mismo alcance.")
+                False -> do
+                    put (st)
+        _ -> do 
+            put (st)
+
+    case Context.stringInExpr s e of
+        True -> error "De alguna forma llegue aqui"
+        False -> do
+            st <- get
+            put st
+        
+    st <- get
+    let symT = topTable $ tablas st
+    let st = modifyTable popTable st
+    case symT of
+        (SymTable _ _) -> do
+            case t of
+                Out.NumberT -> do
+                    put $ modifyTable (pushTable (Context.insertSym symT s Context.Number Context.Nein)) st
+                    anaExpr e
+                    st <- get
+                    case topTable $ tablas st of
+                        Context.ExprTable Context.Boolean _ _ -> do 
+                            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                            ++ (Out.printPos p)
+                                                            ++ " , se declaro Tipo Number pero se inicializo con una expresion Tipo Boolean")
+                        Context.ExprTable Context.Number _ _ -> do
+                            sep <- ask
+                            tell (Out.showLine sep ((h st) +1) (s ++ " : number"))
+                            return $ modifyTable popTable st
+                        _ -> do
+                            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+                Out.BooleanT -> do
+                    put $ modifyTable (pushTable (Context.insertSym symT s Context.Boolean Context.Nein)) st
+                    anaExpr e
+                    st <- get
+                    case topTable $ tablas st of
+                        Context.ExprTable Context.Number _ _ -> do 
+                            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                            ++ (Out.printPos p)
+                                                            ++ " , se declaro Tipo Boolean pero se inicializo con una expresion Tipo Number")
+                        Context.ExprTable Context.Boolean _ _ -> do
+                            sep <- ask
+                            tell (Out.showLine sep ((h st) +1) (s ++ " : boolean"))
+                            return $ modifyTable popTable st
+                        _ -> do
+                            error "Error interno, algo salio mal y no esta la tabla de la expresion"
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la simbolos"
+    
+
+anaDecl (Declaracion t ids) = do
+    case t of
+        Out.NumberT -> anaID Context.Number ids
+        Out.BooleanT -> anaID Context.Boolean ids
+
+anaDecl EmptyD = do
+    st <- get
+    return st
+
+
+anaID :: Context.Type -> [Lexer.Token] -> Context.ConMonad Context.State
+anaID t ((Lexer.Identifier p s):[]) = do
+    st <- get
+    let symT = topTable $ tablas st
+    case findSym s (onlySymTable(tablas st)) of
+        Just (FoundSym _ _ h ) -> do
+            case h == (height symT) of
+                True -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ ". Variable " ++ s ++ " declarada dos veces en el mismo alcance.")
+                False -> do
+                    put (st)
+        _ -> do 
+            put (st)
+    st <- get
+    let symT = topTable $ tablas st
+    case symT of
+        (SymTable _ _) -> do
+            case t of
+                Context.Number -> do
+                    sep <- ask
+                    tell (Out.showLine sep ((h st) +1) (s ++ " : number"))
+                Context.Boolean -> do
+                    sep <- ask
+                    tell (Out.showLine sep ((h st) +1) (s ++ " : boolean"))
+            let st = modifyTable popTable st
+            return $ modifyTable (pushTable (Context.insertSym symT s t Context.Nein)) st
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la simbolos"
+
+anaID t ((Lexer.Identifier p s):rest) = do
+    st <- get
+    let symT = topTable $ tablas st
+    case findSym s (onlySymTable(tablas st)) of
+        Just (FoundSym _ _ h ) -> do
+            case h == (height symT) of
+                True -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ ". Variable " ++ s ++ " declarada dos veces en el mismo alcance.")
+                False -> do
+                    put (st)
+        _ -> do 
+            put (st)
+    st <- get
+    let symT = topTable $ tablas st
+    case symT of
+        (SymTable _ _) -> do
+            case t of
+                Context.Number -> do
+                    sep <- ask
+                    tell (Out.showLine sep ((h st) +1) (s ++ " : number"))
+                Context.Boolean -> do
+                    sep <- ask
+                    tell (Out.showLine sep ((h st) +1) (s ++ " : boolean"))
+            let st = modifyTable popTable st
+            put $ modifyTable (pushTable (Context.insertSym symT s t Context.Nein)) st
+            anaID t rest
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la simbolos"
+
+
 anaExprS :: [Out.ExprS] -> Context.ConMonad Context.State
 anaExprS (x:[]) = do
     case x of
@@ -751,7 +886,7 @@ anaExpr (Out.Identifier i@(Lexer.Identifier p s)) = do
                 throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ ". Variable " ++ s ++ " no declarada.")
-            Just (FoundSym t v _ )-> do
+            Just (Context.FoundSym t v _ )-> do
                 return ( modifyTable (pushTable (Context.ExprTable t Context.Dynamic v)) st )
 
 anaExpr (Out.Integer (Lexer.Number _ s)) = do
