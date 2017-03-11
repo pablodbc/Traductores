@@ -13,10 +13,10 @@ import Prelude as P
 
 anaFunDec :: Out.FunDec -> Context.ConMonad ()
 anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
-    modify $ modifyHeight (+1)
-    modify $ modifyHandler (replace s False)
     st <- get
     sep <- ask
+    modify $ modifyHeight (+1)
+    modify $ modifyHandler (replace s False)
     tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     case Context.findFun s (funcs st) of
@@ -42,11 +42,11 @@ anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
     modify (modifyTable popTable)
 
 anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
+    st <- get
+    sep <- ask
     modify $ modifyHeight (+1)
     let tp = fromTipo t
     modify $ modifyHandler (replace s False)
-    st <- get
-    sep <- ask
     tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     case Context.findFun s (funcs st) of
