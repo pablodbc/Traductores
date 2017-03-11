@@ -204,4 +204,7 @@ anaAnidS (Return e p) = do
                 False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ ". Se esperaba una variable de tipo " ++ show(rt))
+
+anaAnidS (EmptyB) = do
+    return ()
         
