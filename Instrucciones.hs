@@ -153,6 +153,23 @@ anaAnidS (Asig lt e) = do
                                                         ++ (Out.printPos p)
                                                         ++ " Asignacion invalida, expresion de distinto tipo a variable asignada")
 
+anaAnidS (InsFcall f) = do
+    anaFuncion f
+    st <- get
+    case topTable $ tablas st of
+        FuncionTable r -> do 
+            case r of
+                Void -> do
+                    modify (modifyTable popTable)
+                    return ()
+                    
+                _ -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                                    ++ (Out.showFuncionPos f)
+                                                    ++ ", la cual es un llamado de procedimiento (no retorna nada) en una expresion que esperaba tipo de retorno.")
+        _ -> do
+            error "Error interno, algo salio mal y no esta la tabla de la funcion"
+
 anaAnidS (Read lt) = do
     let p = takePos lt
     let s = takeStr lt
