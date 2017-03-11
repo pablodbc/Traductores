@@ -466,7 +466,7 @@ data Decl     = Inicializacion Tipo Lexer.Token Expr        |
 
 data Tipo     = NumberT |
                 BooleanT
-                deriving (Show)
+                deriving (Eq,Show)
 
 data ExprS    = ExprW Expr           |
                 StringW Lexer.Token  

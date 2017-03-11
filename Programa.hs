@@ -42,6 +42,38 @@ anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
     modify (modifyTable popTable)
     modify (modifyTable popTable)
 
+anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
+    modify $ modifyHeight (+1)
+    case t of
+        NumberT -> do modify $ modifyTable (pushTable(FuncionTable Number))
+        BooleanT -> do modify $ modifyTable (pushTable(FuncionTable Boolean))
+    st <- get
+    sep <- ask
+    tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    let tp = if (t == NumberT) then Number else Boolean
+    case Context.findFun s (funcs st) of
+        Nothing -> do
+            case params of
+                [] -> do
+                    modify $ insertFunProto s (FunProto tp (getTypeList params) 0)
+                _ -> do
+                    modify $ insertFunProto s (FunProto tp (getTypeList params) 1)
+                    modify $ modifyTable (pushTable (SymTable M.empty (h st)))
+                    anaParamLs params
+
+        _ -> do
+            throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " la funcion " ++ s ++ "esta siendo declarada dos veces")
+    tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
+    case ins of
+        [] -> do
+            return ()
+        _ -> mapM_ anaAnidS ins
+    modify (modifyHeight (\x -> x-1))
+    modify (modifyTable popTable)
+    modify (modifyTable popTable)
 
 
 

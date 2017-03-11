@@ -8,6 +8,7 @@ import Control.Monad.RWS
 import Prelude as P
 import Control.Exception as E
 import Data.Typeable as T
+import Data.List
 
 data ContextError = ContextError String
     deriving (T.Typeable)
@@ -113,7 +114,7 @@ isFuncionTable :: Tabla -> Bool
 isFuncionTable (FuncionTable _) = True
 isFuncionTable _ = False
 
-findFuncionTable :: [Tabla] -> Tabla
+findFuncionTable :: [Tabla] -> Maybe Tabla
 
 findFuncionTable = find (isFuncionTable)
 

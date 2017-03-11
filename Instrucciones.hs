@@ -176,12 +176,12 @@ anaAnidS (Return e p) = do
     anaExpr e
     st <- get
     modify (modifyTable popTable)
-    case findFuncionTable st of
+    case findFuncionTable (tablas st) of
         Nothing -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ ". Instruccion de retorno en bloque principal")
         Just (FuncionTable rt) -> do
-            let tExp = tipo . head . st
+            let tExp = tipo $ head $ tablas st
             case tExp == rt of
                 True -> return()
                 False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
