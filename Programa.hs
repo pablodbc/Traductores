@@ -117,6 +117,48 @@ anaParamLs (ParamL t (Lexer.Identifier p s):rest) = do
 
 anaInit :: Init -> ConMonad ()
 
+anaInit (Program [] []) = do
+    modify $ insertFunProto "home" (FunProto Void [] 0)
+    modify $ insertFunProto "openeye" (FunProto Void [] 0)
+    modify $ insertFunProto "closeeye" (FunProto Void [] 0)
+    modify $ insertFunProto "forward" (FunProto Void [Number] 1)
+    modify $ insertFunProto "backward" (FunProto Void [Number] 1)
+    modify $ insertFunProto "rotatel" (FunProto Void [Number] 1)
+    modify $ insertFunProto "rotater" (FunProto Void [Number] 1)
+    modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
+    modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
+
+
+anaInit (Program [] ins) = do
+    modify $ insertFunProto "home" (FunProto Void [] 0)
+    modify $ insertFunProto "openeye" (FunProto Void [] 0)
+    modify $ insertFunProto "closeeye" (FunProto Void [] 0)
+    modify $ insertFunProto "forward" (FunProto Void [Number] 1)
+    modify $ insertFunProto "backward" (FunProto Void [Number] 1)
+    modify $ insertFunProto "rotatel" (FunProto Void [Number] 1)
+    modify $ insertFunProto "rotater" (FunProto Void [Number] 1)
+    modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
+    modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
+
+    st <- get
+    sep <- ask
+    tell (Out.showLine sep (h st) ("Alcance _program:\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
+    mapM_ anaAnidS ins
+
+anaInit (Program fs []) = do
+    modify $ insertFunProto "home" (FunProto Void [] 0)
+    modify $ insertFunProto "openeye" (FunProto Void [] 0)
+    modify $ insertFunProto "closeeye" (FunProto Void [] 0)
+    modify $ insertFunProto "forward" (FunProto Void [Number] 1)
+    modify $ insertFunProto "backward" (FunProto Void [Number] 1)
+    modify $ insertFunProto "rotatel" (FunProto Void [Number] 1)
+    modify $ insertFunProto "rotater" (FunProto Void [Number] 1)
+    modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
+    modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
+
+    mapM_ anaFunDec fs
+
 anaInit (Program fs ins) = do
     modify $ insertFunProto "home" (FunProto Void [] 0)
     modify $ insertFunProto "openeye" (FunProto Void [] 0)
@@ -129,31 +171,8 @@ anaInit (Program fs ins) = do
     modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
 
     mapM_ anaFunDec fs
+    st <- get
+    sep <- ask
+    tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
+    tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     mapM_ anaAnidS ins
-
-
-    anaInit (Program [] ins) = do
-    modify $ insertFunProto "home" (FunProto Void [] 0)
-    modify $ insertFunProto "openeye" (FunProto Void [] 0)
-    modify $ insertFunProto "closeeye" (FunProto Void [] 0)
-    modify $ insertFunProto "forward" (FunProto Void [Number] 1)
-    modify $ insertFunProto "backward" (FunProto Void [Number] 1)
-    modify $ insertFunProto "rotatel" (FunProto Void [Number] 1)
-    modify $ insertFunProto "rotater" (FunProto Void [Number] 1)
-    modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
-    modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
-
-    mapM_ anaAnidS ins
-
-    anaInit (Program fs []) = do
-    modify $ insertFunProto "home" (FunProto Void [] 0)
-    modify $ insertFunProto "openeye" (FunProto Void [] 0)
-    modify $ insertFunProto "closeeye" (FunProto Void [] 0)
-    modify $ insertFunProto "forward" (FunProto Void [Number] 1)
-    modify $ insertFunProto "backward" (FunProto Void [Number] 1)
-    modify $ insertFunProto "rotatel" (FunProto Void [Number] 1)
-    modify $ insertFunProto "rotater" (FunProto Void [Number] 1)
-    modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
-    modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
-
-    mapM_ anaFunDec fs
