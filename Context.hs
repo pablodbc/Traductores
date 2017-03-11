@@ -3,7 +3,7 @@ module Context where
 import qualified Lexer
 import qualified Stdout as Out
 import qualified Grammar 
-import Data.Map as M 
+import qualified Data.Map.Lazy as M 
 import Control.Monad.RWS
 import Prelude as P
 import Control.Exception as E
@@ -25,14 +25,14 @@ data ValCalc  = CBoolean Bool | CNumber Double | Nein deriving (Eq,Show,Ord)
 
 data Tabla    = ExprTable {tipo :: Type, compType :: CompType, val :: ValCalc} |
                 FuncionTable {rtype :: Type}                                   |
-                SymTable {mapa :: Map String (Type,ValCalc), height :: Int}
+                SymTable {mapa :: M.Map String (Type,ValCalc), height :: Int}
                 deriving (Eq,Show,Ord)
 
 data FunProto = FunProto {retype :: Type, args :: [Type], size :: Int} deriving (Eq,Show,Ord)
 
 data FunHandler = FunHandler {id :: String, ret :: Bool} | None deriving (Eq,Show,Ord)
 
-data State = State {funcs :: Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int} deriving (Eq,Show,Ord)
+data State = State {funcs :: M.Map String FunProto, tablas :: [Tabla], funDecl :: FunHandler, h :: Int} deriving (Eq,Show,Ord)
 
 data FoundSym = FoundSym Type ValCalc Int deriving (Eq,Show,Ord)
 
@@ -86,6 +86,8 @@ modifyTable f (State fs t fd h) = State fs (f t) fd h
 modifyHeight :: (Int -> Int) -> State -> State
 modifyHeight f (State fs t fd h) = State fs t fd (f h)
 
+-- Handler de Simbolos
+
 isSymTable :: Tabla -> Bool
 isSymTable (SymTable _ _) = True
 isSymTable _ = False
@@ -102,10 +104,17 @@ findSym s (x:xs) = case r of Nothing -> findSym s xs
                             where r = M.lookup s (mapa x)
 
 
+insertSym :: Tabla -> String -> Type -> ValCalc -> Tabla
+insertSym (SymTable m h) s t v = SymTable (M.insert s (t,v) m) h
+
+
+
 -- Para encontrar una funcion con un string creo que sería un simple lookup, lo dejaré aquí
 
-findFun :: String -> Map String FunProto -> Maybe FunProto
+findFun :: String -> M.Map String FunProto -> Maybe FunProto
 findFun s m = M.lookup s m
+
+
 
 
 -- Utilidad para recorrer 2 listas

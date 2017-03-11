@@ -30,7 +30,6 @@ anaExprS (x:xs) = do
 
 
 anaFuncion :: Out.Funcion -> Context.ConMonad Context.State
--- Esto esta terriblemente mal pero es para compilar
 anaFuncion (FuncionSA lt) = do
     let p = takePos lt
     let s = takeStr lt
