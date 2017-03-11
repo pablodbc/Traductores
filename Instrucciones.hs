@@ -110,17 +110,20 @@ anaAnidS (Bwith dls []) = do
     modify $ modifyHeight (+1)
     st <- get
     sep <- ask
+    modify $ modifyTable (pushTable (SymTable M.empty (h st)))
     tell (Out.showLine sep (h st) ("Alcance _with " ++ (show ((h st) - 1)) ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     mapM_ anaDecl dls
     tell (Out.showLine sep ((h st)+1) ("Sub_Alcances:\n"))
     modify $ modifyHeight (\x -> x-1)
+    modify $ modifyTable popTable
     return ()
 
 anaAnidS (Bwith dls ins) = do
     modify $ modifyHeight (+1)
     st <- get
     sep <- ask
+    modify $ modifyTable (pushTable (SymTable M.empty (h st)))
     tell (Out.showLine sep (h st) ("Alcance _with " ++ (show ((h st) - 1)) ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     mapM_ anaDecl dls
@@ -363,14 +366,14 @@ anaAnidS (Return e p) = do
                 Just (FunProto t lt _) -> do
                     case (tipo (head $ tablas st) == t) of
                         True -> do return ()
-                        False -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                        False -> throw $ Context.ContextError ("Cerca de la siguiente posicion " 
                                             ++ (Out.printPos p)
                                             ++ ", se esperaba una expresion de tipo " ++ (show t))
 
                 Nothing -> do 
                     error "Error interno, algo salio mal y la función no se encuentra en el mapa"
 
-        False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+        False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion " 
                                             ++ (Out.printPos p)
                                             ++ ", no se esperaba una funcion de retorno en procedimiento")
 anaAnidS (EmptyB) = do
