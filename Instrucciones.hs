@@ -282,7 +282,7 @@ anaAnidS (Brepeat e [] p) = do
             modify(modifyTable popTable)
         Boolean -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ ", en el Repeat Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
+                                            ++ ", en el Repeat Se esperaba una expresión Tipo Number y se detectó una expresión Tipo Boolean")
 
 
 
