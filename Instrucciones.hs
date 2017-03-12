@@ -367,23 +367,23 @@ anaAnidS (Return e p) = do
         _ -> do
 
             let fid = Context.id (funDecl st)
-            let isret = ret (funDecl st)
-            case isret of
-                True -> do
-                    case findFun fid (funcs st) of
-                        Just (FunProto t lt _) -> do
+            modify $ modifyHandler $ replace fid True
+            case findFun fid (funcs st) of
+                Just (FunProto t lt _) -> do
+                    case t of
+                        Context.Void -> do
+                            throw $ Context.ContextError ("Cerca de la siguiente posicion " 
+                                            ++ (Out.printPos p)
+                                            ++ ", se detectó una expresión de retorno en la definición de un procedimiento.")
+                        _ -> do
                             case (tipo (head $ tablas st) == t) of
                                 True -> do return ()
                                 False -> throw $ Context.ContextError ("Cerca de la siguiente posicion " 
                                                     ++ (Out.printPos p)
                                                     ++ ", se esperaba una expresion de tipo " ++ (show t))
 
-                        Nothing -> do 
-                            error "Error interno, algo salio mal y la función no se encuentra en el mapa"
-
-                False -> do throw $ Context.ContextError ("Cerca de la siguiente posicion " 
-                                                    ++ (Out.printPos p)
-                                                    ++ ", no se esperaba una funcion de retorno en procedimiento")
+                Nothing -> do 
+                    error "Error interno, algo salio mal y la función no se encuentra en el mapa"
 anaAnidS (EmptyB) = do
     return ()
         

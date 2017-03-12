@@ -39,14 +39,13 @@ anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
             return ()
         _ -> mapM_ anaAnidS ins
     modify (modifyHeight (\x -> x-1))
-    --modify (modifyTable popTable)
 
 anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
     st <- get
     sep <- ask
     modify $ modifyHeight (+1)
     let tp = fromTipo t
-    modify $ modifyHandler (replace s True)
+    modify $ modifyHandler (replace s False)
     tell (Out.showLine sep (h st) ("Alcance _" ++ s ++ ":\n"))
     tell (Out.showLine sep ((h st)+1) ("Variables:\n"))
     case Context.findFun s (funcs st) of
@@ -67,10 +66,17 @@ anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
     case ins of
         [] -> do
             return ()
-        _ -> mapM_ anaAnidS ins
+        _ -> do
+            mapM_ anaAnidS ins
+            st <- get
+            case ret $ funDecl st of
+                True -> do return()
+                False -> do
+                    throw $ Context.ContextError ("Cerca de la siguiente posicion" 
+                                            ++ (Out.printPos p)
+                                            ++ " la funcion " ++ s ++ " esperaba al menos una función de retorno")
     modify $ modifyHandler (backToNone)
     modify (modifyHeight (\x -> x-1))
-    --modify (modifyTable popTable)
 
 
 
