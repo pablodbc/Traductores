@@ -93,7 +93,7 @@ anaID t ((Lexer.Identifier p s):[]) = do
             error "Error interno, algo salio mal y no esta la tabla de la simbolos"
     case findSym s (onlySymTable(tablas st)) of
         Just (FoundSym _ _ h ) -> do
-            case h == (height symT) of
+            case h == (height symT) of -- ERROR, HAY QUE RE-PENSAR ESTO
                 True -> do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
@@ -379,7 +379,7 @@ anaExpr (Out.Eq e1 e2 p) = do
                 _ -> do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                                     ++ (Out.printPos p)
-                                                    ++ " en Operacion '/=', Conflicto de Tipos comparados. Se esperaba un Tipo Boolean y se encontro expresion Tipo Number en operando derecho")
+                                                    ++ " en Operacion '==', Conflicto de Tipos comparados. Se esperaba un Tipo Boolean y se encontro expresion Tipo Number en operando derecho")
 
         _ -> do
             error "Error interno, algo salio mal y no esta la tabla de la expresion"

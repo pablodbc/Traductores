@@ -38,6 +38,11 @@ anaFunDec (Out.Proc (Lexer.Identifier p s) params ins) = do
         [] -> do
             return ()
         _ -> mapM_ anaAnidS ins
+    case params of
+        [] -> do
+            return()
+        _ -> do
+            modify $ modifyTable popTable
     modify (modifyHeight (\x -> x-1))
 
 anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
@@ -75,6 +80,11 @@ anaFunDec (Out.Func idt@(Lexer.Identifier p s) params t ins) = do
                     throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
                                             ++ " la funcion " ++ s ++ " esperaba al menos una función de retorno")
+    case params of
+        [] -> do
+            return()
+        _ -> do
+            modify $ modifyTable popTable
     modify $ modifyHandler (backToNone)
     modify (modifyHeight (\x -> x-1))
 
