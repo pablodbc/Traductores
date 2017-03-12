@@ -145,7 +145,7 @@ anaInit (Program [] ins) = do
     modify $ insertFunProto "rotater" (FunProto Void [Number] 1)
     modify $ insertFunProto "setposition" (FunProto Void [Number,Number] 2)
     modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
-
+    modify $ modifyHandler backToNone
     st <- get
     sep <- ask
     modify $ modifyHeight (+1)
@@ -189,6 +189,7 @@ anaInit (Program fs ins) = do
     modify $ insertFunProto "arc" (FunProto Void [Number, Number] 2)
 
     mapM_ anaFunDec fs
+    modify $ modifyHandler backToNone
     st <- get
     sep <- ask
     modify $ modifyHeight (+1)
