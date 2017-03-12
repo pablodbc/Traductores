@@ -295,7 +295,7 @@ anaAnidS (Brepeat e ins p) = do
             mapM_ anaAnidS ins
         Boolean -> throw $ Context.ContextError ("Cerca de la siguiente posicion" 
                                             ++ (Out.printPos p)
-                                            ++ ", en el Repeat Se esperaba una expresión Tipo Boolean y se detectó una expresión Tipo Number")
+                                            ++ ", en el Repeat Se esperaba una expresión Tipo Number y se detectó una expresión Tipo Boolean")
 
 
 anaAnidS (Asig lt e) = do
